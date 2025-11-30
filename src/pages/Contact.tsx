@@ -31,10 +31,11 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     setIsSubmitting(true);
 
     try {
-      const formData = new FormData(e.currentTarget);
+      const formData = new FormData(form);
       const phoneValue = formData.get("phone") as string;
       const data = {
         name: formData.get("name") as string,
@@ -66,7 +67,7 @@ const Contact = () => {
       });
 
       // Reset form
-      e.currentTarget.reset();
+      form.reset();
       setFormStarted(false);
     } catch (error) {
       if (error instanceof z.ZodError) {
