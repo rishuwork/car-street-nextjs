@@ -5,37 +5,33 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Check, Star, Shield, DollarSign, Award, Phone } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { Tables } from "@/integrations/supabase/types";
 
 const Index = () => {
-  const featuredVehicles = [
-    {
-      id: 1,
-      year: 2020,
-      make: "Honda",
-      model: "Civic",
-      price: "$18,995",
-      mileage: "45,000 km",
-      image: "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&auto=format&fit=crop",
+  const { data: featuredVehicles = [] } = useQuery({
+    queryKey: ["featured-vehicles"],
+    queryFn: async () => {
+      const { data: vehicles, error } = await supabase
+        .from("vehicles")
+        .select(`
+          *,
+          vehicle_images(image_url, is_primary)
+        `)
+        .eq("featured", true)
+        .eq("status", "available")
+        .order("created_at", { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+
+      return vehicles.map((vehicle: Tables<"vehicles"> & { vehicle_images: Array<{ image_url: string; is_primary: boolean }> }) => ({
+        ...vehicle,
+        primaryImage: vehicle.vehicle_images.find(img => img.is_primary)?.image_url || vehicle.vehicle_images[0]?.image_url,
+      }));
     },
-    {
-      id: 2,
-      year: 2019,
-      make: "Toyota",
-      model: "Camry",
-      price: "$22,995",
-      mileage: "38,000 km",
-      image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&auto=format&fit=crop",
-    },
-    {
-      id: 3,
-      year: 2021,
-      make: "Mazda",
-      model: "CX-5",
-      price: "$28,995",
-      mileage: "32,000 km",
-      image: "https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=800&auto=format&fit=crop",
-    },
-  ];
+  });
 
   const benefits = [
     {
@@ -113,36 +109,43 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {featuredVehicles.map((vehicle) => (
-              <Card key={vehicle.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group">
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={vehicle.image} 
-                    alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-bold">
-                    {vehicle.price}
-                  </div>
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="text-2xl font-heading font-bold mb-2">
-                    {vehicle.year} {vehicle.make} {vehicle.model}
-                  </h3>
-                  <div className="flex items-center justify-between text-muted-foreground mb-4">
-                    <span className="text-sm">{vehicle.mileage}</span>
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-primary text-primary" />
-                      ))}
+            {featuredVehicles.length > 0 ? (
+              featuredVehicles.map((vehicle) => (
+                <Card key={vehicle.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group">
+                  <div className="relative overflow-hidden">
+                    <img 
+                      src={vehicle.primaryImage || "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&auto=format&fit=crop"} 
+                      alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                      className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-bold">
+                      ${vehicle.price.toLocaleString()}
                     </div>
                   </div>
-                  <Button variant="default" className="w-full" asChild>
-                    <Link to={`/vehicle/${vehicle.id}`}>View Details</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="text-2xl font-heading font-bold mb-2">
+                      {vehicle.year} {vehicle.make} {vehicle.model}
+                    </h3>
+                    <div className="flex items-center justify-between text-muted-foreground mb-4">
+                      <span className="text-sm">{vehicle.mileage.toLocaleString()} km</span>
+                      <div className="flex gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+                        ))}
+                      </div>
+                    </div>
+                    <Button variant="default" className="w-full" asChild>
+                      <Link to={`/vehicle/${vehicle.id}`}>View Details</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-12 text-muted-foreground">
+                <p className="text-lg">No featured vehicles available at this time.</p>
+                <p className="text-sm mt-2">Check back soon for our latest offerings!</p>
+              </div>
+            )}
           </div>
 
           <div className="text-center">

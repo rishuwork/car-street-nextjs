@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -36,6 +37,7 @@ export default function InventoryManagement() {
     drivetrain: "fwd",
     description: "",
     status: "available" as "available" | "sold" | "pending",
+    featured: false,
   });
 
   useEffect(() => {
@@ -103,6 +105,7 @@ export default function InventoryManagement() {
       drivetrain: formData.drivetrain,
       description: formData.description,
       status: formData.status,
+      featured: formData.featured,
     };
 
     if (editingVehicle) {
@@ -148,6 +151,7 @@ export default function InventoryManagement() {
       drivetrain: "fwd",
       description: "",
       status: "available",
+      featured: false,
     });
   };
 
@@ -166,6 +170,7 @@ export default function InventoryManagement() {
       drivetrain: vehicle.drivetrain,
       description: vehicle.description || "",
       status: vehicle.status,
+      featured: vehicle.featured,
     });
     setIsDialogOpen(true);
   };
@@ -349,18 +354,28 @@ export default function InventoryManagement() {
                         <SelectItem value="pending">Pending</SelectItem>
                       </SelectContent>
                   </Select>
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={4}
-                />
-              </div>
-              <div className="flex justify-end gap-2">
+                 </div>
+               </div>
+               <div>
+                 <Label htmlFor="description">Description</Label>
+                 <Textarea
+                   id="description"
+                   value={formData.description}
+                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                   rows={4}
+                 />
+               </div>
+               <div className="flex items-center space-x-2">
+                 <Checkbox
+                   id="featured"
+                   checked={formData.featured}
+                   onCheckedChange={(checked) => setFormData({ ...formData, featured: checked as boolean })}
+                 />
+                 <Label htmlFor="featured" className="font-normal cursor-pointer">
+                   Featured Vehicle (display on homepage)
+                 </Label>
+               </div>
+               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => {
                   setIsDialogOpen(false);
                   setEditingVehicle(null);
@@ -495,17 +510,27 @@ export default function InventoryManagement() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={4}
-                  />
-                </div>
-                <div className="flex justify-end gap-2">
+                 </div>
+                 <div>
+                   <Label htmlFor="description">Description</Label>
+                   <Textarea
+                     id="description"
+                     value={formData.description}
+                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                     rows={4}
+                   />
+                 </div>
+                 <div className="flex items-center space-x-2">
+                   <Checkbox
+                     id="featured-add"
+                     checked={formData.featured}
+                     onCheckedChange={(checked) => setFormData({ ...formData, featured: checked as boolean })}
+                   />
+                   <Label htmlFor="featured-add" className="font-normal cursor-pointer">
+                     Featured Vehicle (display on homepage)
+                   </Label>
+                 </div>
+                 <div className="flex justify-end gap-2">
                   <Button type="button" variant="outline" onClick={() => {
                     setIsDialogOpen(false);
                     setEditingVehicle(null);
