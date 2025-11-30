@@ -141,6 +141,16 @@ const BudgetCalculator = () => {
                   type="number"
                   value={tradeInValue}
                   onChange={(e) => setTradeInValue(Number(e.target.value))}
+                  onFocus={(e) => {
+                    if (tradeInValue === 0) {
+                      e.target.value = '';
+                    }
+                  }}
+                  onBlur={(e) => {
+                    if (e.target.value === '') {
+                      setTradeInValue(0);
+                    }
+                  }}
                   placeholder="Trade-In Value"
                   className="w-48"
                 />
