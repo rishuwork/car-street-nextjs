@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import TrackingScripts from "@/components/tracking/TrackingScripts";
+import CookieConsent from "@/components/tracking/CookieConsent";
 import Index from "./pages/Index";
 import Inventory from "./pages/Inventory";
 import VehicleDetail from "./pages/VehicleDetail";
@@ -27,6 +29,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <TrackingScripts />
+          <CookieConsent />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/inventory" element={<Inventory />} />

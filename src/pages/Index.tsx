@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import BudgetCalculator from "@/components/BudgetCalculator";
 import { Check, Star, Shield, DollarSign, Award, Phone } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,23 +34,6 @@ const Index = () => {
     },
   });
 
-  const benefits = [
-    {
-      icon: Shield,
-      title: "Quality Assured",
-      description: "Every vehicle undergoes rigorous inspection and comes with warranty options",
-    },
-    {
-      icon: DollarSign,
-      title: "Best Prices",
-      description: "Competitive pricing with flexible financing options to fit your budget",
-    },
-    {
-      icon: Award,
-      title: "Top-Rated Service",
-      description: "Award-winning customer service with thousands of satisfied customers",
-    },
-  ];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -81,22 +65,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Benefits Section */}
+      {/* Budget Calculator Section */}
       <section className="py-16 bg-muted">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {benefits.map((benefit, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="pt-8 text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
-                    <benefit.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-heading font-bold mb-2">{benefit.title}</h3>
-                  <p className="text-muted-foreground">{benefit.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <BudgetCalculator />
         </div>
       </section>
 
@@ -159,8 +131,41 @@ const Index = () => {
       {/* Why Choose Us Section */}
       <section className="py-16 bg-secondary text-secondary-foreground">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-heading font-bold mb-8">Why Choose Car Street?</h2>
+          <h2 className="text-4xl font-heading font-bold mb-12 text-center">Why Choose Car Street?</h2>
+          
+          {/* Three main benefits moved from top */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background">
+              <CardContent className="pt-8 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+                  <Shield className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-heading font-bold mb-2">Quality Assured</h3>
+                <p className="text-muted-foreground">Every vehicle undergoes rigorous inspection and comes with warranty options</p>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background">
+              <CardContent className="pt-8 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+                  <DollarSign className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-heading font-bold mb-2">Best Prices</h3>
+                <p className="text-muted-foreground">Competitive pricing with flexible financing options to fit your budget</p>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background">
+              <CardContent className="pt-8 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+                  <Award className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-heading font-bold mb-2">Top-Rated Service</h3>
+                <p className="text-muted-foreground">Award-winning customer service with thousands of satisfied customers</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Additional benefits list */}
+          <div className="max-w-3xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
               {[
                 "100% price match guarantee",

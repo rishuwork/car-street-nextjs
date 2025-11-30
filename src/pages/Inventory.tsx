@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -14,6 +15,7 @@ type Vehicle = Tables<"vehicles">;
 type VehicleImage = Tables<"vehicle_images">;
 
 const Inventory = () => {
+  const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [makeFilter, setMakeFilter] = useState("all");
   const [priceFilter, setPriceFilter] = useState("all");
@@ -22,9 +24,26 @@ const Inventory = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [makes, setMakes] = useState<string[]>([]);
 
+  // Get maxPrice from URL params (from budget calculator)
+  const maxPriceParam = searchParams.get('maxPrice');
+
   useEffect(() => {
     loadVehicles();
   }, []);
+
+  useEffect(() => {
+    // Track inventory search when filters change
+    if (searchTerm || makeFilter !== 'all' || priceFilter !== 'all' || maxPriceParam) {
+      import('@/utils/tracking').then(({ trackInventorySearch }) => {
+        trackInventorySearch({
+          searchQuery: searchTerm,
+          makeFilter,
+          priceFilter,
+          maxPrice: maxPriceParam,
+        });
+      });
+    }
+  }, [searchTerm, makeFilter, priceFilter, maxPriceParam]);
 
   const loadVehicles = async () => {
     setIsLoading(true);
@@ -77,7 +96,10 @@ const Inventory = () => {
       (priceFilter === "20to30k" && Number(vehicle.price) >= 20000 && Number(vehicle.price) < 30000) ||
       (priceFilter === "over30k" && Number(vehicle.price) >= 30000);
 
-    return matchesSearch && matchesMake && matchesPrice;
+    // Filter by maxPrice from budget calculator
+    const matchesMaxPrice = !maxPriceParam || Number(vehicle.price) <= Number(maxPriceParam);
+
+    return matchesSearch && matchesMake && matchesPrice && matchesMaxPrice;
   });
 
   return (

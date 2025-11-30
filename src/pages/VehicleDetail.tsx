@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, ArrowLeft, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { trackVehicleView, trackClickToCall } from "@/utils/tracking";
+import { generateVehicleStructuredData } from "@/utils/vehicleStructuredData";
 
 const VehicleDetail = () => {
   const { id } = useParams();
@@ -41,6 +43,32 @@ const VehicleDetail = () => {
       return data;
     },
   });
+
+  // Track vehicle view when data is loaded
+  useEffect(() => {
+    if (vehicle) {
+      trackVehicleView(vehicle);
+      
+      // Add structured data for SEO
+      const structuredData = generateVehicleStructuredData(
+        vehicle,
+        images?.[0]?.image_url
+      );
+      
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.text = JSON.stringify(structuredData);
+      document.head.appendChild(script);
+      
+      return () => {
+        document.head.removeChild(script);
+      };
+    }
+  }, [vehicle, images]);
+
+  const handleCallClick = () => {
+    trackClickToCall('+15555551234');
+  };
 
   if (isLoading) {
     return (
@@ -260,7 +288,7 @@ const VehicleDetail = () => {
 
                   <div className="space-y-3">
                     <Button variant="default" className="w-full" size="lg" asChild>
-                      <a href="tel:+15555551234">
+                      <a href="tel:+15555551234" onClick={handleCallClick}>
                         <Phone className="mr-2 h-5 w-5" />
                         Call Now
                       </a>
