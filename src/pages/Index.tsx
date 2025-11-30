@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BudgetCalculator from "@/components/BudgetCalculator";
-import { Check, Star, Shield, DollarSign, Award, Phone } from "lucide-react";
+import { Check, Shield, DollarSign, Award, Phone } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -98,13 +98,8 @@ const Index = () => {
                     <h3 className="text-2xl font-heading font-bold mb-2">
                       {vehicle.year} {vehicle.make} {vehicle.model}
                     </h3>
-                    <div className="flex items-center justify-between text-muted-foreground mb-4">
+                    <div className="text-muted-foreground mb-4">
                       <span className="text-sm">{vehicle.mileage.toLocaleString()} km</span>
-                      <div className="flex gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 fill-primary text-primary" />
-                        ))}
-                      </div>
                     </div>
                     <Button variant="default" className="w-full" asChild>
                       <Link to={`/vehicle/${vehicle.id}`}>View Details</Link>
