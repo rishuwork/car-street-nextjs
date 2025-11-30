@@ -99,7 +99,7 @@ const Index = () => {
                       <span className="text-sm text-muted-foreground">{vehicle.mileage.toLocaleString()} km</span>
                     </div>
                     <div className="mb-4">
-                      <p className="text-2xl font-bold text-foreground">${vehicle.price.toLocaleString()}</p>
+                      <p className="text-2xl font-bold text-green-600">${vehicle.price.toLocaleString()}</p>
                       <p className="text-xs text-muted-foreground">+ HST & licensing</p>
                     </div>
                     <Button variant="default" className="w-full" asChild>
