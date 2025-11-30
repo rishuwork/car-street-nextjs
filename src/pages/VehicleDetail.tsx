@@ -95,7 +95,7 @@ const VehicleDetail = () => {
                       <img 
                         src={images[selectedImageIndex].image_url} 
                         alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                        className="w-full h-96 object-cover rounded-lg"
+                        className="w-full h-64 md:h-96 object-cover rounded-lg"
                       />
                       {images.length > 1 && (
                         <>
@@ -119,13 +119,13 @@ const VehicleDetail = () => {
                       )}
                     </div>
                     {images.length > 1 && (
-                      <div className="grid grid-cols-4 gap-4">
+                      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
                         {images.map((image, index) => (
                           <img 
                             key={image.id}
                             src={image.image_url} 
                             alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                            className={`w-full h-24 object-cover rounded-lg cursor-pointer transition-all ${
+                            className={`w-full h-16 md:h-24 object-cover rounded-lg cursor-pointer transition-all ${
                               selectedImageIndex === index 
                                 ? 'ring-2 ring-primary opacity-100' 
                                 : 'opacity-60 hover:opacity-100'
