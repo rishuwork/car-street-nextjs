@@ -4,9 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BudgetCalculator from "@/components/BudgetCalculator";
-import { Check, Shield, DollarSign, Award, Phone } from "lucide-react";
+import { Check, Shield, DollarSign, Award, Phone, Gauge } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
-import speedometerIcon from "@/assets/speedometer.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Tables } from "@/integrations/supabase/types";
@@ -97,7 +96,7 @@ const Index = () => {
                       {vehicle.year} {vehicle.make} {vehicle.model}
                     </h3>
                     <div className="mb-2 flex items-center gap-2">
-                      <img src={speedometerIcon} alt="Odometer" className="h-4 w-4" />
+                      <Gauge className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm text-muted-foreground">{vehicle.mileage.toLocaleString()} km</span>
                     </div>
                     <div className="mb-4">
