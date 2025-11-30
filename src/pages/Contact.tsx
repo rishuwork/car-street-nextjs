@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -5,11 +6,81 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { trackFormStart, trackFormSubmit } from "@/utils/tracking";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+  phone: z.string().trim().max(20, "Phone must be less than 20 characters").optional(),
+  message: z.string().trim().min(1, "Message is required").max(1000, "Message must be less than 1000 characters"),
+});
 
 const Contact = () => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formStarted, setFormStarted] = useState(false);
+
+  const handleFormFocus = () => {
+    if (!formStarted) {
+      setFormStarted(true);
+      trackFormStart("contact");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission
+    setIsSubmitting(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const data = {
+        name: formData.get("name") as string,
+        email: formData.get("email") as string,
+        phone: formData.get("phone") as string || null,
+        message: formData.get("message") as string,
+      };
+
+      // Validate input
+      const validatedData = contactSchema.parse(data);
+
+      // Submit to database
+      const { error } = await supabase
+        .from("contact_submissions")
+        .insert([{
+          name: validatedData.name,
+          email: validatedData.email,
+          phone: validatedData.phone || null,
+          message: validatedData.message,
+        }]);
+
+      if (error) throw error;
+
+      // Track successful submission
+      trackFormSubmit("contact");
+
+      toast.success("Message sent successfully!", {
+        description: "We'll get back to you as soon as possible.",
+      });
+
+      // Reset form
+      e.currentTarget.reset();
+      setFormStarted(false);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error("Please check your input", {
+          description: error.errors[0].message,
+        });
+      } else {
+        console.error("Error submitting form:", error);
+        toast.error("Failed to send message", {
+          description: "Please try again later or call us directly.",
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,26 +105,58 @@ const Contact = () => {
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
-                      <Input id="name" placeholder="Your name" required />
+                      <Input 
+                        id="name" 
+                        name="name"
+                        placeholder="Your name" 
+                        required 
+                        onFocus={handleFormFocus}
+                        maxLength={100}
+                      />
                     </div>
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
-                      <Input id="email" type="email" placeholder="your@email.com" required />
+                      <Input 
+                        id="email" 
+                        name="email"
+                        type="email" 
+                        placeholder="your@email.com" 
+                        required 
+                        onFocus={handleFormFocus}
+                        maxLength={255}
+                      />
                     </div>
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium mb-2">Phone</label>
-                      <Input id="phone" type="tel" placeholder="(555) 555-1234" />
+                      <Input 
+                        id="phone" 
+                        name="phone"
+                        type="tel" 
+                        placeholder="(555) 555-1234"
+                        onFocus={handleFormFocus}
+                        maxLength={20}
+                      />
                     </div>
                     <div>
                       <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
                       <Textarea 
                         id="message" 
+                        name="message"
                         placeholder="How can we help you?" 
                         rows={5}
                         required 
+                        onFocus={handleFormFocus}
+                        maxLength={1000}
                       />
                     </div>
-                    <Button type="submit" className="w-full" size="lg">Send Message</Button>
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      size="lg"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                    </Button>
                   </form>
                 </CardContent>
               </Card>
@@ -119,11 +222,18 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                {/* Map placeholder */}
+                {/* Map */}
                 <Card className="overflow-hidden">
-                  <div className="w-full h-64 bg-muted flex items-center justify-center">
-                    <p className="text-muted-foreground">Map Location</p>
-                  </div>
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2885.5847892614243!2d-79.6437445!3d43.6777176!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882b3ae8dddffc7f%3A0x5b2e2f7d1e6f8b1e!2sMississauga%2C%20ON%20L5B%201M5!5e0!3m2!1sen!2sca!4v1234567890123!5m2!1sen!2sca"
+                    width="100%"
+                    height="256"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Car Street Location"
+                  />
                 </Card>
               </div>
             </div>
