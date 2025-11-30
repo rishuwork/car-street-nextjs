@@ -35,10 +35,11 @@ const Contact = () => {
 
     try {
       const formData = new FormData(e.currentTarget);
+      const phoneValue = formData.get("phone") as string;
       const data = {
         name: formData.get("name") as string,
         email: formData.get("email") as string,
-        phone: formData.get("phone") as string || null,
+        phone: phoneValue?.trim() ? phoneValue : undefined,
         message: formData.get("message") as string,
       };
 
