@@ -236,11 +236,7 @@ const Inventory = () => {
           {filteredVehicles.length === 0 && (
             <div className="text-center py-16">
               <p className="text-xl text-muted-foreground">No vehicles found matching your criteria.</p>
-              <Button variant="outline" className="mt-4" onClick={() => {
-                setSearchTerm("");
-                setMakeFilter("all");
-                setPriceFilter("all");
-              }}>
+              <Button variant="outline" className="mt-4" onClick={handleClearFilters}>
                 Clear Filters
               </Button>
             </div>
