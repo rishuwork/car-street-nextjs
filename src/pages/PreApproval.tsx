@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 // Vehicle type images (placeholders - replace with actual images)
 const vehicleTypes = [
@@ -388,27 +389,46 @@ const PreApproval = () => {
   const handleSubmit = async () => {
     if (!validateStep()) return;
 
-    const payload = {
-      ...formData,
-      submittedAt: new Date().toISOString(),
-    };
-
-    console.log("Form submission payload:", payload);
-
     try {
-      // Example: Send to backend
-      // await fetch('/api/leads', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(payload)
-      // });
+      // Prepare detailed message with all form data
+      const detailedInfo = {
+        vehicleType: formData.vehicleType,
+        budget: formData.budget,
+        tradeIn: formData.tradeIn,
+        creditRating: formData.creditRating,
+        employmentStatus: formData.employmentStatus,
+        incomeDetails: {
+          type: formData.incomeType,
+          annualIncome: formData.annualIncome,
+          hourlyWage: formData.hourlyWage,
+          hoursPerWeek: formData.hoursPerWeek,
+          monthlyIncome: formData.monthlyIncome,
+        },
+        address: formData.address,
+        timeAtAddress: {
+          years: formData.yearsAtAddress,
+          months: formData.monthsAtAddress,
+        },
+        housing: {
+          rentOrOwn: formData.rentOrOwn,
+          monthlyPayment: formData.monthlyHousePayment,
+        },
+        dateOfBirth: formData.dob,
+        age: formData.age,
+        sin: formData.sin,
+      };
 
-      // Example: Send to Zapier webhook
-      // await fetch('YOUR_ZAPIER_WEBHOOK_URL', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(payload)
-      // });
+      // Insert into contact_submissions table
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        phone: formData.phone,
+        message: `Pre-Approval Application\n\nVehicle Type: ${formData.vehicleType}\nBudget: ${formData.budget}\nTrade-In: ${formData.tradeIn}\nCredit Rating: ${formData.creditRating}`,
+        notes: JSON.stringify(detailedInfo, null, 2),
+        status: "new",
+      });
+
+      if (error) throw error;
 
       setCurrentStep(13); // Success screen
       localStorage.removeItem(STORAGE_KEY);
