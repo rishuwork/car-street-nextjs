@@ -153,9 +153,10 @@ const PreApproval = () => {
     // Auto-advance after a short delay to show selection
     setTimeout(() => {
       if (validateStepField(field, value)) {
-        goToStep(currentStep + 1, 1);
+        setDirection(1);
+        setCurrentStep(currentStep + 1);
       }
-    }, 300);
+    }, 400);
   };
 
   const validateStepField = (field: keyof FormData, value: any): boolean => {
@@ -165,7 +166,10 @@ const PreApproval = () => {
   const goToStep = (step: number, dir: number) => {
     setDirection(dir);
     setCurrentStep(step);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Scroll to top of page smoothly
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 50);
   };
 
   const nextStep = () => {
