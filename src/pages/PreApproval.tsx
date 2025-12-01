@@ -386,6 +386,36 @@ const PreApproval = () => {
     }
   };
 
+  const resetForm = () => {
+    setFormData({
+      vehicleType: "",
+      budget: "",
+      tradeIn: "",
+      creditRating: "",
+      employmentStatus: "",
+      incomeType: "",
+      annualIncome: "",
+      hourlyWage: "",
+      hoursPerWeek: "",
+      monthlyIncome: "",
+      address: "",
+      yearsAtAddress: "",
+      monthsAtAddress: "",
+      rentOrOwn: "",
+      monthlyHousePayment: "",
+      dob: "",
+      age: null,
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      sin: "",
+    });
+    setCurrentStep(1);
+    setDirection(1);
+    localStorage.removeItem(STORAGE_KEY);
+  };
+
   const handleSubmit = async () => {
     if (!validateStep()) return;
 
@@ -431,7 +461,6 @@ const PreApproval = () => {
       if (error) throw error;
 
       setCurrentStep(13); // Success screen
-      localStorage.removeItem(STORAGE_KEY);
 
       toast({
         title: "Application Submitted!",
@@ -1153,9 +1182,14 @@ const PreApproval = () => {
                       your information and contact you within 24 hours to discuss
                       your pre-approval options.
                     </p>
-                    <Button size="lg" asChild>
-                      <a href="/">Return to Home</a>
-                    </Button>
+                    <div className="flex gap-4 justify-center">
+                      <Button size="lg" variant="outline" onClick={resetForm}>
+                        Submit Another Application
+                      </Button>
+                      <Button size="lg" asChild>
+                        <a href="/">Return to Home</a>
+                      </Button>
+                    </div>
                   </motion.div>
                 )}
               </motion.div>
