@@ -548,7 +548,7 @@ const PreApproval = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      <main className="flex-1 py-24 md:py-32">
+      <main className="flex-1 py-8 md:py-12">
         <div className="max-w-[700px] mx-auto px-4">
           {/* Progress Bar */}
           {currentStep <= TOTAL_STEPS && (
