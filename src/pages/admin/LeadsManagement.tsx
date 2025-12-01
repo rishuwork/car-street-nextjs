@@ -101,6 +101,16 @@ export default function LeadsManagement() {
     }
   };
 
+  const formatDob = (dob: string): string => {
+    if (!dob || dob.length !== 8) return dob;
+    return `${dob.slice(0, 2)}/${dob.slice(2, 4)}/${dob.slice(4, 8)}`;
+  };
+
+  const formatSin = (sin: string): string => {
+    if (!sin || sin.length !== 9) return sin;
+    return `${sin.slice(0, 3)}-${sin.slice(3, 5)}-${sin.slice(5, 9)}`;
+  };
+
   const renderPreApprovalDetails = (data: any) => {
     if (!data) return null;
 
@@ -192,7 +202,7 @@ export default function LeadsManagement() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <span className="font-semibold">Date of Birth:</span>
-            <p className="text-muted-foreground">{data.dateOfBirth || "N/A"}</p>
+            <p className="text-muted-foreground">{formatDob(data.dateOfBirth) || "N/A"}</p>
           </div>
           <div>
             <span className="font-semibold">Age:</span>
@@ -203,7 +213,7 @@ export default function LeadsManagement() {
         {data.sin && (
           <div>
             <span className="font-semibold">SIN:</span>
-            <p className="text-muted-foreground">***-**-{data.sin.slice(-4)}</p>
+            <p className="text-muted-foreground">{formatSin(data.sin)}</p>
           </div>
         )}
       </div>
