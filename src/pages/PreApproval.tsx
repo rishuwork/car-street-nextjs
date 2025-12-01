@@ -411,12 +411,21 @@ const PreApproval = () => {
     return age;
   };
 
+  const formatDobDisplay = (value: string): string => {
+    const cleaned = value.replace(/\D/g, "");
+    if (cleaned.length <= 2) return cleaned;
+    if (cleaned.length <= 4) return `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+    return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4, 8)}`;
+  };
+
   const handleDobChange = (value: string) => {
     const cleaned = value.replace(/\D/g, "");
-    updateFormData("dob", cleaned);
+    // Limit to 8 digits
+    const limited = cleaned.substring(0, 8);
+    updateFormData("dob", limited);
 
-    if (cleaned.length === 8) {
-      const age = calculateAge(cleaned);
+    if (limited.length === 8) {
+      const age = calculateAge(limited);
       updateFormData("age", age);
     } else {
       updateFormData("age", null);
@@ -570,7 +579,7 @@ const PreApproval = () => {
           )}
 
           {/* Form Steps */}
-          <div className="bg-card rounded-lg shadow-lg p-8 min-h-[500px]">
+          <div className="bg-card rounded-lg shadow-lg p-8">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={currentStep}
@@ -1107,7 +1116,7 @@ const PreApproval = () => {
                   <div>
                     <h2 className="text-3xl font-bold mb-2">Date of Birth</h2>
                     <p className="text-muted-foreground mb-8">
-                      Enter your date of birth (DDMMYYYY)
+                      Enter your date of birth (DD/MM/YYYY)
                     </p>
 
                     <div className="space-y-4">
@@ -1117,11 +1126,11 @@ const PreApproval = () => {
                           id="dob"
                           type="text"
                           inputMode="numeric"
-                          placeholder="DDMMYYYY"
-                          maxLength={8}
-                          value={formData.dob}
+                          placeholder="DD/MM/YYYY"
+                          maxLength={10}
+                          value={formatDobDisplay(formData.dob)}
                           onChange={(e) =>
-                            handleDobChange(e.target.value.replace(/\D/g, ""))
+                            handleDobChange(e.target.value)
                           }
                           className="mt-2 text-lg"
                         />
