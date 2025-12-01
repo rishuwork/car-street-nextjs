@@ -65,6 +65,10 @@ interface FormData {
   hourlyWage: string;
   hoursPerWeek: string;
   monthlyIncome: string;
+  employerName: string;
+  employerPhone: string;
+  jobTitle: string;
+  yearsEmployed: string;
   address: string;
   yearsAtAddress: string;
   monthsAtAddress: string;
@@ -79,7 +83,7 @@ interface FormData {
   sin: string;
 }
 
-const TOTAL_STEPS = 12;
+const TOTAL_STEPS = 13;
 const STORAGE_KEY = "car_street_lead_v1";
 
 const PreApproval = () => {
@@ -97,6 +101,10 @@ const PreApproval = () => {
     hourlyWage: "",
     hoursPerWeek: "",
     monthlyIncome: "",
+    employerName: "",
+    employerPhone: "",
+    jobTitle: "",
+    yearsEmployed: "",
     address: "",
     yearsAtAddress: "",
     monthsAtAddress: "",
@@ -137,6 +145,21 @@ const PreApproval = () => {
 
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Auto-advance for selection steps
+  const handleSelection = (field: keyof FormData, value: any) => {
+    updateFormData(field, value);
+    // Auto-advance after a short delay to show selection
+    setTimeout(() => {
+      if (validateStepField(field, value)) {
+        goToStep(currentStep + 1, 1);
+      }
+    }, 300);
+  };
+
+  const validateStepField = (field: keyof FormData, value: any): boolean => {
+    return value !== "";
   };
 
   const goToStep = (step: number, dir: number) => {
@@ -250,6 +273,16 @@ const PreApproval = () => {
         }
         break;
       case 8:
+        if (!formData.employerName || !formData.jobTitle) {
+          toast({
+            title: "Input Required",
+            description: "Please enter your employer details",
+            variant: "destructive",
+          });
+          return false;
+        }
+        break;
+      case 9:
         if (!formData.address) {
           toast({
             title: "Input Required",
@@ -259,7 +292,7 @@ const PreApproval = () => {
           return false;
         }
         break;
-      case 9:
+      case 10:
         const years = parseInt(formData.yearsAtAddress) || 0;
         const months = parseInt(formData.monthsAtAddress) || 0;
         if (years === 0 && months === 0) {
@@ -279,7 +312,7 @@ const PreApproval = () => {
           return false;
         }
         break;
-      case 10:
+      case 11:
         if (!formData.rentOrOwn || !formData.monthlyHousePayment) {
           toast({
             title: "Input Required",
@@ -289,7 +322,7 @@ const PreApproval = () => {
           return false;
         }
         break;
-      case 11:
+      case 12:
         if (!formData.dob || !formData.age) {
           toast({
             title: "Input Required",
@@ -307,7 +340,7 @@ const PreApproval = () => {
           return false;
         }
         break;
-      case 12:
+      case 13:
         if (
           !formData.firstName ||
           !formData.lastName ||
@@ -398,6 +431,10 @@ const PreApproval = () => {
       hourlyWage: "",
       hoursPerWeek: "",
       monthlyIncome: "",
+      employerName: "",
+      employerPhone: "",
+      jobTitle: "",
+      yearsEmployed: "",
       address: "",
       yearsAtAddress: "",
       monthsAtAddress: "",
@@ -434,6 +471,12 @@ const PreApproval = () => {
           hoursPerWeek: formData.hoursPerWeek,
           monthlyIncome: formData.monthlyIncome,
         },
+        employerDetails: {
+          name: formData.employerName,
+          phone: formData.employerPhone,
+          jobTitle: formData.jobTitle,
+          yearsEmployed: formData.yearsEmployed,
+        },
         address: formData.address,
         timeAtAddress: {
           years: formData.yearsAtAddress,
@@ -460,7 +503,7 @@ const PreApproval = () => {
 
       if (error) throw error;
 
-      setCurrentStep(13); // Success screen
+      setCurrentStep(14); // Success screen
 
       toast({
         title: "Application Submitted!",
@@ -501,8 +544,8 @@ const PreApproval = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      <main className="flex-1 py-12">
-        <div className="container max-w-3xl mx-auto px-4">
+      <main className="flex-1 py-24 md:py-32">
+        <div className="max-w-[700px] mx-auto px-4">
           {/* Progress Bar */}
           {currentStep <= TOTAL_STEPS && (
             <motion.div
@@ -550,7 +593,7 @@ const PreApproval = () => {
                           key={type.id}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() => updateFormData("vehicleType", type.id)}
+                          onClick={() => handleSelection("vehicleType", type.id)}
                           className={`p-6 rounded-lg border-2 transition-all ${
                             formData.vehicleType === type.id
                               ? "border-primary bg-primary/10 shadow-lg"
@@ -575,25 +618,20 @@ const PreApproval = () => {
                       Select your preferred monthly payment range
                     </p>
 
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
                       {budgetOptions.map((option) => (
                         <motion.button
                           key={option}
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
-                          onClick={() => updateFormData("budget", option)}
-                          className={`w-full p-5 rounded-lg border-2 text-left transition-all ${
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleSelection("budget", option)}
+                          className={`p-5 rounded-lg border-2 text-center transition-all ${
                             formData.budget === option
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-lg">{option}</span>
-                            {formData.budget === option && (
-                              <Check className="h-5 w-5 text-primary" />
-                            )}
-                          </div>
+                          <span className="font-medium">{option}</span>
                         </motion.button>
                       ))}
                     </div>
@@ -610,25 +648,20 @@ const PreApproval = () => {
                       Let us know if you have a vehicle to trade in
                     </p>
 
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-3 gap-4">
                       {tradeInOptions.map((option) => (
                         <motion.button
                           key={option}
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
-                          onClick={() => updateFormData("tradeIn", option)}
-                          className={`w-full p-5 rounded-lg border-2 text-left transition-all ${
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleSelection("tradeIn", option)}
+                          className={`p-5 rounded-lg border-2 text-center transition-all ${
                             formData.tradeIn === option
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-lg">{option}</span>
-                            {formData.tradeIn === option && (
-                              <Check className="h-5 w-5 text-primary" />
-                            )}
-                          </div>
+                          <span className="font-medium text-lg">{option}</span>
                         </motion.button>
                       ))}
                     </div>
@@ -645,29 +678,24 @@ const PreApproval = () => {
                       This helps us find the best financing options for you
                     </p>
 
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
                       {creditRatingOptions.map((option) => (
                         <motion.button
                           key={option.value}
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() =>
-                            updateFormData("creditRating", option.value)
+                            handleSelection("creditRating", option.value)
                           }
-                          className={`w-full p-5 rounded-lg border-2 text-left transition-all ${
+                          className={`p-5 rounded-lg border-2 text-center transition-all ${
                             formData.creditRating === option.value
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-lg">
-                              {option.label}
-                            </span>
-                            {formData.creditRating === option.value && (
-                              <Check className="h-5 w-5 text-primary" />
-                            )}
-                          </div>
+                          <span className="font-medium">
+                            {option.label}
+                          </span>
                         </motion.button>
                       ))}
                     </div>
@@ -684,27 +712,22 @@ const PreApproval = () => {
                       What is your current employment situation?
                     </p>
 
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
                       {employmentOptions.map((option) => (
                         <motion.button
                           key={option}
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() =>
-                            updateFormData("employmentStatus", option)
+                            handleSelection("employmentStatus", option)
                           }
-                          className={`w-full p-5 rounded-lg border-2 text-left transition-all ${
+                          className={`p-5 rounded-lg border-2 text-center transition-all ${
                             formData.employmentStatus === option
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-lg">{option}</span>
-                            {formData.employmentStatus === option && (
-                              <Check className="h-5 w-5 text-primary" />
-                            )}
-                          </div>
+                          <span className="font-medium">{option}</span>
                         </motion.button>
                       ))}
                     </div>
@@ -719,25 +742,20 @@ const PreApproval = () => {
                       How would you like to provide your income information?
                     </p>
 
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
                       {incomeTypeOptions.map((option) => (
                         <motion.button
                           key={option}
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
-                          onClick={() => updateFormData("incomeType", option)}
-                          className={`w-full p-5 rounded-lg border-2 text-left transition-all ${
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleSelection("incomeType", option)}
+                          className={`p-5 rounded-lg border-2 text-center transition-all ${
                             formData.incomeType === option
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-lg">{option}</span>
-                            {formData.incomeType === option && (
-                              <Check className="h-5 w-5 text-primary" />
-                            )}
-                          </div>
+                          <span className="font-medium">{option}</span>
                         </motion.button>
                       ))}
                     </div>
@@ -850,8 +868,80 @@ const PreApproval = () => {
                   </div>
                 )}
 
-                {/* Step 8: Address */}
+                {/* Step 8: Employer Details */}
                 {currentStep === 8 && (
+                  <div>
+                    <h2 className="text-3xl font-bold mb-2">Employer Details</h2>
+                    <p className="text-muted-foreground mb-8">
+                      Please provide information about your current employer
+                    </p>
+
+                    <div className="space-y-6">
+                      <div>
+                        <Label htmlFor="employerName">Employer Name *</Label>
+                        <Input
+                          id="employerName"
+                          type="text"
+                          placeholder="Company Name"
+                          value={formData.employerName}
+                          onChange={(e) =>
+                            updateFormData("employerName", e.target.value)
+                          }
+                          className="mt-2 text-lg"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="jobTitle">Job Title *</Label>
+                        <Input
+                          id="jobTitle"
+                          type="text"
+                          placeholder="Your Position"
+                          value={formData.jobTitle}
+                          onChange={(e) =>
+                            updateFormData("jobTitle", e.target.value)
+                          }
+                          className="mt-2 text-lg"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="employerPhone">Employer Phone Number</Label>
+                        <Input
+                          id="employerPhone"
+                          type="tel"
+                          placeholder="(555) 123-4567"
+                          value={formData.employerPhone}
+                          onChange={(e) =>
+                            updateFormData("employerPhone", e.target.value)
+                          }
+                          className="mt-2 text-lg"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="yearsEmployed">Years at Current Employer</Label>
+                        <Input
+                          id="yearsEmployed"
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="0"
+                          value={formData.yearsEmployed}
+                          onChange={(e) =>
+                            updateFormData(
+                              "yearsEmployed",
+                              e.target.value.replace(/\D/g, "")
+                            )
+                          }
+                          className="mt-2 text-lg"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 9: Address */}
+                {currentStep === 9 && (
                   <div>
                     <h2 className="text-3xl font-bold mb-2">
                       What is your address?
@@ -894,8 +984,8 @@ const PreApproval = () => {
                   </div>
                 )}
 
-                {/* Step 9: Years at Address */}
-                {currentStep === 9 && (
+                {/* Step 10: Years at Address */}
+                {currentStep === 10 && (
                   <div>
                     <h2 className="text-3xl font-bold mb-2">
                       How long at this address?
@@ -943,8 +1033,8 @@ const PreApproval = () => {
                   </div>
                 )}
 
-                {/* Step 10: Rent or Own */}
-                {currentStep === 10 && (
+                {/* Step 11: Rent or Own */}
+                {currentStep === 11 && (
                   <div>
                     <h2 className="text-3xl font-bold mb-2">
                       Do you Rent or Own?
@@ -1008,8 +1098,8 @@ const PreApproval = () => {
                   </div>
                 )}
 
-                {/* Step 11: Date of Birth */}
-                {currentStep === 11 && (
+                {/* Step 12: Date of Birth */}
+                {currentStep === 12 && (
                   <div>
                     <h2 className="text-3xl font-bold mb-2">Date of Birth</h2>
                     <p className="text-muted-foreground mb-8">
@@ -1056,8 +1146,8 @@ const PreApproval = () => {
                   </div>
                 )}
 
-                {/* Step 12: Final Details */}
-                {currentStep === 12 && (
+                {/* Step 13: Final Details */}
+                {currentStep === 13 && (
                   <div>
                     <h2 className="text-3xl font-bold mb-2">
                       Almost Done!
@@ -1160,7 +1250,7 @@ const PreApproval = () => {
                 )}
 
                 {/* Success Screen */}
-                {currentStep === 13 && (
+                {currentStep === 14 && (
                   <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -1212,15 +1302,18 @@ const PreApproval = () => {
                   Back
                 </Button>
 
-                {currentStep === TOTAL_STEPS ? (
-                  <Button onClick={handleSubmit} size="lg">
-                    Submit Application
-                  </Button>
-                ) : (
-                  <Button onClick={nextStep} size="lg">
-                    Continue
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                {/* Only show Continue button for input steps (7+) and Submit for final step */}
+                {currentStep >= 7 && (
+                  currentStep === TOTAL_STEPS ? (
+                    <Button onClick={handleSubmit} size="lg">
+                      Submit Application
+                    </Button>
+                  ) : (
+                    <Button onClick={nextStep} size="lg">
+                      Continue
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  )
                 )}
               </motion.div>
             )}

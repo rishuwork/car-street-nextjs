@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tables } from "@/integrations/supabase/types";
 import { formatDistanceToNow } from "date-fns";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, FileText } from "lucide-react";
 
 type ContactSubmission = Tables<"contact_submissions">;
 
@@ -21,6 +21,7 @@ export default function LeadsManagement() {
   const [notes, setNotes] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
 
   useEffect(() => {
     loadLeads();
@@ -46,6 +47,11 @@ export default function LeadsManagement() {
     setStatus(lead.status);
     setNotes(lead.notes || "");
     setIsDialogOpen(true);
+  };
+
+  const handleViewDetails = (lead: ContactSubmission) => {
+    setSelectedLead(lead);
+    setViewDetailsOpen(true);
   };
 
   const handleUpdateLead = async () => {
@@ -86,6 +92,124 @@ export default function LeadsManagement() {
     }
   };
 
+  const parsePreApprovalData = (notes: string | null) => {
+    if (!notes) return null;
+    try {
+      return JSON.parse(notes);
+    } catch {
+      return null;
+    }
+  };
+
+  const renderPreApprovalDetails = (data: any) => {
+    if (!data) return null;
+
+    return (
+      <div className="space-y-4 text-sm">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <span className="font-semibold">Vehicle Type:</span>
+            <p className="text-muted-foreground">{data.vehicleType || "N/A"}</p>
+          </div>
+          <div>
+            <span className="font-semibold">Budget:</span>
+            <p className="text-muted-foreground">{data.budget || "N/A"}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <span className="font-semibold">Trade-In:</span>
+            <p className="text-muted-foreground">{data.tradeIn || "N/A"}</p>
+          </div>
+          <div>
+            <span className="font-semibold">Credit Rating:</span>
+            <p className="text-muted-foreground">{data.creditRating || "N/A"}</p>
+          </div>
+        </div>
+
+        <div>
+          <span className="font-semibold">Employment Status:</span>
+          <p className="text-muted-foreground">{data.employmentStatus || "N/A"}</p>
+        </div>
+
+        {data.incomeDetails && (
+          <div>
+            <span className="font-semibold">Income Details:</span>
+            <div className="ml-4 mt-1 space-y-1 text-muted-foreground">
+              <p>Type: {data.incomeDetails.type || "N/A"}</p>
+              {data.incomeDetails.annualIncome && (
+                <p>Annual Income: ${parseInt(data.incomeDetails.annualIncome).toLocaleString()}</p>
+              )}
+              {data.incomeDetails.hourlyWage && (
+                <p>Hourly Wage: ${parseInt(data.incomeDetails.hourlyWage).toLocaleString()} ({data.incomeDetails.hoursPerWeek}hrs/week)</p>
+              )}
+              {data.incomeDetails.monthlyIncome && (
+                <p>Monthly Income: ${parseInt(data.incomeDetails.monthlyIncome).toLocaleString()}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {data.employerDetails && (
+          <div>
+            <span className="font-semibold">Employer Details:</span>
+            <div className="ml-4 mt-1 space-y-1 text-muted-foreground">
+              <p>Company: {data.employerDetails.name || "N/A"}</p>
+              <p>Job Title: {data.employerDetails.jobTitle || "N/A"}</p>
+              {data.employerDetails.phone && <p>Phone: {data.employerDetails.phone}</p>}
+              {data.employerDetails.yearsEmployed && <p>Years Employed: {data.employerDetails.yearsEmployed}</p>}
+            </div>
+          </div>
+        )}
+
+        <div>
+          <span className="font-semibold">Address:</span>
+          <p className="text-muted-foreground">{data.address || "N/A"}</p>
+        </div>
+
+        {data.timeAtAddress && (
+          <div>
+            <span className="font-semibold">Time at Address:</span>
+            <p className="text-muted-foreground">
+              {data.timeAtAddress.years || 0} years, {data.timeAtAddress.months || 0} months
+            </p>
+          </div>
+        )}
+
+        {data.housing && (
+          <div>
+            <span className="font-semibold">Housing:</span>
+            <div className="ml-4 mt-1 space-y-1 text-muted-foreground">
+              <p>Status: {data.housing.rentOrOwn === "rent" ? "Renting" : "Owns"}</p>
+              {data.housing.monthlyPayment && (
+                <p>Monthly Payment: ${parseInt(data.housing.monthlyPayment).toLocaleString()}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <span className="font-semibold">Date of Birth:</span>
+            <p className="text-muted-foreground">{data.dateOfBirth || "N/A"}</p>
+          </div>
+          <div>
+            <span className="font-semibold">Age:</span>
+            <p className="text-muted-foreground">{data.age || "N/A"}</p>
+          </div>
+        </div>
+
+        {data.sin && (
+          <div>
+            <span className="font-semibold">SIN:</span>
+            <p className="text-muted-foreground">***-**-{data.sin.slice(-4)}</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -103,89 +227,124 @@ export default function LeadsManagement() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {leads.map((lead) => (
-            <Card key={lead.id}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-xl">{lead.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      {formatDistanceToNow(new Date(lead.created_at), { addSuffix: true })}
-                    </p>
-                  </div>
-                  <Badge className={getStatusColor(lead.status)}>{lead.status}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">Email:</span> {lead.email}
-                  </div>
-                  {lead.phone && (
+          {leads.map((lead) => {
+            const preApprovalData = parsePreApprovalData(lead.notes);
+            const isPreApproval = lead.message.includes("Pre-Approval Application");
+
+            return (
+              <Card key={lead.id}>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
                     <div>
-                      <span className="font-medium">Phone:</span> {lead.phone}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <span className="font-medium text-sm">Message:</span>
-                  <p className="text-sm text-muted-foreground mt-1">{lead.message}</p>
-                </div>
-                {lead.notes && (
-                  <div className="pt-2 border-t">
-                    <span className="font-medium text-sm">Notes:</span>
-                    <p className="text-sm text-muted-foreground mt-1">{lead.notes}</p>
-                  </div>
-                )}
-                <div className="pt-4">
-                  <Dialog open={isDialogOpen && selectedLead?.id === lead.id} onOpenChange={(open) => {
-                    setIsDialogOpen(open);
-                    if (!open) setSelectedLead(null);
-                  }}>
-                    <DialogTrigger asChild>
-                      <Button onClick={() => handleOpenDialog(lead)} size="sm">
-                        <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Update Lead
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Update Lead Status</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Status</label>
-                          <Select value={status} onValueChange={setStatus}>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="new">New</SelectItem>
-                              <SelectItem value="contacted">Contacted</SelectItem>
-                              <SelectItem value="processed">Processed</SelectItem>
-                              <SelectItem value="converted">Converted</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Notes / Comments</label>
-                          <Textarea
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Add notes or comments about this lead..."
-                            rows={4}
-                          />
-                        </div>
-                        <Button onClick={handleUpdateLead} disabled={isUpdating} className="w-full">
-                          {isUpdating ? "Updating..." : "Save Changes"}
-                        </Button>
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-xl">{lead.name}</CardTitle>
+                        {isPreApproval && (
+                          <Badge variant="outline" className="bg-blue-50">Pre-Approval</Badge>
+                        )}
                       </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                      <p className="text-sm text-muted-foreground">
+                        {formatDistanceToNow(new Date(lead.created_at), { addSuffix: true })}
+                      </p>
+                    </div>
+                    <Badge className={getStatusColor(lead.status)}>{lead.status}</Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium">Email:</span> {lead.email}
+                    </div>
+                    {lead.phone && (
+                      <div>
+                        <span className="font-medium">Phone:</span> {lead.phone}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <span className="font-medium text-sm">Message:</span>
+                    <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{lead.message}</p>
+                  </div>
+                  
+                  <div className="flex gap-2 pt-4">
+                    {preApprovalData && (
+                      <Dialog open={viewDetailsOpen && selectedLead?.id === lead.id} onOpenChange={(open) => {
+                        setViewDetailsOpen(open);
+                        if (!open) setSelectedLead(null);
+                      }}>
+                        <DialogTrigger asChild>
+                          <Button onClick={() => handleViewDetails(lead)} size="sm" variant="outline">
+                            <FileText className="h-4 w-4 mr-2" />
+                            View Full Application
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>Pre-Approval Application Details</DialogTitle>
+                          </DialogHeader>
+                          <div className="py-4">
+                            <div className="mb-4 pb-4 border-b">
+                              <h3 className="font-semibold mb-2">Contact Information</h3>
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                <p><span className="font-medium">Name:</span> {lead.name}</p>
+                                <p><span className="font-medium">Email:</span> {lead.email}</p>
+                                <p><span className="font-medium">Phone:</span> {lead.phone}</p>
+                              </div>
+                            </div>
+                            {renderPreApprovalDetails(preApprovalData)}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
+                    
+                    <Dialog open={isDialogOpen && selectedLead?.id === lead.id} onOpenChange={(open) => {
+                      setIsDialogOpen(open);
+                      if (!open) setSelectedLead(null);
+                    }}>
+                      <DialogTrigger asChild>
+                        <Button onClick={() => handleOpenDialog(lead)} size="sm">
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          Update Lead
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Update Lead Status</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Status</label>
+                            <Select value={status} onValueChange={setStatus}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="new">New</SelectItem>
+                                <SelectItem value="contacted">Contacted</SelectItem>
+                                <SelectItem value="processed">Processed</SelectItem>
+                                <SelectItem value="converted">Converted</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Notes / Comments</label>
+                            <Textarea
+                              value={notes}
+                              onChange={(e) => setNotes(e.target.value)}
+                              placeholder="Add notes or comments about this lead..."
+                              rows={4}
+                            />
+                          </div>
+                          <Button onClick={handleUpdateLead} disabled={isUpdating} className="w-full">
+                            {isUpdating ? "Updating..." : "Save Changes"}
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
