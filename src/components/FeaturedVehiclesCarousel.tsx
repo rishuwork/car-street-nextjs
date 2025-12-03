@@ -90,11 +90,12 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {visibleVehicles.map((vehicle) => (
           <Card key={vehicle.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group">
-            <div className="relative overflow-hidden">
+            <div className="relative overflow-hidden aspect-video">
               <img
                 src={vehicle.primaryImage || "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&auto=format&fit=crop"}
                 alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                loading="lazy"
               />
             </div>
             <CardContent className="p-6">

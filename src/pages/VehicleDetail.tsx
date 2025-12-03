@@ -119,11 +119,12 @@ const VehicleDetail = () => {
               <div className="space-y-4">
                 {images && images.length > 0 ? (
                   <>
-                    <div className="relative group">
+                    <div className="relative group aspect-video">
                       <img 
                         src={images[selectedImageIndex].image_url} 
                         alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                        className="w-full h-64 md:h-96 object-cover rounded-lg"
+                        className="w-full h-full object-cover rounded-lg"
+                        loading="lazy"
                       />
                       {images.length > 1 && (
                         <>
@@ -149,17 +150,19 @@ const VehicleDetail = () => {
                     {images.length > 1 && (
                       <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
                         {images.map((image, index) => (
-                          <img 
-                            key={image.id}
-                            src={image.image_url} 
-                            alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                            className={`w-full h-16 md:h-24 object-cover rounded-lg cursor-pointer transition-all ${
-                              selectedImageIndex === index 
-                                ? 'ring-2 ring-primary opacity-100' 
-                                : 'opacity-60 hover:opacity-100'
-                            }`}
-                            onClick={() => setSelectedImageIndex(index)}
-                          />
+                          <div key={image.id} className="aspect-video">
+                            <img 
+                              src={image.image_url} 
+                              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                              className={`w-full h-full object-cover rounded-lg cursor-pointer transition-all ${
+                                selectedImageIndex === index 
+                                  ? 'ring-2 ring-primary opacity-100' 
+                                  : 'opacity-60 hover:opacity-100'
+                              }`}
+                              onClick={() => setSelectedImageIndex(index)}
+                              loading="lazy"
+                            />
+                          </div>
                         ))}
                       </div>
                     )}
