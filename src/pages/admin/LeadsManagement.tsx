@@ -42,11 +42,26 @@ export default function LeadsManagement() {
     setIsLoading(false);
   };
 
+  const getAdminNotes = (notes: string | null): string => {
+    if (!notes) return "";
+    // If notes is JSON (pre-approval data), check for embedded admin notes
+    try {
+      const parsed = JSON.parse(notes);
+      return parsed._adminNotes || ""; // Return admin notes if they exist in JSON
+    } catch {
+      return notes; // It's regular admin notes
+    }
+  };
+
   const handleOpenDialog = (lead: ContactSubmission) => {
     setSelectedLead(lead);
     setStatus(lead.status);
-    setNotes(lead.notes || "");
+    setNotes(getAdminNotes(lead.notes));
     setIsDialogOpen(true);
+  };
+
+  const hasAdminNotes = (lead: ContactSubmission): string | null => {
+    return getAdminNotes(lead.notes) || null;
   };
 
   const handleViewDetails = (lead: ContactSubmission) => {
@@ -58,11 +73,30 @@ export default function LeadsManagement() {
     if (!selectedLead) return;
 
     setIsUpdating(true);
+    
+    // Preserve pre-approval JSON data if it exists, store admin notes separately
+    let notesToSave: string | null = notes.trim() || null;
+    const existingPreApprovalData = parsePreApprovalData(selectedLead.notes);
+    
+    // If there was pre-approval data, we need to keep it and add admin notes in a structured way
+    if (existingPreApprovalData) {
+      if (notes.trim()) {
+        // Store both pre-approval data and admin notes as JSON
+        notesToSave = JSON.stringify({
+          ...existingPreApprovalData,
+          _adminNotes: notes.trim()
+        });
+      } else {
+        // Keep original pre-approval data without admin notes
+        notesToSave = selectedLead.notes;
+      }
+    }
+    
     const { error } = await supabase
       .from("contact_submissions")
       .update({
         status,
-        notes: notes.trim() || null,
+        notes: notesToSave,
         updated_at: new Date().toISOString(),
       })
       .eq("id", selectedLead.id);
@@ -274,6 +308,13 @@ export default function LeadsManagement() {
                     <span className="font-medium text-sm">Message:</span>
                     <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{lead.message}</p>
                   </div>
+                  
+                  {hasAdminNotes(lead) && (
+                    <div className="bg-muted/50 rounded-md p-3">
+                      <span className="font-medium text-sm">Your Notes:</span>
+                      <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{hasAdminNotes(lead)}</p>
+                    </div>
+                  )}
                   
                   <div className="flex gap-2 pt-4">
                     {preApprovalData && (
