@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BudgetCalculator from "@/components/BudgetCalculator";
-import { Check, Shield, DollarSign, Award, Phone, Gauge } from "lucide-react";
+import FeaturedVehiclesCarousel from "@/components/FeaturedVehiclesCarousel";
+import { Check, Shield, DollarSign, Award, Phone } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -22,8 +23,7 @@ const Index = () => {
         `)
         .eq("featured", true)
         .eq("status", "available")
-        .order("created_at", { ascending: false })
-        .limit(3);
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
 
@@ -83,41 +83,8 @@ const Index = () => {
             <p className="text-xl text-muted-foreground">Check out our hand-picked selection of quality vehicles</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {featuredVehicles.length > 0 ? (
-              featuredVehicles.map((vehicle) => (
-                <Card key={vehicle.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group">
-                  <div className="relative overflow-hidden">
-                    <img 
-                      src={vehicle.primaryImage || "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&auto=format&fit=crop"} 
-                      alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                      className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-2xl font-heading font-bold mb-2">
-                      {vehicle.year} {vehicle.make} {vehicle.model}
-                    </h3>
-                    <div className="mb-2 flex items-center gap-2">
-                      <Gauge className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">{vehicle.mileage.toLocaleString()} km</span>
-                    </div>
-                    <div className="mb-4">
-                      <p className="text-2xl font-bold text-green-600">${vehicle.price.toLocaleString()}</p>
-                      <p className="text-xs text-muted-foreground">+ HST & licensing</p>
-                    </div>
-                    <Button variant="default" className="w-full" asChild>
-                      <Link to={`/vehicle/${vehicle.id}`}>View Details</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <div className="col-span-3 text-center py-12 text-muted-foreground">
-                <p className="text-lg">No featured vehicles available at this time.</p>
-                <p className="text-sm mt-2">Check back soon for our latest offerings!</p>
-              </div>
-            )}
+          <div className="mb-8 px-8 md:px-12">
+            <FeaturedVehiclesCarousel vehicles={featuredVehicles} />
           </div>
 
           <div className="text-center">
