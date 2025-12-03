@@ -134,18 +134,18 @@ const Inventory = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 py-8">
+      <main className="flex-1 py-4">
         <div className="container mx-auto px-4">
           {/* Page Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Our Inventory</h1>
-            <p className="text-lg text-muted-foreground">Browse our selection of quality pre-owned vehicles</p>
+          <div className="mb-3">
+            <h1 className="text-2xl md:text-3xl font-heading font-bold mb-1">Our Inventory</h1>
+            <p className="text-muted-foreground">Browse our selection of quality pre-owned vehicles</p>
           </div>
 
           {/* Search and Filter Section */}
-          <Card className="mb-6 bg-muted">
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <Card className="mb-4 bg-muted">
+            <CardContent className="py-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 <div className="relative md:col-span-1 lg:col-span-2">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -207,8 +207,8 @@ const Inventory = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="mt-4 flex justify-end">
-                <Button variant="outline" onClick={handleClearFilters}>
+              <div className="mt-3 flex justify-end">
+                <Button variant="outline" size="sm" onClick={handleClearFilters}>
                   Clear Filters
                 </Button>
               </div>
@@ -216,20 +216,20 @@ const Inventory = () => {
           </Card>
 
           {isLoading ? (
-            <div className="text-center py-16">
-              <p className="text-xl text-muted-foreground">Loading vehicles...</p>
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Loading vehicles...</p>
             </div>
           ) : (
             <>
               {/* Results Count */}
-              <div className="mb-6">
-                <p className="text-lg text-muted-foreground">
+              <div className="mb-3">
+                <p className="text-sm text-muted-foreground">
                   Showing <span className="font-bold text-foreground">{filteredVehicles.length}</span> vehicles
                 </p>
               </div>
 
               {/* Vehicle Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredVehicles.map((vehicle) => {
                   const images = vehicleImages[vehicle.id] || [];
                   const primaryImage = images.find(img => img.is_primary) || images[0];
@@ -241,17 +241,17 @@ const Inventory = () => {
                         <img 
                           src={imageUrl} 
                           alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                          className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-300"
+                          className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                         />
-                        <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-4 py-2 rounded-full text-lg font-bold">
+                        <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-bold">
                           ${Number(vehicle.price).toLocaleString()}
                         </div>
                       </div>
-                      <CardContent className="p-6">
-                        <h3 className="text-2xl font-heading font-bold mb-3">
+                      <CardContent className="p-4">
+                        <h3 className="text-xl font-heading font-bold mb-2">
                           {vehicle.year} {vehicle.make} {vehicle.model}
                         </h3>
-                        <div className="space-y-2 mb-4 text-sm text-muted-foreground">
+                        <div className="space-y-1 mb-3 text-sm text-muted-foreground">
                           <div className="flex justify-between">
                             <span>Mileage:</span>
                             <span className="font-medium text-foreground">{vehicle.mileage.toLocaleString()} km</span>
@@ -265,12 +265,12 @@ const Inventory = () => {
                             <span className="font-medium text-foreground capitalize">{vehicle.fuel_type}</span>
                           </div>
                         </div>
-                        <div className="flex gap-1 mb-4">
+                        <div className="flex gap-1 mb-2">
                           {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+                            <Star key={i} className="h-3 w-3 fill-primary text-primary" />
                           ))}
                         </div>
-                        <Button variant="default" className="w-full" asChild>
+                        <Button variant="default" className="w-full" size="sm" asChild>
                           <Link to={`/vehicle/${vehicle.id}`}>View Details</Link>
                         </Button>
                       </CardContent>
@@ -282,9 +282,9 @@ const Inventory = () => {
           )}
 
           {filteredVehicles.length === 0 && (
-            <div className="text-center py-16">
-              <p className="text-xl text-muted-foreground">No vehicles found matching your criteria.</p>
-              <Button variant="outline" className="mt-4" onClick={handleClearFilters}>
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No vehicles found matching your criteria.</p>
+              <Button variant="outline" size="sm" className="mt-2" onClick={handleClearFilters}>
                 Clear Filters
               </Button>
             </div>
