@@ -515,6 +515,7 @@ const PreApproval = () => {
       if (error) throw error;
 
       setCurrentStep(14); // Success screen
+      window.scrollTo({ top: 0, behavior: "instant" });
 
       toast({
         title: "Application Submitted!",
