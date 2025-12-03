@@ -166,6 +166,8 @@ const PreApproval = () => {
   const goToStep = (step: number, dir: number) => {
     setDirection(dir);
     setCurrentStep(step);
+    // Scroll to top instantly to avoid animation conflicts on mobile
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const nextStep = () => {
