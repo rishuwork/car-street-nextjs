@@ -18,11 +18,15 @@ const Inventory = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [makeFilter, setMakeFilter] = useState("all");
+  const [modelFilter, setModelFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
   const [priceFilter, setPriceFilter] = useState("all");
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [vehicleImages, setVehicleImages] = useState<Record<string, VehicleImage[]>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [makes, setMakes] = useState<string[]>([]);
+  const [models, setModels] = useState<string[]>([]);
+  const [years, setYears] = useState<number[]>([]);
 
   // Get maxPrice from URL params (from budget calculator)
   const maxPriceParam = searchParams.get('maxPrice');
@@ -30,6 +34,8 @@ const Inventory = () => {
   const handleClearFilters = () => {
     setSearchTerm("");
     setMakeFilter("all");
+    setModelFilter("all");
+    setYearFilter("all");
     setPriceFilter("all");
     // Clear URL parameters
     navigate('/inventory', { replace: true });
@@ -41,17 +47,19 @@ const Inventory = () => {
 
   useEffect(() => {
     // Track inventory search when filters change
-    if (searchTerm || makeFilter !== 'all' || priceFilter !== 'all' || maxPriceParam) {
+    if (searchTerm || makeFilter !== 'all' || modelFilter !== 'all' || yearFilter !== 'all' || priceFilter !== 'all' || maxPriceParam) {
       import('@/utils/tracking').then(({ trackInventorySearch }) => {
         trackInventorySearch({
           searchQuery: searchTerm,
           makeFilter,
+          modelFilter,
+          yearFilter,
           priceFilter,
           maxPrice: maxPriceParam,
         });
       });
     }
-  }, [searchTerm, makeFilter, priceFilter, maxPriceParam]);
+  }, [searchTerm, makeFilter, modelFilter, yearFilter, priceFilter, maxPriceParam]);
 
   const loadVehicles = async () => {
     setIsLoading(true);
@@ -66,10 +74,13 @@ const Inventory = () => {
       console.error("Error loading vehicles:", error);
     } else if (data) {
       setVehicles(data);
-      
-      // Extract unique makes
-      const uniqueMakes = [...new Set(data.map(v => v.make))];
+      // Extract unique makes, models, and years
+      const uniqueMakes = [...new Set(data.map(v => v.make))].sort();
+      const uniqueModels = [...new Set(data.map(v => v.model))].sort();
+      const uniqueYears = [...new Set(data.map(v => v.year))].sort((a, b) => b - a);
       setMakes(uniqueMakes);
+      setModels(uniqueModels);
+      setYears(uniqueYears);
 
       // Load images for all vehicles
       const imagePromises = data.map(async (vehicle) => {
@@ -99,6 +110,10 @@ const Inventory = () => {
     
     const matchesMake = makeFilter === "all" || vehicle.make === makeFilter;
     
+    const matchesModel = modelFilter === "all" || vehicle.model === modelFilter;
+    
+    const matchesYear = yearFilter === "all" || vehicle.year.toString() === yearFilter;
+    
     const matchesPrice = priceFilter === "all" || 
       (priceFilter === "under20k" && Number(vehicle.price) < 20000) ||
       (priceFilter === "20to30k" && Number(vehicle.price) >= 20000 && Number(vehicle.price) < 30000) ||
@@ -107,8 +122,13 @@ const Inventory = () => {
     // Filter by maxPrice from budget calculator
     const matchesMaxPrice = !maxPriceParam || Number(vehicle.price) <= Number(maxPriceParam);
 
-    return matchesSearch && matchesMake && matchesPrice && matchesMaxPrice;
+    return matchesSearch && matchesMake && matchesModel && matchesYear && matchesPrice && matchesMaxPrice;
   });
+
+  // Get filtered models based on selected make
+  const filteredModels = makeFilter === "all" 
+    ? models 
+    : [...new Set(vehicles.filter(v => v.make === makeFilter).map(v => v.model))].sort();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -125,18 +145,21 @@ const Inventory = () => {
           {/* Search and Filter Section */}
           <Card className="mb-8 bg-muted">
             <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="relative">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div className="relative md:col-span-1 lg:col-span-2">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search by make, model, or year..."
+                    placeholder="Search..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
                 </div>
                 
-                <Select value={makeFilter} onValueChange={setMakeFilter}>
+                <Select value={makeFilter} onValueChange={(value) => {
+                  setMakeFilter(value);
+                  setModelFilter("all"); // Reset model when make changes
+                }}>
                   <SelectTrigger>
                     <SelectValue placeholder="All Makes" />
                   </SelectTrigger>
@@ -144,6 +167,30 @@ const Inventory = () => {
                     <SelectItem value="all">All Makes</SelectItem>
                     {makes.map((make) => (
                       <SelectItem key={make} value={make}>{make}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={modelFilter} onValueChange={setModelFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Models" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Models</SelectItem>
+                    {filteredModels.map((model) => (
+                      <SelectItem key={model} value={model}>{model}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={yearFilter} onValueChange={setYearFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Years" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Years</SelectItem>
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -159,8 +206,9 @@ const Inventory = () => {
                     <SelectItem value="over30k">Over $30,000</SelectItem>
                   </SelectContent>
                 </Select>
-
-                <Button variant="default" onClick={handleClearFilters}>
+              </div>
+              <div className="mt-4 flex justify-end">
+                <Button variant="outline" onClick={handleClearFilters}>
                   Clear Filters
                 </Button>
               </div>
