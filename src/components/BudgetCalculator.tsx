@@ -15,7 +15,10 @@ const BudgetCalculator = () => {
   const [interestRate, setInterestRate] = useState("7.99");
   const [includeTradeIn, setIncludeTradeIn] = useState(false);
   const [tradeInValue, setTradeInValue] = useState(0);
+  const [includeSalesTax, setIncludeSalesTax] = useState(false);
   const [monthlyPayment, setMonthlyPayment] = useState(0);
+
+  const SALES_TAX_RATE = 0.13; // 13% HST
 
   const calculatePayment = () => {
     const price = parseFloat(vehiclePrice.toString()) || 0;
@@ -24,7 +27,9 @@ const BudgetCalculator = () => {
     const rate = parseFloat(interestRate) / 100;
     const tradeIn = includeTradeIn ? (parseFloat(tradeInValue.toString()) || 0) : 0;
 
-    const loanAmount = price - down - tradeIn;
+    // Apply sales tax to the vehicle price if toggle is enabled
+    const taxablePrice = includeSalesTax ? price * (1 + SALES_TAX_RATE) : price;
+    const loanAmount = taxablePrice - down - tradeIn;
     const monthlyRate = rate / 12;
 
     let payment = 0;
@@ -37,7 +42,7 @@ const BudgetCalculator = () => {
 
   useEffect(() => {
     calculatePayment();
-  }, [vehiclePrice, downPayment, loanTerm, interestRate, includeTradeIn, tradeInValue]);
+  }, [vehiclePrice, downPayment, loanTerm, interestRate, includeTradeIn, tradeInValue, includeSalesTax]);
 
   const handleShopByBudget = () => {
     // Track budget search event
@@ -126,16 +131,27 @@ const BudgetCalculator = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-center space-x-2 mb-6">
-            <Switch
-              id="tradeIn"
-              checked={includeTradeIn}
-              onCheckedChange={setIncludeTradeIn}
-            />
-            <Label htmlFor="tradeIn" className="cursor-pointer">Include Trade-In</Label>
+          <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="salesTax"
+                checked={includeSalesTax}
+                onCheckedChange={setIncludeSalesTax}
+              />
+              <Label htmlFor="salesTax" className="cursor-pointer">Include Sales Tax (13% HST)</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="tradeIn"
+                checked={includeTradeIn}
+                onCheckedChange={setIncludeTradeIn}
+              />
+              <Label htmlFor="tradeIn" className="cursor-pointer">Include Trade-In</Label>
+            </div>
             
             {includeTradeIn && (
-              <div className="ml-6">
+              <div>
                 <Input
                   id="tradeInValue"
                   type="number"
@@ -167,7 +183,7 @@ const BudgetCalculator = () => {
                 ${monthlyPayment.toFixed(2)}
               </div>
               <div className="text-xs text-muted-foreground mt-1">
-                at {interestRate}% APR
+                at {interestRate}% APR{includeSalesTax && " (incl. 13% HST)"}
               </div>
             </div>
 
