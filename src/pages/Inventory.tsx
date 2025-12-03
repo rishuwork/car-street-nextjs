@@ -134,16 +134,16 @@ const Inventory = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-8">
         <div className="container mx-auto px-4">
           {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4">Our Inventory</h1>
-            <p className="text-xl text-muted-foreground">Browse our selection of quality pre-owned vehicles</p>
+          <div className="mb-6">
+            <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Our Inventory</h1>
+            <p className="text-lg text-muted-foreground">Browse our selection of quality pre-owned vehicles</p>
           </div>
 
           {/* Search and Filter Section */}
-          <Card className="mb-8 bg-muted">
+          <Card className="mb-6 bg-muted">
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div className="relative md:col-span-1 lg:col-span-2">

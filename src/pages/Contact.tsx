@@ -89,12 +89,12 @@ const Contact = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4">Contact Us</h1>
-              <p className="text-xl text-muted-foreground">We're here to help you find your perfect vehicle</p>
+            <div className="text-center mb-8">
+              <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">Contact Us</h1>
+              <p className="text-lg text-muted-foreground">We're here to help you find your perfect vehicle</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
