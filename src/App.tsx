@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import ScrollToTop from "@/components/ScrollToTop";
 import TrackingScripts from "@/components/tracking/TrackingScripts";
 import CookieConsent from "@/components/tracking/CookieConsent";
 import Index from "./pages/Index";
@@ -30,6 +31,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <ScrollToTop />
           <TrackingScripts />
           <CookieConsent />
           <Routes>
