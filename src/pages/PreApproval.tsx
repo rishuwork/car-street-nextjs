@@ -1295,15 +1295,17 @@ const PreApproval = () => {
             {/* Navigation Buttons */}
             {currentStep <= TOTAL_STEPS && (
               <motion.div
-                className="flex justify-between mt-8 pt-6 border-t"
+                className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-between mt-8 pt-6 border-t"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
                 <Button
                   variant="outline"
+                  size="lg"
                   onClick={prevStep}
                   disabled={currentStep === 1}
+                  className="w-full sm:w-auto"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
@@ -1312,11 +1314,11 @@ const PreApproval = () => {
                 {/* Only show Continue button for input steps (7+) and Submit for final step */}
                 {currentStep >= 7 && (
                   currentStep === TOTAL_STEPS ? (
-                    <Button onClick={handleSubmit} size="lg">
+                    <Button onClick={handleSubmit} size="lg" className="w-full sm:w-auto">
                       Submit Application
                     </Button>
                   ) : (
-                    <Button onClick={nextStep} size="lg">
+                    <Button onClick={nextStep} size="lg" className="w-full sm:w-auto">
                       Continue
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
