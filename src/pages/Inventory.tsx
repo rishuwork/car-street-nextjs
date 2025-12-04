@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -134,6 +135,12 @@ const Inventory = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Used Car Inventory"
+        description="Browse our selection of quality pre-owned vehicles at Car Street. Find the perfect used car with competitive pricing and flexible financing options."
+        url="https://carstreet.com/inventory"
+        keywords="used cars for sale, pre-owned vehicles, car inventory, used car dealership Langton Ontario"
+      />
       <Header />
 
       <main className="flex-1 py-4">

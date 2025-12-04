@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -98,8 +99,22 @@ const VehicleDetail = () => {
     );
   }
 
+  const primaryImage = images?.[0]?.image_url;
+  const structuredData = vehicle ? generateVehicleStructuredData(vehicle, primaryImage) : undefined;
+
   return (
     <div className="min-h-screen flex flex-col">
+      {vehicle && (
+        <SEO 
+          title={`${vehicle.year} ${vehicle.make} ${vehicle.model} for Sale`}
+          description={`Buy this ${vehicle.year} ${vehicle.make} ${vehicle.model} with ${vehicle.mileage.toLocaleString()} km. ${vehicle.transmission} transmission, ${vehicle.fuel_type} fuel. Price: $${Number(vehicle.price).toLocaleString()}. Located at Car Street, Langton ON.`}
+          url={`https://carstreet.com/vehicle/${vehicle.id}`}
+          image={primaryImage}
+          type="product"
+          keywords={`${vehicle.year} ${vehicle.make} ${vehicle.model}, used ${vehicle.make} for sale, ${vehicle.make} ${vehicle.model} Ontario`}
+          jsonLd={structuredData}
+        />
+      )}
       <Header />
 
       <main className="flex-1 py-8">

@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Award, ThumbsUp, Clock } from "lucide-react";
 import aboutImage from "@/assets/about-bg.jpg";
@@ -14,6 +15,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="About Us"
+        description="Learn about Car Street - your trusted partner in finding quality pre-owned vehicles. Over 15 years serving the community with transparent pricing and exceptional service."
+        url="https://carstreet.com/about"
+      />
       <Header />
 
       <main className="flex-1">

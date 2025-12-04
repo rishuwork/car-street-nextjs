@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -87,6 +88,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Contact Us"
+        description="Get in touch with Car Street. Visit our dealership in Langton, Ontario or call us to find your perfect pre-owned vehicle. Open 7 days a week."
+        url="https://carstreet.com/contact"
+      />
       <Header />
 
       <main className="flex-1 py-8">

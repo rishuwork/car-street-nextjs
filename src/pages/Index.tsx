@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BudgetCalculator from "@/components/BudgetCalculator";
 import FeaturedVehiclesCarousel from "@/components/FeaturedVehiclesCarousel";
+import { SEO } from "@/components/SEO";
 import { Check, Shield, DollarSign, Award, Phone } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,6 +38,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Quality Used Cars in Langton, Ontario"
+        description="Find quality pre-owned vehicles at Car Street in Langton, ON. Browse our inventory of certified used cars with transparent pricing, warranty options, and flexible financing."
+        url="https://carstreet.com/"
+      />
       <Header />
 
       {/* Hero Section */}
