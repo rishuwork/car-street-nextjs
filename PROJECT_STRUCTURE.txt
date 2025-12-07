@@ -1,0 +1,160 @@
+CAR STREET - PROJECT FILE STRUCTURE
+====================================
+
+ROOT FILES
+----------
+.env                          - Environment variables (Supabase keys)
+index.html                    - HTML entry point
+vite.config.ts                - Vite build configuration
+tailwind.config.ts            - Tailwind CSS theme/design system
+eslint.config.js              - Code linting rules
+MIGRATION_GUIDE.md            - Guide for migrating to Node.js/Next.js
+TRACKING_SETUP.md             - Analytics tracking documentation
+README.md                     - Project documentation
+
+SRC/
+----
+main.tsx                      - App entry point with providers
+App.tsx                       - Router and route definitions
+App.css                       - Global styles
+index.css                     - Tailwind base + design tokens
+vite-env.d.ts                 - Vite TypeScript declarations
+
+SRC/PAGES/
+----------
+Index.tsx                     - Homepage
+Inventory.tsx                 - Vehicle listing page
+VehicleDetail.tsx             - Single vehicle page
+PreApproval.tsx               - Finance pre-approval form
+About.tsx                     - About Us page
+Contact.tsx                   - Contact page
+Auth.tsx                      - Login/Signup page
+NotFound.tsx                  - 404 error page
+
+SRC/PAGES/ADMIN/
+----------------
+AdminLayout.tsx               - Admin wrapper/navigation
+Dashboard.tsx                 - Admin dashboard
+InventoryManagement.tsx       - Add/edit vehicles
+LeadsManagement.tsx           - View/manage leads
+UsersManagement.tsx           - Manage admin users
+
+SRC/COMPONENTS/
+---------------
+Header.tsx                    - Site navigation header
+Footer.tsx                    - Site footer
+SEO.tsx                       - Meta tags/structured data
+BudgetCalculator.tsx          - Monthly payment calculator
+FeaturedVehiclesCarousel.tsx  - Homepage featured vehicles carousel
+NavLink.tsx                   - Navigation link component
+ProtectedRoute.tsx            - Admin authentication guard
+ScrollToTop.tsx               - Scroll restoration on route change
+
+SRC/COMPONENTS/ADMIN/
+---------------------
+ImageUpload.tsx               - Vehicle image uploader with drag-drop
+
+SRC/COMPONENTS/TRACKING/
+------------------------
+CookieConsent.tsx             - Cookie consent banner
+TrackingScripts.tsx           - GTM/GA4/Meta Pixel scripts
+
+SRC/COMPONENTS/UI/
+------------------
+accordion.tsx                 - Accordion component
+alert-dialog.tsx              - Alert dialog component
+alert.tsx                     - Alert component
+aspect-ratio.tsx              - Aspect ratio container
+avatar.tsx                    - Avatar component
+badge.tsx                     - Badge component
+breadcrumb.tsx                - Breadcrumb navigation
+button.tsx                    - Button component
+calendar.tsx                  - Calendar picker
+card.tsx                      - Card component
+carousel.tsx                  - Carousel component
+chart.tsx                     - Chart component
+checkbox.tsx                  - Checkbox component
+collapsible.tsx               - Collapsible component
+command.tsx                   - Command palette
+context-menu.tsx              - Context menu
+dialog.tsx                    - Dialog/modal component
+drawer.tsx                    - Drawer component
+dropdown-menu.tsx             - Dropdown menu
+form.tsx                      - Form components
+hover-card.tsx                - Hover card
+input-otp.tsx                 - OTP input
+input.tsx                     - Input component
+label.tsx                     - Label component
+menubar.tsx                   - Menu bar
+navigation-menu.tsx           - Navigation menu
+pagination.tsx                - Pagination component
+popover.tsx                   - Popover component
+progress.tsx                  - Progress bar
+radio-group.tsx               - Radio group
+resizable.tsx                 - Resizable panels
+scroll-area.tsx               - Scroll area
+select.tsx                    - Select dropdown
+separator.tsx                 - Separator line
+sheet.tsx                     - Sheet/side panel
+sidebar.tsx                   - Sidebar component
+skeleton.tsx                  - Loading skeleton
+slider.tsx                    - Slider component
+sonner.tsx                    - Toast notifications (Sonner)
+switch.tsx                    - Toggle switch
+table.tsx                     - Table component
+tabs.tsx                      - Tabs component
+textarea.tsx                  - Textarea component
+toast.tsx                     - Toast component
+toaster.tsx                   - Toast container
+toggle-group.tsx              - Toggle group
+toggle.tsx                    - Toggle component
+tooltip.tsx                   - Tooltip component
+use-toast.ts                  - Toast hook
+
+SRC/HOOKS/
+----------
+useAuth.tsx                   - Authentication context and hook
+use-mobile.tsx                - Mobile device detection hook
+use-toast.ts                  - Toast notification hook
+
+SRC/UTILS/
+----------
+tracking.ts                   - Analytics event helper functions
+vehicleFeedGenerator.ts       - Meta Dynamic Product Ads feed generator
+vehicleStructuredData.ts      - JSON-LD structured data generator
+
+SRC/LIB/
+--------
+utils.ts                      - Utility functions (cn for classnames)
+
+SRC/INTEGRATIONS/SUPABASE/
+--------------------------
+client.ts                     - Supabase client (auto-generated)
+types.ts                      - Database TypeScript types (auto-generated)
+
+SRC/ASSETS/
+-----------
+about-bg.jpg                  - About page background image
+hero-bg.jpg                   - Homepage hero background
+speedometer.jpg               - Decorative image
+
+PUBLIC/
+-------
+sitemap.xml                   - SEO sitemap for search engines
+robots.txt                    - Crawler rules and directives
+favicon.ico                   - Site favicon
+placeholder.svg               - Placeholder image
+
+SUPABASE/
+---------
+config.toml                   - Supabase project configuration
+migrations/                   - Database migration files
+
+====================================
+DATABASE TABLES (Supabase)
+====================================
+vehicles                      - Vehicle inventory
+vehicle_images                - Vehicle image gallery
+contact_submissions           - Lead/contact form submissions
+profiles                      - User profile data
+user_roles                    - Admin/sales/manager roles
