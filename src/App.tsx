@@ -20,6 +20,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import InventoryManagement from "./pages/admin/InventoryManagement";
 import LeadsManagement from "./pages/admin/LeadsManagement";
 import UsersManagement from "./pages/admin/UsersManagement";
+import FAQManagement from "./pages/admin/FAQManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="inventory" element={<InventoryManagement />} />
               <Route path="leads" element={<LeadsManagement />} />
               <Route path="users" element={<UsersManagement />} />
+              <Route path="faqs" element={<FAQManagement />} />
             </Route>
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

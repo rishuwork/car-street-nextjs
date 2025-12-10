@@ -10,15 +10,23 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
-// Vehicle type images (placeholders - replace with actual images)
+// Vehicle type icons
+import CoupeIcon from "@/assets/vehicle-icons/coupe.svg";
+import HatchbackIcon from "@/assets/vehicle-icons/hatchback.svg";
+import SedanIcon from "@/assets/vehicle-icons/sedan.svg";
+import MinivanIcon from "@/assets/vehicle-icons/minivan.svg";
+import SuvIcon from "@/assets/vehicle-icons/suv.svg";
+import TruckIcon from "@/assets/vehicle-icons/truck.svg";
+
 const vehicleTypes = [
-  { id: "coupe", name: "Coupe", image: "🚗" },
-  { id: "hatchback", name: "Hatchback", image: "🚙" },
-  { id: "sedan", name: "Sedan", image: "🚘" },
-  { id: "minivan", name: "Minivan", image: "🚐" },
-  { id: "suv", name: "SUV & Crossover", image: "🚙" },
-  { id: "truck", name: "Truck", image: "🚚" },
+  { id: "coupe", name: "Coupe", icon: CoupeIcon },
+  { id: "hatchback", name: "Hatchback", icon: HatchbackIcon },
+  { id: "sedan", name: "Sedan", icon: SedanIcon },
+  { id: "minivan", name: "Minivan", icon: MinivanIcon },
+  { id: "suv", name: "SUV & Crossover", icon: SuvIcon },
+  { id: "truck", name: "Truck", icon: TruckIcon },
 ];
 
 const budgetOptions = [
@@ -88,6 +96,7 @@ const STORAGE_KEY = "car_street_lead_v1";
 
 const PreApproval = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [formData, setFormData] = useState<FormData>({
@@ -125,20 +134,25 @@ const PreApproval = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setFormData(parsed.formData || formData);
-        setCurrentStep(parsed.currentStep || 1);
+        // Only restore if not on success screen
+        if (parsed.currentStep < 14) {
+          setFormData(parsed.formData || formData);
+          setCurrentStep(parsed.currentStep || 1);
+        }
       } catch (e) {
         console.error("Failed to load saved progress", e);
       }
     }
   }, []);
 
-  // Save progress to localStorage
+  // Save progress to localStorage (except success screen)
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ formData, currentStep })
-    );
+    if (currentStep < 14) {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ formData, currentStep })
+      );
+    }
   }, [formData, currentStep]);
 
   const progress = (currentStep / TOTAL_STEPS) * 100;
@@ -147,10 +161,8 @@ const PreApproval = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Auto-advance for selection steps
   const handleSelection = (field: keyof FormData, value: any) => {
     updateFormData(field, value);
-    // Auto-advance after a short delay to show selection
     setTimeout(() => {
       if (validateStepField(field, value)) {
         setDirection(1);
@@ -166,7 +178,6 @@ const PreApproval = () => {
   const goToStep = (step: number, dir: number) => {
     setDirection(dir);
     setCurrentStep(step);
-    // Scroll to top instantly to avoid animation conflicts on mobile
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
@@ -184,113 +195,63 @@ const PreApproval = () => {
     switch (currentStep) {
       case 1:
         if (!formData.vehicleType) {
-          toast({
-            title: "Selection Required",
-            description: "Please select a vehicle type",
-            variant: "destructive",
-          });
+          toast({ title: "Selection Required", description: "Please select a vehicle type", variant: "destructive" });
           return false;
         }
         break;
       case 2:
         if (!formData.budget) {
-          toast({
-            title: "Selection Required",
-            description: "Please select your budget",
-            variant: "destructive",
-          });
+          toast({ title: "Selection Required", description: "Please select your budget", variant: "destructive" });
           return false;
         }
         break;
       case 3:
         if (!formData.tradeIn) {
-          toast({
-            title: "Selection Required",
-            description: "Please select if you have a trade-in",
-            variant: "destructive",
-          });
+          toast({ title: "Selection Required", description: "Please select if you have a trade-in", variant: "destructive" });
           return false;
         }
         break;
       case 4:
         if (!formData.creditRating) {
-          toast({
-            title: "Selection Required",
-            description: "Please select your credit rating",
-            variant: "destructive",
-          });
+          toast({ title: "Selection Required", description: "Please select your credit rating", variant: "destructive" });
           return false;
         }
         break;
       case 5:
         if (!formData.employmentStatus) {
-          toast({
-            title: "Selection Required",
-            description: "Please select your employment status",
-            variant: "destructive",
-          });
+          toast({ title: "Selection Required", description: "Please select your employment status", variant: "destructive" });
           return false;
         }
         break;
       case 6:
         if (!formData.incomeType) {
-          toast({
-            title: "Selection Required",
-            description: "Please select how you know your income",
-            variant: "destructive",
-          });
+          toast({ title: "Selection Required", description: "Please select how you know your income", variant: "destructive" });
           return false;
         }
         break;
       case 7:
         if (formData.incomeType === "I know my annual salary" && !formData.annualIncome) {
-          toast({
-            title: "Input Required",
-            description: "Please enter your annual income",
-            variant: "destructive",
-          });
+          toast({ title: "Input Required", description: "Please enter your annual income", variant: "destructive" });
           return false;
         }
-        if (
-          formData.incomeType === "I know my hourly wage" &&
-          (!formData.hourlyWage || !formData.hoursPerWeek)
-        ) {
-          toast({
-            title: "Input Required",
-            description: "Please enter your hourly wage and hours per week",
-            variant: "destructive",
-          });
+        if (formData.incomeType === "I know my hourly wage" && (!formData.hourlyWage || !formData.hoursPerWeek)) {
+          toast({ title: "Input Required", description: "Please enter your hourly wage and hours per week", variant: "destructive" });
           return false;
         }
-        if (
-          (formData.incomeType === "I know my monthly income" || formData.incomeType === "Other") &&
-          !formData.monthlyIncome
-        ) {
-          toast({
-            title: "Input Required",
-            description: "Please enter your monthly income",
-            variant: "destructive",
-          });
+        if ((formData.incomeType === "I know my monthly income" || formData.incomeType === "Other") && !formData.monthlyIncome) {
+          toast({ title: "Input Required", description: "Please enter your monthly income", variant: "destructive" });
           return false;
         }
         break;
       case 8:
         if (!formData.employerName || !formData.jobTitle) {
-          toast({
-            title: "Input Required",
-            description: "Please enter your employer details",
-            variant: "destructive",
-          });
+          toast({ title: "Input Required", description: "Please enter your employer details", variant: "destructive" });
           return false;
         }
         break;
       case 9:
         if (!formData.address) {
-          toast({
-            title: "Input Required",
-            description: "Please enter your address",
-            variant: "destructive",
-          });
+          toast({ title: "Input Required", description: "Please enter your address", variant: "destructive" });
           return false;
         }
         break;
@@ -298,70 +259,41 @@ const PreApproval = () => {
         const years = parseInt(formData.yearsAtAddress) || 0;
         const months = parseInt(formData.monthsAtAddress) || 0;
         if (years === 0 && months === 0) {
-          toast({
-            title: "Input Required",
-            description: "Please enter how long you've been at this address",
-            variant: "destructive",
-          });
+          toast({ title: "Input Required", description: "Please enter how long you've been at this address", variant: "destructive" });
           return false;
         }
         if (months > 11) {
-          toast({
-            title: "Invalid Input",
-            description: "Months must be between 0 and 11",
-            variant: "destructive",
-          });
+          toast({ title: "Invalid Input", description: "Months must be between 0 and 11", variant: "destructive" });
           return false;
         }
         break;
       case 11:
         if (!formData.rentOrOwn || !formData.monthlyHousePayment) {
-          toast({
-            title: "Input Required",
-            description: "Please complete all housing information",
-            variant: "destructive",
-          });
+          toast({ title: "Input Required", description: "Please complete all housing information", variant: "destructive" });
           return false;
         }
         break;
       case 12:
         if (!formData.dob || !formData.age) {
-          toast({
-            title: "Input Required",
-            description: "Please enter your date of birth",
-            variant: "destructive",
-          });
+          toast({ title: "Input Required", description: "Please enter your date of birth", variant: "destructive" });
           return false;
         }
         if (formData.age < 17 || formData.age > 100) {
-          toast({
-            title: "Invalid Age",
-            description: "You must be between 17 and 100 years old",
-            variant: "destructive",
-          });
+          toast({ title: "Invalid Age", description: "You must be between 17 and 100 years old", variant: "destructive" });
           return false;
         }
         break;
       case 13:
-        if (
-          !formData.firstName ||
-          !formData.lastName ||
-          !formData.email ||
-          !formData.phone
-        ) {
-          toast({
-            title: "Input Required",
-            description: "Please complete all required fields",
-            variant: "destructive",
-          });
+        if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
+          toast({ title: "Input Required", description: "Please complete all required fields", variant: "destructive" });
           return false;
         }
         if (!isValidEmail(formData.email)) {
-          toast({
-            title: "Invalid Email",
-            description: "Please enter a valid email address",
-            variant: "destructive",
-          });
+          toast({ title: "Invalid Email", description: "Please enter a valid email address", variant: "destructive" });
+          return false;
+        }
+        if (!isValidPhone(formData.phone)) {
+          toast({ title: "Invalid Phone", description: "Please enter a valid phone number", variant: "destructive" });
           return false;
         }
         break;
@@ -373,15 +305,17 @@ const PreApproval = () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
+  const isValidPhone = (phone: string): boolean => {
+    const cleaned = phone.replace(/\D/g, "");
+    return cleaned.length >= 10;
+  };
+
   const formatCurrency = (value: string): string => {
     const num = value.replace(/\D/g, "");
     return num ? parseInt(num).toLocaleString() : "";
   };
 
-  const handleCurrencyInput = (
-    field: keyof FormData,
-    value: string
-  ) => {
+  const handleCurrencyInput = (field: keyof FormData, value: string) => {
     const num = value.replace(/\D/g, "");
     updateFormData(field, num);
   };
@@ -389,23 +323,16 @@ const PreApproval = () => {
   const calculateAge = (dob: string): number | null => {
     const cleaned = dob.replace(/\D/g, "");
     if (cleaned.length !== 8) return null;
-
     const day = parseInt(cleaned.substring(0, 2));
     const month = parseInt(cleaned.substring(2, 4));
     const year = parseInt(cleaned.substring(4, 8));
-
     const birthDate = new Date(year, month - 1, day);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-
     return age;
   };
 
@@ -418,10 +345,8 @@ const PreApproval = () => {
 
   const handleDobChange = (value: string) => {
     const cleaned = value.replace(/\D/g, "");
-    // Limit to 8 digits
     const limited = cleaned.substring(0, 8);
     updateFormData("dob", limited);
-
     if (limited.length === 8) {
       const age = calculateAge(limited);
       updateFormData("age", age);
@@ -432,32 +357,11 @@ const PreApproval = () => {
 
   const resetForm = () => {
     setFormData({
-      vehicleType: "",
-      budget: "",
-      tradeIn: "",
-      creditRating: "",
-      employmentStatus: "",
-      incomeType: "",
-      annualIncome: "",
-      hourlyWage: "",
-      hoursPerWeek: "",
-      monthlyIncome: "",
-      employerName: "",
-      employerPhone: "",
-      jobTitle: "",
-      yearsEmployed: "",
-      address: "",
-      yearsAtAddress: "",
-      monthsAtAddress: "",
-      rentOrOwn: "",
-      monthlyHousePayment: "",
-      dob: "",
-      age: null,
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      sin: "",
+      vehicleType: "", budget: "", tradeIn: "", creditRating: "", employmentStatus: "",
+      incomeType: "", annualIncome: "", hourlyWage: "", hoursPerWeek: "", monthlyIncome: "",
+      employerName: "", employerPhone: "", jobTitle: "", yearsEmployed: "", address: "",
+      yearsAtAddress: "", monthsAtAddress: "", rentOrOwn: "", monthlyHousePayment: "",
+      dob: "", age: null, firstName: "", lastName: "", email: "", phone: "", sin: "",
     });
     setCurrentStep(1);
     setDirection(1);
@@ -468,7 +372,6 @@ const PreApproval = () => {
     if (!validateStep()) return;
 
     try {
-      // Prepare detailed message with all form data
       const detailedInfo = {
         vehicleType: formData.vehicleType,
         budget: formData.budget,
@@ -489,20 +392,13 @@ const PreApproval = () => {
           yearsEmployed: formData.yearsEmployed,
         },
         address: formData.address,
-        timeAtAddress: {
-          years: formData.yearsAtAddress,
-          months: formData.monthsAtAddress,
-        },
-        housing: {
-          rentOrOwn: formData.rentOrOwn,
-          monthlyPayment: formData.monthlyHousePayment,
-        },
+        timeAtAddress: { years: formData.yearsAtAddress, months: formData.monthsAtAddress },
+        housing: { rentOrOwn: formData.rentOrOwn, monthlyPayment: formData.monthlyHousePayment },
         dateOfBirth: formData.dob,
         age: formData.age,
         sin: formData.sin,
       };
 
-      // Insert into contact_submissions table
       const { error } = await supabase.from("contact_submissions").insert({
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
@@ -514,7 +410,10 @@ const PreApproval = () => {
 
       if (error) throw error;
 
-      setCurrentStep(14); // Success screen
+      // Clear localStorage after successful submission
+      localStorage.removeItem(STORAGE_KEY);
+      
+      setCurrentStep(14);
       window.scrollTo({ top: 0, behavior: "instant" });
 
       toast({
@@ -531,89 +430,66 @@ const PreApproval = () => {
     }
   };
 
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 300 : -300,
-      opacity: 0,
-    }),
+  // Fade animation instead of slide
+  const fadeVariants = {
+    enter: { opacity: 0 },
+    center: { opacity: 1 },
+    exit: { opacity: 0 },
   };
 
-  const springTransition = {
-    type: "spring" as const,
-    stiffness: 300,
-    damping: 30,
+  const fadeTransition = {
+    duration: 0.3,
+    ease: "easeInOut" as const,
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      <main className="flex-1 py-8 md:py-12">
+      <main className="flex-1 py-4 md:py-8">
         <div className="max-w-[700px] mx-auto px-4">
           {/* Progress Bar */}
           {currentStep <= TOTAL_STEPS && (
-            <motion.div
-              className="mb-8"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
+            <motion.div className="mb-6" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-muted-foreground">
-                  Step {currentStep} of {TOTAL_STEPS}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  Estimated time: {Math.max(1, TOTAL_STEPS - currentStep + 1)} min
-                </span>
+                <span className="text-sm text-muted-foreground">Step {currentStep} of {TOTAL_STEPS}</span>
+                <span className="text-sm text-muted-foreground">Estimated time: 6 min</span>
               </div>
               <Progress value={progress} className="h-2" />
             </motion.div>
           )}
 
           {/* Form Steps */}
-          <div className="bg-card rounded-lg shadow-lg p-8">
-            <AnimatePresence mode="wait" custom={direction}>
+          <div className="bg-card rounded-lg shadow-lg p-6">
+            <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
-                custom={direction}
-                variants={slideVariants}
+                variants={fadeVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={springTransition}
+                transition={fadeTransition}
               >
                 {/* Step 1: Vehicle Type */}
                 {currentStep === 1 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">
-                      What type of vehicle are you interested in?
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      Select the vehicle type that best suits your needs
-                    </p>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <h2 className="text-2xl font-bold mb-2">What type of vehicle are you interested in?</h2>
+                    <p className="text-muted-foreground mb-6">Select the vehicle type that best suits your needs</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       {vehicleTypes.map((type) => (
                         <motion.button
                           key={type.id}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleSelection("vehicleType", type.id)}
-                          className={`p-6 rounded-lg border-2 transition-all ${
+                          className={`p-4 rounded-lg border-2 transition-all ${
                             formData.vehicleType === type.id
                               ? "border-primary bg-primary/10 shadow-lg"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <div className="text-5xl mb-3">{type.image}</div>
-                          <div className="font-medium">{type.name}</div>
+                          <img src={type.icon} alt={type.name} className="w-12 h-12 mx-auto mb-2 text-primary" />
+                          <div className="font-medium text-sm">{type.name}</div>
                         </motion.button>
                       ))}
                     </div>
@@ -623,27 +499,22 @@ const PreApproval = () => {
                 {/* Step 2: Budget */}
                 {currentStep === 2 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">
-                      What is your budget?
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      Select your preferred monthly payment range
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-4">
+                    <h2 className="text-2xl font-bold mb-2">What is your budget?</h2>
+                    <p className="text-muted-foreground mb-6">Select your preferred monthly payment range</p>
+                    <div className="grid grid-cols-2 gap-3">
                       {budgetOptions.map((option) => (
                         <motion.button
                           key={option}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleSelection("budget", option)}
-                          className={`p-5 rounded-lg border-2 text-center transition-all ${
+                          className={`p-4 rounded-lg border-2 text-center transition-all ${
                             formData.budget === option
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <span className="font-medium">{option}</span>
+                          <span className="font-medium text-sm">{option}</span>
                         </motion.button>
                       ))}
                     </div>
@@ -653,27 +524,22 @@ const PreApproval = () => {
                 {/* Step 3: Trade-in */}
                 {currentStep === 3 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">
-                      Do you have a trade-in?
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      Let us know if you have a vehicle to trade in
-                    </p>
-
-                    <div className="grid grid-cols-3 gap-4">
+                    <h2 className="text-2xl font-bold mb-2">Do you have a trade-in?</h2>
+                    <p className="text-muted-foreground mb-6">Let us know if you have a vehicle to trade in</p>
+                    <div className="grid grid-cols-3 gap-3">
                       {tradeInOptions.map((option) => (
                         <motion.button
                           key={option}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleSelection("tradeIn", option)}
-                          className={`p-5 rounded-lg border-2 text-center transition-all ${
+                          className={`p-4 rounded-lg border-2 text-center transition-all ${
                             formData.tradeIn === option
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <span className="font-medium text-lg">{option}</span>
+                          <span className="font-medium">{option}</span>
                         </motion.button>
                       ))}
                     </div>
@@ -683,31 +549,22 @@ const PreApproval = () => {
                 {/* Step 4: Credit Rating */}
                 {currentStep === 4 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">
-                      Estimated credit rating
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      This helps us find the best financing options for you
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-4">
+                    <h2 className="text-2xl font-bold mb-2">Estimated credit rating</h2>
+                    <p className="text-muted-foreground mb-6">This helps us find the best financing options for you</p>
+                    <div className="grid grid-cols-2 gap-3">
                       {creditRatingOptions.map((option) => (
                         <motion.button
                           key={option.value}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() =>
-                            handleSelection("creditRating", option.value)
-                          }
-                          className={`p-5 rounded-lg border-2 text-center transition-all ${
+                          onClick={() => handleSelection("creditRating", option.value)}
+                          className={`p-4 rounded-lg border-2 text-center transition-all ${
                             formData.creditRating === option.value
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <span className="font-medium">
-                            {option.label}
-                          </span>
+                          <span className="font-medium text-sm">{option.label}</span>
                         </motion.button>
                       ))}
                     </div>
@@ -717,29 +574,22 @@ const PreApproval = () => {
                 {/* Step 5: Employment Status */}
                 {currentStep === 5 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">
-                      Employment Status
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      What is your current employment situation?
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-4">
+                    <h2 className="text-2xl font-bold mb-2">Employment Status</h2>
+                    <p className="text-muted-foreground mb-6">What is your current employment situation?</p>
+                    <div className="grid grid-cols-2 gap-3">
                       {employmentOptions.map((option) => (
                         <motion.button
                           key={option}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() =>
-                            handleSelection("employmentStatus", option)
-                          }
-                          className={`p-5 rounded-lg border-2 text-center transition-all ${
+                          onClick={() => handleSelection("employmentStatus", option)}
+                          className={`p-4 rounded-lg border-2 text-center transition-all ${
                             formData.employmentStatus === option
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <span className="font-medium">{option}</span>
+                          <span className="font-medium text-sm">{option}</span>
                         </motion.button>
                       ))}
                     </div>
@@ -749,25 +599,22 @@ const PreApproval = () => {
                 {/* Step 6: Income Type Selection */}
                 {currentStep === 6 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">Income Details</h2>
-                    <p className="text-muted-foreground mb-8">
-                      How would you like to provide your income information?
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-4">
+                    <h2 className="text-2xl font-bold mb-2">Income Details</h2>
+                    <p className="text-muted-foreground mb-6">How would you like to provide your income information?</p>
+                    <div className="grid grid-cols-2 gap-3">
                       {incomeTypeOptions.map((option) => (
                         <motion.button
                           key={option}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleSelection("incomeType", option)}
-                          className={`p-5 rounded-lg border-2 text-center transition-all ${
+                          className={`p-4 rounded-lg border-2 text-center transition-all ${
                             formData.incomeType === option
                               ? "border-primary bg-primary/10 shadow-md"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <span className="font-medium">{option}</span>
+                          <span className="font-medium text-sm">{option}</span>
                         </motion.button>
                       ))}
                     </div>
@@ -777,101 +624,70 @@ const PreApproval = () => {
                 {/* Step 7: Income Input */}
                 {currentStep === 7 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">Income Information</h2>
-                    <p className="text-muted-foreground mb-8">
-                      Please provide your income details
-                    </p>
-
-                    <div className="space-y-6">
+                    <h2 className="text-2xl font-bold mb-2">Income Information</h2>
+                    <p className="text-muted-foreground mb-6">Please provide your income details</p>
+                    <div className="space-y-4">
                       {formData.incomeType === "I know my annual salary" && (
                         <div>
-                          <Label htmlFor="annualIncome">
-                            What is your annual income before taxes & deductions?
-                          </Label>
+                          <Label htmlFor="annualIncome">What is your annual income before taxes & deductions?</Label>
                           <div className="relative mt-2">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                              $
-                            </span>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                             <Input
                               id="annualIncome"
                               type="text"
                               inputMode="numeric"
                               placeholder="0"
                               value={formatCurrency(formData.annualIncome)}
-                              onChange={(e) =>
-                                handleCurrencyInput("annualIncome", e.target.value)
-                              }
-                              className="pl-7 text-lg"
+                              onChange={(e) => handleCurrencyInput("annualIncome", e.target.value)}
+                              className="pl-7"
                             />
                           </div>
                         </div>
                       )}
-
                       {formData.incomeType === "I know my hourly wage" && (
                         <>
                           <div>
-                            <Label htmlFor="hourlyWage">
-                              How much do you get paid per hour?
-                            </Label>
+                            <Label htmlFor="hourlyWage">How much do you get paid per hour?</Label>
                             <div className="relative mt-2">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                                $
-                              </span>
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                               <Input
                                 id="hourlyWage"
                                 type="text"
                                 inputMode="numeric"
                                 placeholder="0"
                                 value={formatCurrency(formData.hourlyWage)}
-                                onChange={(e) =>
-                                  handleCurrencyInput("hourlyWage", e.target.value)
-                                }
-                                className="pl-7 text-lg"
+                                onChange={(e) => handleCurrencyInput("hourlyWage", e.target.value)}
+                                className="pl-7"
                               />
                             </div>
                           </div>
                           <div>
-                            <Label htmlFor="hoursPerWeek">
-                              Average hours per week
-                            </Label>
+                            <Label htmlFor="hoursPerWeek">Average hours per week</Label>
                             <Input
                               id="hoursPerWeek"
                               type="text"
                               inputMode="numeric"
                               placeholder="40"
                               value={formData.hoursPerWeek}
-                              onChange={(e) =>
-                                updateFormData(
-                                  "hoursPerWeek",
-                                  e.target.value.replace(/\D/g, "")
-                                )
-                              }
-                              className="mt-2 text-lg"
+                              onChange={(e) => updateFormData("hoursPerWeek", e.target.value.replace(/\D/g, ""))}
+                              className="mt-2"
                             />
                           </div>
                         </>
                       )}
-
-                      {(formData.incomeType === "I know my monthly income" ||
-                        formData.incomeType === "Other") && (
+                      {(formData.incomeType === "I know my monthly income" || formData.incomeType === "Other") && (
                         <div>
-                          <Label htmlFor="monthlyIncome">
-                            What is your monthly income before taxes & deductions?
-                          </Label>
+                          <Label htmlFor="monthlyIncome">What is your monthly income before taxes & deductions?</Label>
                           <div className="relative mt-2">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                              $
-                            </span>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                             <Input
                               id="monthlyIncome"
                               type="text"
                               inputMode="numeric"
                               placeholder="0"
                               value={formatCurrency(formData.monthlyIncome)}
-                              onChange={(e) =>
-                                handleCurrencyInput("monthlyIncome", e.target.value)
-                              }
-                              className="pl-7 text-lg"
+                              onChange={(e) => handleCurrencyInput("monthlyIncome", e.target.value)}
+                              className="pl-7"
                             />
                           </div>
                         </div>
@@ -883,12 +699,9 @@ const PreApproval = () => {
                 {/* Step 8: Employer Details */}
                 {currentStep === 8 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">Employer Details</h2>
-                    <p className="text-muted-foreground mb-8">
-                      Please provide information about your current employer
-                    </p>
-
-                    <div className="space-y-6">
+                    <h2 className="text-2xl font-bold mb-2">Employer Details</h2>
+                    <p className="text-muted-foreground mb-6">Please provide information about your current employer</p>
+                    <div className="space-y-4">
                       <div>
                         <Label htmlFor="employerName">Employer Name *</Label>
                         <Input
@@ -896,13 +709,10 @@ const PreApproval = () => {
                           type="text"
                           placeholder="Company Name"
                           value={formData.employerName}
-                          onChange={(e) =>
-                            updateFormData("employerName", e.target.value)
-                          }
-                          className="mt-2 text-lg"
+                          onChange={(e) => updateFormData("employerName", e.target.value)}
+                          className="mt-2"
                         />
                       </div>
-
                       <div>
                         <Label htmlFor="jobTitle">Job Title *</Label>
                         <Input
@@ -910,42 +720,31 @@ const PreApproval = () => {
                           type="text"
                           placeholder="Your Position"
                           value={formData.jobTitle}
-                          onChange={(e) =>
-                            updateFormData("jobTitle", e.target.value)
-                          }
-                          className="mt-2 text-lg"
+                          onChange={(e) => updateFormData("jobTitle", e.target.value)}
+                          className="mt-2"
                         />
                       </div>
-
                       <div>
-                        <Label htmlFor="employerPhone">Employer Phone Number</Label>
+                        <Label htmlFor="employerPhone">Employer Phone (Optional)</Label>
                         <Input
                           id="employerPhone"
                           type="tel"
-                          placeholder="(555) 123-4567"
+                          placeholder="(555) 555-1234"
                           value={formData.employerPhone}
-                          onChange={(e) =>
-                            updateFormData("employerPhone", e.target.value)
-                          }
-                          className="mt-2 text-lg"
+                          onChange={(e) => updateFormData("employerPhone", e.target.value)}
+                          className="mt-2"
                         />
                       </div>
-
                       <div>
-                        <Label htmlFor="yearsEmployed">Years at Current Employer</Label>
+                        <Label htmlFor="yearsEmployed">Years Employed (Optional)</Label>
                         <Input
                           id="yearsEmployed"
                           type="text"
                           inputMode="numeric"
                           placeholder="0"
                           value={formData.yearsEmployed}
-                          onChange={(e) =>
-                            updateFormData(
-                              "yearsEmployed",
-                              e.target.value.replace(/\D/g, "")
-                            )
-                          }
-                          className="mt-2 text-lg"
+                          onChange={(e) => updateFormData("yearsEmployed", e.target.value.replace(/\D/g, ""))}
+                          className="mt-2"
                         />
                       </div>
                     </div>
@@ -955,58 +754,28 @@ const PreApproval = () => {
                 {/* Step 9: Address */}
                 {currentStep === 9 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">
-                      What is your address?
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      We need your address for verification purposes
-                    </p>
-
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="address">Address</Label>
-                        <Input
-                          id="address"
-                          type="text"
-                          placeholder="Start typing your address..."
-                          value={formData.address}
-                          onChange={(e) =>
-                            updateFormData("address", e.target.value)
-                          }
-                          className="mt-2 text-lg"
-                        />
-                        <p className="text-sm text-muted-foreground mt-2">
-                          Note: Address must be in Canada
-                        </p>
-                      </div>
-
-                      {formData.address && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="p-4 bg-muted rounded-lg"
-                        >
-                          <p className="text-sm font-medium mb-1">
-                            Selected Address:
-                          </p>
-                          <p className="text-foreground">{formData.address}</p>
-                        </motion.div>
-                      )}
+                    <h2 className="text-2xl font-bold mb-2">Current Address</h2>
+                    <p className="text-muted-foreground mb-6">Please enter your current address in Canada</p>
+                    <div>
+                      <Label htmlFor="address">Full Address</Label>
+                      <Input
+                        id="address"
+                        type="text"
+                        placeholder="123 Main St, City, Province, Postal Code"
+                        value={formData.address}
+                        onChange={(e) => updateFormData("address", e.target.value)}
+                        className="mt-2"
+                      />
                     </div>
                   </div>
                 )}
 
-                {/* Step 10: Years at Address */}
+                {/* Step 10: Time at Address */}
                 {currentStep === 10 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">
-                      How long at this address?
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      Let us know how long you've lived at your current address
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-6">
+                    <h2 className="text-2xl font-bold mb-2">How long at this address?</h2>
+                    <p className="text-muted-foreground mb-6">Let us know how long you've lived at your current address</p>
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="years">Years</Label>
                         <Input
@@ -1015,13 +784,8 @@ const PreApproval = () => {
                           inputMode="numeric"
                           placeholder="0"
                           value={formData.yearsAtAddress}
-                          onChange={(e) =>
-                            updateFormData(
-                              "yearsAtAddress",
-                              e.target.value.replace(/\D/g, "")
-                            )
-                          }
-                          className="mt-2 text-lg"
+                          onChange={(e) => updateFormData("yearsAtAddress", e.target.value.replace(/\D/g, ""))}
+                          className="mt-2"
                         />
                       </div>
                       <div>
@@ -1038,7 +802,7 @@ const PreApproval = () => {
                               updateFormData("monthsAtAddress", val);
                             }
                           }}
-                          className="mt-2 text-lg"
+                          className="mt-2"
                         />
                       </div>
                     </div>
@@ -1048,60 +812,37 @@ const PreApproval = () => {
                 {/* Step 11: Rent or Own */}
                 {currentStep === 11 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">
-                      Do you Rent or Own?
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      Tell us about your housing situation
-                    </p>
-
-                    <div className="space-y-6">
+                    <h2 className="text-2xl font-bold mb-2">Do you Rent or Own?</h2>
+                    <p className="text-muted-foreground mb-6">Tell us about your housing situation</p>
+                    <div className="space-y-4">
                       <RadioGroup
                         value={formData.rentOrOwn}
-                        onValueChange={(value) =>
-                          updateFormData("rentOrOwn", value)
-                        }
+                        onValueChange={(value) => updateFormData("rentOrOwn", value)}
                       >
-                        <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-border">
+                        <div className="flex items-center space-x-3 p-3 rounded-lg border-2 border-border">
                           <RadioGroupItem value="rent" id="rent" />
-                          <Label htmlFor="rent" className="text-lg cursor-pointer">
-                            Rent
-                          </Label>
+                          <Label htmlFor="rent" className="cursor-pointer">Rent</Label>
                         </div>
-                        <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-border">
+                        <div className="flex items-center space-x-3 p-3 rounded-lg border-2 border-border">
                           <RadioGroupItem value="own" id="own" />
-                          <Label htmlFor="own" className="text-lg cursor-pointer">
-                            Own
-                          </Label>
+                          <Label htmlFor="own" className="cursor-pointer">Own</Label>
                         </div>
                       </RadioGroup>
-
                       {formData.rentOrOwn && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                        >
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                           <Label htmlFor="monthlyPayment">
-                            Monthly {formData.rentOrOwn === "rent" ? "Rent" : "Mortgage"}{" "}
-                            Payment
+                            Monthly {formData.rentOrOwn === "rent" ? "Rent" : "Mortgage"} Payment
                           </Label>
                           <div className="relative mt-2">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                              $
-                            </span>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                             <Input
                               id="monthlyPayment"
                               type="text"
                               inputMode="numeric"
                               placeholder="0"
                               value={formatCurrency(formData.monthlyHousePayment)}
-                              onChange={(e) =>
-                                handleCurrencyInput(
-                                  "monthlyHousePayment",
-                                  e.target.value
-                                )
-                              }
-                              className="pl-7 text-lg"
+                              onChange={(e) => handleCurrencyInput("monthlyHousePayment", e.target.value)}
+                              className="pl-7"
                             />
                           </div>
                         </motion.div>
@@ -1113,11 +854,8 @@ const PreApproval = () => {
                 {/* Step 12: Date of Birth */}
                 {currentStep === 12 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">Date of Birth</h2>
-                    <p className="text-muted-foreground mb-8">
-                      Enter your date of birth (DD/MM/YYYY)
-                    </p>
-
+                    <h2 className="text-2xl font-bold mb-2">Date of Birth</h2>
+                    <p className="text-muted-foreground mb-6">Enter your date of birth (DD/MM/YYYY)</p>
                     <div className="space-y-4">
                       <div>
                         <Label htmlFor="dob">Date of Birth</Label>
@@ -1128,29 +866,23 @@ const PreApproval = () => {
                           placeholder="DD/MM/YYYY"
                           maxLength={10}
                           value={formatDobDisplay(formData.dob)}
-                          onChange={(e) =>
-                            handleDobChange(e.target.value)
-                          }
-                          className="mt-2 text-lg"
+                          onChange={(e) => handleDobChange(e.target.value)}
+                          className="mt-2"
                         />
                       </div>
-
                       {formData.age !== null && (
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className={`p-4 rounded-lg ${
+                          className={`p-3 rounded-lg ${
                             formData.age >= 17 && formData.age <= 100
                               ? "bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900"
                               : "bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900"
                           }`}
                         >
                           <p className="text-sm">
-                            Based on your input, you are{" "}
-                            <strong>{formData.age}</strong> years old.
-                            {formData.age >= 17 && formData.age <= 100
-                              ? " If this is correct, press continue."
-                              : " Age must be between 17 and 100."}
+                            Based on your input, you are <strong>{formData.age}</strong> years old.
+                            {formData.age >= 17 && formData.age <= 100 ? " If this is correct, press continue." : " Age must be between 17 and 100."}
                           </p>
                         </motion.div>
                       )}
@@ -1161,24 +893,17 @@ const PreApproval = () => {
                 {/* Step 13: Final Details */}
                 {currentStep === 13 && (
                   <div>
-                    <h2 className="text-3xl font-bold mb-2">
-                      Almost Done!
-                    </h2>
-                    <p className="text-muted-foreground mb-8">
-                      Just a few more details to complete your application
-                    </p>
-
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <h2 className="text-2xl font-bold mb-2">Almost Done!</h2>
+                    <p className="text-muted-foreground mb-6">Just a few more details to complete your application</p>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="firstName">First Name *</Label>
                           <Input
                             id="firstName"
                             type="text"
                             value={formData.firstName}
-                            onChange={(e) =>
-                              updateFormData("firstName", e.target.value)
-                            }
+                            onChange={(e) => updateFormData("firstName", e.target.value)}
                             className="mt-2"
                           />
                         </div>
@@ -1188,44 +913,33 @@ const PreApproval = () => {
                             id="lastName"
                             type="text"
                             value={formData.lastName}
-                            onChange={(e) =>
-                              updateFormData("lastName", e.target.value)
-                            }
+                            onChange={(e) => updateFormData("lastName", e.target.value)}
                             className="mt-2"
                           />
                         </div>
                       </div>
-
                       <div>
                         <Label htmlFor="email">Email *</Label>
                         <Input
                           id="email"
                           type="email"
                           value={formData.email}
-                          onChange={(e) =>
-                            updateFormData("email", e.target.value)
-                          }
+                          onChange={(e) => updateFormData("email", e.target.value)}
                           className="mt-2"
                         />
                       </div>
-
                       <div>
                         <Label htmlFor="phone">Phone Number *</Label>
                         <Input
                           id="phone"
                           type="tel"
                           value={formData.phone}
-                          onChange={(e) =>
-                            updateFormData("phone", e.target.value)
-                          }
+                          onChange={(e) => updateFormData("phone", e.target.value)}
                           className="mt-2"
                         />
                       </div>
-
                       <div>
-                        <Label htmlFor="sin">
-                          Social Insurance Number (Optional)
-                        </Label>
+                        <Label htmlFor="sin">Social Insurance Number (Optional)</Label>
                         <Input
                           id="sin"
                           type="text"
@@ -1233,28 +947,14 @@ const PreApproval = () => {
                           maxLength={9}
                           placeholder="•••-••-••••"
                           value={formData.sin}
-                          onChange={(e) =>
-                            updateFormData(
-                              "sin",
-                              e.target.value.replace(/\D/g, "")
-                            )
-                          }
+                          onChange={(e) => updateFormData("sin", e.target.value.replace(/\D/g, ""))}
                           className="mt-2"
                         />
                       </div>
-
-                      <div className="p-4 bg-muted rounded-lg text-sm">
-                        <p className="font-medium mb-2">Important Disclosure:</p>
+                      <div className="p-3 bg-muted rounded-lg text-xs">
+                        <p className="font-medium mb-1">Important Disclosure:</p>
                         <p className="text-muted-foreground leading-relaxed">
-                          By submitting this application, you authorize Car Street
-                          and its financing partners to obtain your credit report
-                          and verify the information provided. This may result in a
-                          credit inquiry that could affect your credit score. You
-                          understand that submission does not guarantee approval and
-                          that all information provided is subject to verification.
-                          Car Street respects your privacy and will handle your
-                          personal information in accordance with applicable privacy
-                          laws.
+                          By submitting this application, you authorize Car Street and its financing partners to obtain your credit report and verify the information provided. This may result in a credit inquiry that could affect your credit score. You understand that submission does not guarantee approval and that all information provided is subject to verification.
                         </p>
                       </div>
                     </div>
@@ -1263,29 +963,21 @@ const PreApproval = () => {
 
                 {/* Success Screen */}
                 {currentStep === 14 && (
-                  <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="text-center py-12"
-                  >
+                  <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center py-8">
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.2, type: "spring" }}
-                      className="w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6"
+                      className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4"
                     >
-                      <Check className="h-10 w-10 text-green-600 dark:text-green-400" />
+                      <Check className="h-8 w-8 text-green-600 dark:text-green-400" />
                     </motion.div>
-                    <h2 className="text-3xl font-bold mb-4">
-                      Application Submitted!
-                    </h2>
-                    <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                      Thank you for your application. Our finance team will review
-                      your information and contact you within 24 hours to discuss
-                      your pre-approval options.
+                    <h2 className="text-2xl font-bold mb-3">Application Submitted!</h2>
+                    <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                      Thank you for your application. Our finance team will review your information and contact you within 24 hours to discuss your pre-approval options.
                     </p>
-                    <Button size="lg" asChild>
-                      <a href="/">Return to Home</a>
+                    <Button size="lg" onClick={() => { resetForm(); navigate("/"); }}>
+                      Return to Home
                     </Button>
                   </motion.div>
                 )}
@@ -1295,28 +987,18 @@ const PreApproval = () => {
             {/* Navigation Buttons */}
             {currentStep <= TOTAL_STEPS && (
               <motion.div
-                className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-between mt-8 pt-6 border-t"
+                className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-between mt-6 pt-4 border-t"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={prevStep}
-                  disabled={currentStep === 1}
-                  className="w-full sm:w-auto"
-                >
+                <Button variant="outline" size="lg" onClick={prevStep} disabled={currentStep === 1} className="w-full sm:w-auto">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Button>
-
-                {/* Only show Continue button for input steps (7+) and Submit for final step */}
                 {currentStep >= 7 && (
                   currentStep === TOTAL_STEPS ? (
-                    <Button onClick={handleSubmit} size="lg" className="w-full sm:w-auto">
-                      Submit Application
-                    </Button>
+                    <Button onClick={handleSubmit} size="lg" className="w-full sm:w-auto">Submit Application</Button>
                   ) : (
                     <Button onClick={nextStep} size="lg" className="w-full sm:w-auto">
                       Continue

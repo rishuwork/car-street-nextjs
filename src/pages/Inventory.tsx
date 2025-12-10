@@ -269,7 +269,7 @@ const Inventory = () => {
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                           loading="lazy"
                         />
-                        <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-bold">
+                        <div className="absolute top-2 right-2 bg-background text-price px-3 py-1 rounded-full text-sm font-bold border">
                           ${Number(vehicle.price).toLocaleString()}
                         </div>
                       </div>

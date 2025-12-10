@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { LayoutDashboard, Car, Mail, Users, LogOut, Home } from "lucide-react";
+import { LayoutDashboard, Car, Mail, Users, LogOut, Home, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AdminLayout() {
@@ -13,6 +13,7 @@ export default function AdminLayout() {
     { icon: Car, label: "Inventory", path: "/admin/inventory" },
     { icon: Mail, label: "Leads", path: "/admin/leads" },
     { icon: Users, label: "Users", path: "/admin/users" },
+    { icon: HelpCircle, label: "FAQs", path: "/admin/faqs" },
   ];
 
   return (

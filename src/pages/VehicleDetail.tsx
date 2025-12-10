@@ -5,16 +5,18 @@ import Footer from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, ArrowLeft, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Phone, Mail, ArrowLeft, Check, ChevronLeft, ChevronRight, Calculator, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { trackVehicleView, trackClickToCall } from "@/utils/tracking";
 import { generateVehicleStructuredData } from "@/utils/vehicleStructuredData";
+import VehicleFeatures from "@/components/VehicleFeatures";
+import PaymentCalculatorModal from "@/components/PaymentCalculatorModal";
 
 const VehicleDetail = () => {
   const { id } = useParams();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   const { data: vehicle, isLoading } = useQuery({
     queryKey: ["vehicle", id],
@@ -45,12 +47,22 @@ const VehicleDetail = () => {
     },
   });
 
+  // Auto slideshow
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setSelectedImageIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [images]);
+
   // Track vehicle view when data is loaded
   useEffect(() => {
     if (vehicle) {
       trackVehicleView(vehicle);
       
-      // Add structured data for SEO
       const structuredData = generateVehicleStructuredData(
         vehicle,
         images?.[0]?.image_url
@@ -68,14 +80,14 @@ const VehicleDetail = () => {
   }, [vehicle, images]);
 
   const handleCallClick = () => {
-    trackClickToCall('+15555551234');
+    trackClickToCall('+15195825555');
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 py-8">
+        <main className="flex-1 py-4">
           <div className="container mx-auto px-4">
             <p>Loading...</p>
           </div>
@@ -89,7 +101,7 @@ const VehicleDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 py-8">
+        <main className="flex-1 py-4">
           <div className="container mx-auto px-4">
             <p>Vehicle not found</p>
           </div>
@@ -108,7 +120,7 @@ const VehicleDetail = () => {
         <SEO 
           title={`${vehicle.year} ${vehicle.make} ${vehicle.model} for Sale`}
           description={`Buy this ${vehicle.year} ${vehicle.make} ${vehicle.model} with ${vehicle.mileage.toLocaleString()} km. ${vehicle.transmission} transmission, ${vehicle.fuel_type} fuel. Price: $${Number(vehicle.price).toLocaleString()}. Located at Car Street, Langton ON.`}
-          url={`https://carstreet.com/vehicle/${vehicle.id}`}
+          url={`https://carstreet.ca/vehicle/${vehicle.id}`}
           image={primaryImage}
           type="product"
           keywords={`${vehicle.year} ${vehicle.make} ${vehicle.model}, used ${vehicle.make} for sale, ${vehicle.make} ${vehicle.model} Ontario`}
@@ -117,30 +129,32 @@ const VehicleDetail = () => {
       )}
       <Header />
 
-      <main className="flex-1 py-8">
+      <main className="flex-1 py-2">
         <div className="container mx-auto px-4">
           {/* Back Button */}
-          <Button variant="ghost" asChild className="mb-6">
+          <Button variant="ghost" asChild className="mb-2">
             <Link to="/inventory">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Inventory
             </Link>
           </Button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-4">
               {/* Image Gallery */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {images && images.length > 0 ? (
                   <>
                     <div className="relative group aspect-video">
-                      <img 
-                        src={images[selectedImageIndex].image_url} 
-                        alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                        className="w-full h-full object-cover rounded-lg"
-                        loading="lazy"
-                      />
+                      <picture>
+                        <img 
+                          src={images[selectedImageIndex].image_url} 
+                          alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                          className="w-full h-full object-cover rounded-lg"
+                          loading="lazy"
+                        />
+                      </picture>
                       {images.length > 1 && (
                         <>
                           <Button
@@ -159,31 +173,45 @@ const VehicleDetail = () => {
                           >
                             <ChevronRight className="h-4 w-4" />
                           </Button>
+                          {/* Dots indicator */}
+                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                            {images.map((_, index) => (
+                              <button
+                                key={index}
+                                onClick={() => setSelectedImageIndex(index)}
+                                className={`w-2 h-2 rounded-full transition-colors ${
+                                  index === selectedImageIndex ? "bg-white" : "bg-white/50"
+                                }`}
+                              />
+                            ))}
+                          </div>
                         </>
                       )}
                     </div>
                     {images.length > 1 && (
-                      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
+                      <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
                         {images.map((image, index) => (
                           <div key={image.id} className="aspect-video">
-                            <img 
-                              src={image.image_url} 
-                              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                              className={`w-full h-full object-cover rounded-lg cursor-pointer transition-all ${
-                                selectedImageIndex === index 
-                                  ? 'ring-2 ring-primary opacity-100' 
-                                  : 'opacity-60 hover:opacity-100'
-                              }`}
-                              onClick={() => setSelectedImageIndex(index)}
-                              loading="lazy"
-                            />
+                            <picture>
+                              <img 
+                                src={image.image_url} 
+                                alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                                className={`w-full h-full object-cover rounded cursor-pointer transition-all ${
+                                  selectedImageIndex === index 
+                                    ? 'ring-2 ring-primary opacity-100' 
+                                    : 'opacity-60 hover:opacity-100'
+                                }`}
+                                onClick={() => setSelectedImageIndex(index)}
+                                loading="lazy"
+                              />
+                            </picture>
                           </div>
                         ))}
                       </div>
                     )}
                   </>
                 ) : (
-                  <div className="w-full h-96 bg-muted rounded-lg flex items-center justify-center">
+                  <div className="w-full h-72 bg-muted rounded-lg flex items-center justify-center">
                     <p className="text-muted-foreground">No images available</p>
                   </div>
                 )}
@@ -191,70 +219,45 @@ const VehicleDetail = () => {
 
               {/* Vehicle Title */}
               <div>
-                <h1 className="text-4xl font-heading font-bold mb-2">
+                <h1 className="text-3xl font-heading font-bold mb-3">
                   {vehicle.year} {vehicle.make} {vehicle.model}
                 </h1>
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="secondary">{vehicle.mileage.toLocaleString()} km</Badge>
-                  <Badge variant="secondary">{vehicle.transmission}</Badge>
-                  <Badge variant="secondary">{vehicle.fuel_type}</Badge>
-                  <Badge variant="secondary">{vehicle.drivetrain}</Badge>
-                </div>
               </div>
+
+              {/* Vehicle Features Section */}
+              <VehicleFeatures
+                mileage={vehicle.mileage}
+                color={vehicle.color}
+                transmission={vehicle.transmission}
+                drivetrain={vehicle.drivetrain}
+                fuelType={vehicle.fuel_type}
+                condition={vehicle.condition}
+              />
 
               {/* Description */}
               {vehicle.description && (
                 <Card>
-                  <CardHeader>
+                  <CardHeader className="pb-3">
                     <CardTitle>Description</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-0">
                     <p className="text-muted-foreground leading-relaxed">{vehicle.description}</p>
                   </CardContent>
                 </Card>
               )}
 
-              {/* Specifications */}
-              {vehicle.engine && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Specifications</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="font-medium">Engine</span>
-                        <span className="text-muted-foreground">{vehicle.engine}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="font-medium">Drivetrain</span>
-                        <span className="text-muted-foreground">{vehicle.drivetrain}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="font-medium">Transmission</span>
-                        <span className="text-muted-foreground">{vehicle.transmission}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="font-medium">Fuel Type</span>
-                        <span className="text-muted-foreground">{vehicle.fuel_type}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Features */}
+              {/* Key Features */}
               {vehicle.features && vehicle.features.length > 0 && (
                 <Card>
-                  <CardHeader>
+                  <CardHeader className="pb-3">
                     <CardTitle>Key Features</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <CardContent className="pt-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {vehicle.features.map((feature, index) => (
                         <div key={index} className="flex items-start gap-2">
-                          <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                          <span>{feature}</span>
+                          <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -264,27 +267,25 @@ const VehicleDetail = () => {
 
               {/* Vehicle Information */}
               <Card>
-                <CardHeader>
+                <CardHeader className="pb-3">
                   <CardTitle>Vehicle Information</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
                     <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">VIN</span>
-                      <span className="text-muted-foreground">{vehicle.vin}</span>
+                      <span className="font-medium text-sm">VIN</span>
+                      <span className="text-muted-foreground text-sm">{vehicle.vin}</span>
                     </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Color</span>
-                      <span className="text-muted-foreground">{vehicle.color}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Condition</span>
-                      <span className="text-muted-foreground capitalize">{vehicle.condition}</span>
-                    </div>
+                    {vehicle.engine && (
+                      <div className="flex justify-between py-2 border-b">
+                        <span className="font-medium text-sm">Engine</span>
+                        <span className="text-muted-foreground text-sm">{vehicle.engine}</span>
+                      </div>
+                    )}
                     {vehicle.location && (
                       <div className="flex justify-between py-2 border-b">
-                        <span className="font-medium">Location</span>
-                        <span className="text-muted-foreground">{vehicle.location}</span>
+                        <span className="font-medium text-sm">Location</span>
+                        <span className="text-muted-foreground text-sm">{vehicle.location}</span>
                       </div>
                     )}
                   </div>
@@ -293,58 +294,78 @@ const VehicleDetail = () => {
             </div>
 
             {/* Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Price Card */}
               <Card className="sticky top-24">
                 <CardContent className="pt-6">
-                  <div className="text-center mb-6">
-                    <p className="text-sm text-muted-foreground mb-2">Price</p>
-                    <p className="text-5xl font-heading font-bold text-primary">
+                  <div className="text-center mb-4">
+                    <p className="text-4xl font-heading font-bold text-price">
                       ${Number(vehicle.price).toLocaleString()}
                     </p>
+                    <p className="text-sm text-muted-foreground mt-1">+ Tax & Licensing</p>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      size="lg"
+                      onClick={() => setIsCalculatorOpen(true)}
+                    >
+                      <Calculator className="mr-2 h-5 w-5" />
+                      Estimate Your Payments
+                    </Button>
                     <Button 
                       variant="default" 
                       className="w-full" 
                       size="lg"
+                      asChild
+                    >
+                      <Link to="/pre-approval">
+                        <FileText className="mr-2 h-5 w-5" />
+                        Get Pre-Approved
+                      </Link>
+                    </Button>
+                    <Button 
+                      variant="secondary" 
+                      className="w-full" 
+                      size="lg"
                       onClick={() => {
                         handleCallClick();
-                        window.location.href = 'tel:+15555551234';
+                        window.location.href = 'tel:+15195825555';
                       }}
                     >
                       <Phone className="mr-2 h-5 w-5" />
                       Call Now
                     </Button>
                     <Button 
-                      variant="outline" 
+                      variant="ghost" 
                       className="w-full" 
                       size="lg"
-                      onClick={() => window.location.href = 'mailto:info@carstreet.com'}
+                      onClick={() => window.location.href = 'mailto:info@carstreet.ca'}
                     >
                       <Mail className="mr-2 h-5 w-5" />
                       Email Inquiry
                     </Button>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t">
-                    <h3 className="font-heading font-semibold mb-3">Why Buy From Us?</h3>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
+                  <div className="mt-4 pt-4 border-t">
+                    <h3 className="font-heading font-semibold mb-2 text-sm">Why Buy From Us?</h3>
+                    <ul className="space-y-1.5 text-xs text-muted-foreground">
                       <li className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                        <Check className="h-3 w-3 text-primary flex-shrink-0 mt-0.5" />
                         <span>Price match guarantee</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                        <Check className="h-3 w-3 text-primary flex-shrink-0 mt-0.5" />
                         <span>Full vehicle inspection</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                        <Check className="h-3 w-3 text-primary flex-shrink-0 mt-0.5" />
                         <span>Warranty options available</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                        <Check className="h-3 w-3 text-primary flex-shrink-0 mt-0.5" />
                         <span>Flexible financing</span>
                       </li>
                     </ul>
@@ -357,6 +378,13 @@ const VehicleDetail = () => {
       </main>
 
       <Footer />
+
+      {/* Payment Calculator Modal */}
+      <PaymentCalculatorModal
+        isOpen={isCalculatorOpen}
+        onClose={() => setIsCalculatorOpen(false)}
+        vehiclePrice={Number(vehicle.price)}
+      />
     </div>
   );
 };
