@@ -74,7 +74,7 @@ export default function CustomerReviews() {
           }}
           transition={{
             x: {
-              duration: 60,
+              duration: 120,
               repeat: Infinity,
               ease: "linear",
             },
