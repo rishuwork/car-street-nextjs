@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { Star } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Review {
   id: number;
@@ -55,8 +55,6 @@ const reviews: Review[] = [
 ];
 
 export default function CustomerReviews() {
-  // Duplicate reviews for infinite scroll effect
-  const duplicatedReviews = [...reviews, ...reviews];
 
   return (
     <section className="py-12 bg-muted overflow-hidden">
@@ -66,45 +64,27 @@ export default function CustomerReviews() {
         </h2>
       </div>
 
-      <div className="relative">
-        <motion.div
-          className="flex gap-6"
-          animate={{
-            x: [0, -50 * reviews.length * 24],
-          }}
-          transition={{
-            x: {
-              duration: 120,
-              repeat: Infinity,
-              ease: "linear",
-            },
-          }}
-        >
-          {duplicatedReviews.map((review, index) => (
-            <motion.div
-              key={`${review.id}-${index}`}
-              className="flex-shrink-0 w-80 bg-card rounded-lg p-6 shadow-lg border border-border cursor-pointer"
-              whileHover={{ 
-                scale: 1.05, 
-                y: -5,
-                transition: { duration: 0.2 }
-              }}
-            >
-              <div className="flex items-center gap-1 mb-3">
-                {Array.from({ length: review.rating }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-              <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                "{review.text}"
-              </p>
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-sm">{review.name}</span>
-                <span className="text-xs text-muted-foreground">{review.date}</span>
-              </div>
-            </motion.div>
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {reviews.slice(0, 3).map((review) => (
+            <Card key={review.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background">
+              <CardContent className="pt-6 text-center">
+                <div className="flex items-center justify-center gap-1 mb-3">
+                  {Array.from({ length: review.rating }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  "{review.text}"
+                </p>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="font-medium">{review.name}</span>
+                  <span className="text-muted-foreground">{review.date}</span>
+                </div>
+              </CardContent>
+            </Card>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

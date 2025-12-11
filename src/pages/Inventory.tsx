@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Star, Search, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, SlidersHorizontal, Gauge, Palette, Settings, Car } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -135,12 +135,12 @@ const Inventory = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEO 
-        title="Used Car Inventory"
-        description="Browse our selection of quality pre-owned vehicles at Car Street. Find the perfect used car with competitive pricing and flexible financing options."
-        url="https://carstreet.com/inventory"
-        keywords="used cars for sale, pre-owned vehicles, car inventory, used car dealership Langton Ontario"
-      />
+        <SEO 
+          title="Used Car Inventory"
+          description="Browse our selection of quality pre-owned vehicles at Car Street. Find the perfect used car with competitive pricing and flexible financing options."
+          url="https://carstreet.ca/inventory"
+          keywords="used cars for sale, pre-owned vehicles, car inventory, used car dealership Langton Ontario"
+        />
       <Header />
 
       <main className="flex-1 py-12">
@@ -262,43 +262,50 @@ const Inventory = () => {
 
                   return (
                     <Card key={vehicle.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group">
-                      <div className="relative overflow-hidden aspect-video">
+                      <div className="relative overflow-hidden aspect-square">
                         <img 
                           src={imageUrl} 
                           alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                           loading="lazy"
                         />
-                        <div className="absolute top-2 right-2 bg-background text-price px-3 py-1 rounded-full text-sm font-bold border">
-                          ${Number(vehicle.price).toLocaleString()}
-                        </div>
                       </div>
                       <CardContent className="p-4">
-                        <h3 className="text-xl font-heading font-bold mb-2">
-                          {vehicle.year} {vehicle.make} {vehicle.model}
+                        <h3 className="text-lg font-heading font-bold mb-1">
+                          {vehicle.make}
                         </h3>
-                        <div className="space-y-1 mb-3 text-sm text-muted-foreground">
-                          <div className="flex justify-between">
-                            <span>Mileage:</span>
-                            <span className="font-medium text-foreground">{vehicle.mileage.toLocaleString()} km</span>
+                        <h3 className="text-base text-muted-foreground mb-1">
+                          {vehicle.year} {vehicle.model}
+                        </h3>
+                        <div className="flex flex-wrap gap-3 my-3 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1.5">
+                            <Gauge className="h-4 w-4" />
+                            <span>{vehicle.mileage.toLocaleString()} KM</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span>Transmission:</span>
-                            <span className="font-medium text-foreground capitalize">{vehicle.transmission}</span>
+                          <div className="flex items-center gap-1.5">
+                            <Settings className="h-4 w-4" />
+                            <span className="capitalize">{vehicle.transmission === 'automatic' ? 'Auto' : vehicle.transmission}</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span>Fuel Type:</span>
-                            <span className="font-medium text-foreground capitalize">{vehicle.fuel_type}</span>
+                          <div className="flex items-center gap-1.5">
+                            <Car className="h-4 w-4" />
+                            <span className="uppercase">{vehicle.drivetrain}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Palette className="h-4 w-4" />
+                            <span className="capitalize">{vehicle.color}</span>
                           </div>
                         </div>
-                        <div className="flex gap-1 mb-2">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="h-3 w-3 fill-primary text-primary" />
-                          ))}
+                        <div className="border-t pt-3 mt-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-xl font-bold text-price">${Number(vehicle.price).toLocaleString()}</p>
+                              <p className="text-xs text-muted-foreground">+ Tax & Licensing</p>
+                            </div>
+                            <Link to={`/vehicle/${vehicle.id}`} className="text-primary hover:text-primary/80 text-sm font-medium flex items-center gap-1">
+                              View Details <span>↗</span>
+                            </Link>
+                          </div>
                         </div>
-                        <Button variant="default" className="w-full" size="sm" asChild>
-                          <Link to={`/vehicle/${vehicle.id}`}>View Details</Link>
-                        </Button>
                       </CardContent>
                     </Card>
                   );

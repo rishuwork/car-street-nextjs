@@ -29,9 +29,9 @@ const Header = () => {
               Open 7 Days a Week | Quality Pre-Owned Vehicles
             </div>
             <div className="flex items-center gap-4">
-              <a href="tel:+15195825555" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+              <a href="tel:+16398990000" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
                 <Phone className="h-4 w-4" />
-                <span className="font-medium">(519) 582-5555</span>
+                <span className="font-medium">(639) 899-0000</span>
               </a>
             </div>
           </div>
@@ -90,11 +90,11 @@ const Header = () => {
                   </Link>
                 </Button>
                 <a
-                  href="tel:+15195825555"
+                  href="tel:+16398990000"
                   className="flex items-center gap-2 text-foreground hover:text-primary transition-colors mt-4"
                 >
                   <Phone className="h-5 w-5" />
-                  <span className="font-medium">(519) 582-5555</span>
+                  <span className="font-medium">(639) 899-0000</span>
                 </a>
               </nav>
             </SheetContent>

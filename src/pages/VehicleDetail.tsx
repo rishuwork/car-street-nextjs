@@ -80,7 +80,7 @@ const VehicleDetail = () => {
   }, [vehicle, images]);
 
   const handleCallClick = () => {
-    trackClickToCall('+15195825555');
+    trackClickToCall('+16398990000');
   };
 
   if (isLoading) {
@@ -307,7 +307,7 @@ const VehicleDetail = () => {
 
                   <div className="space-y-2">
                     <Button 
-                      variant="outline" 
+                      variant="destructive" 
                       className="w-full" 
                       size="lg"
                       onClick={() => setIsCalculatorOpen(true)}
@@ -316,7 +316,7 @@ const VehicleDetail = () => {
                       Estimate Your Payments
                     </Button>
                     <Button 
-                      variant="default" 
+                      variant="destructive" 
                       className="w-full" 
                       size="lg"
                       asChild
@@ -327,19 +327,19 @@ const VehicleDetail = () => {
                       </Link>
                     </Button>
                     <Button 
-                      variant="secondary" 
+                      variant="destructive" 
                       className="w-full" 
                       size="lg"
                       onClick={() => {
                         handleCallClick();
-                        window.location.href = 'tel:+15195825555';
+                        window.location.href = 'tel:+16398990000';
                       }}
                     >
                       <Phone className="mr-2 h-5 w-5" />
                       Call Now
                     </Button>
                     <Button 
-                      variant="ghost" 
+                      variant="destructive" 
                       className="w-full" 
                       size="lg"
                       onClick={() => window.location.href = 'mailto:info@carstreet.ca'}

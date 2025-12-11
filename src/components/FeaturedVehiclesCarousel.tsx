@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, TouchEvent } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,14 +16,19 @@ interface FeaturedVehiclesCarouselProps {
 export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
+  const [isMobile, setIsMobile] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   // Update items per page based on screen size
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
         setItemsPerPage(1);
+        setIsMobile(true);
       } else {
         setItemsPerPage(3);
+        setIsMobile(false);
       }
     };
 
@@ -42,6 +47,35 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
 
   const maxIndex = Math.max(0, vehicles.length - itemsPerPage);
   const showNavigation = vehicles.length > itemsPerPage;
+
+  // Touch handlers for swipe
+  const handleTouchStart = (e: TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    
+    const diff = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (Math.abs(diff) > minSwipeDistance) {
+      if (diff > 0 && currentIndex < maxIndex) {
+        // Swipe left - next
+        setCurrentIndex((prev) => Math.min(maxIndex, prev + 1));
+      } else if (diff < 0 && currentIndex > 0) {
+        // Swipe right - previous
+        setCurrentIndex((prev) => Math.max(0, prev - 1));
+      }
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
 
   const handlePrev = () => {
     setCurrentIndex((prev) => Math.max(0, prev - 1));
@@ -63,9 +97,14 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
   }
 
   return (
-    <div className="relative">
-      {/* Navigation Arrows */}
-      {showNavigation && (
+    <div 
+      className="relative"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Navigation Arrows - Hidden on mobile */}
+      {showNavigation && !isMobile && (
         <>
           <button
             onClick={handlePrev}
@@ -90,7 +129,7 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {visibleVehicles.map((vehicle) => (
           <Card key={vehicle.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group">
-            <div className="relative overflow-hidden aspect-video">
+            <div className="relative overflow-hidden aspect-square">
               <img
                 src={vehicle.primaryImage || "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&auto=format&fit=crop"}
                 alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}

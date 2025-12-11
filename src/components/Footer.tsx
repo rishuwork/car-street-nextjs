@@ -60,9 +60,9 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-heading font-semibold text-lg">Contact Us</h4>
             <div className="space-y-3">
-              <a href="tel:+15195825555" className="flex items-start gap-2 text-sm hover:text-primary transition-colors">
+              <a href="tel:+16398990000" className="flex items-start gap-2 text-sm hover:text-primary transition-colors">
                 <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                <span>(519) 582-5555</span>
+                <span>(639) 899-0000</span>
               </a>
               <a href="mailto:info@carstreet.ca" className="flex items-start gap-2 text-sm hover:text-primary transition-colors">
                 <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
