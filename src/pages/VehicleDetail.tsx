@@ -294,7 +294,7 @@ const VehicleDetail = () => {
             </div>
 
             {/* Sidebar */}
-            <div className="space-y-4">
+            <div className="lg:self-start">
               {/* Price Card */}
               <Card className="sticky top-24">
                 <CardContent className="pt-6">
