@@ -14,6 +14,7 @@ import { Plus, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Tables } from "@/integrations/supabase/types";
 import { ImageUpload, VehicleImages } from "@/components/admin/ImageUpload";
+import { submitVehicleToIndexNow, submitInventoryToIndexNow } from "@/utils/indexNow";
 
 type Vehicle = Tables<"vehicles">;
 type VehicleImage = Tables<"vehicle_images">;
@@ -118,6 +119,8 @@ export default function InventoryManagement() {
         toast.error("Failed to update vehicle");
       } else {
         toast.success("Vehicle updated successfully");
+        // Submit to IndexNow for instant re-indexing
+        submitVehicleToIndexNow(editingVehicle.id);
         setIsDialogOpen(false);
         setEditingVehicle(null);
         resetForm();
@@ -130,6 +133,11 @@ export default function InventoryManagement() {
         toast.error("Failed to add vehicle");
       } else {
         toast.success("Vehicle added! You can now add images.");
+        // Submit to IndexNow for instant indexing
+        if (data) {
+          submitVehicleToIndexNow(data.id);
+          submitInventoryToIndexNow();
+        }
         // Switch to edit mode so user can add images
         setEditingVehicle(data);
         loadVehicles();
@@ -185,6 +193,9 @@ export default function InventoryManagement() {
       toast.error("Failed to update status");
     } else {
       toast.success("Status updated");
+      // Submit to IndexNow when status changes
+      submitVehicleToIndexNow(vehicleId);
+      submitInventoryToIndexNow();
       loadVehicles();
     }
   };
