@@ -307,7 +307,7 @@ const VehicleDetail = () => {
 
                   <div className="space-y-2">
                     <Button 
-                      variant="destructive" 
+                      variant="default" 
                       className="w-full" 
                       size="lg"
                       onClick={() => setIsCalculatorOpen(true)}
@@ -316,7 +316,7 @@ const VehicleDetail = () => {
                       Estimate Your Payments
                     </Button>
                     <Button 
-                      variant="destructive" 
+                      variant="default" 
                       className="w-full" 
                       size="lg"
                       asChild
@@ -327,7 +327,7 @@ const VehicleDetail = () => {
                       </Link>
                     </Button>
                     <Button 
-                      variant="destructive" 
+                      variant="default" 
                       className="w-full" 
                       size="lg"
                       onClick={() => {
@@ -339,7 +339,7 @@ const VehicleDetail = () => {
                       Call Now
                     </Button>
                     <Button 
-                      variant="destructive" 
+                      variant="default" 
                       className="w-full" 
                       size="lg"
                       onClick={() => window.location.href = 'mailto:info@carstreet.ca'}
