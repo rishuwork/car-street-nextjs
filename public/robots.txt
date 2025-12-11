@@ -15,4 +15,5 @@ Allow: /
 Disallow: /admin/
 Disallow: /auth
 
-Sitemap: https://carstreet.com/sitemap.xml
+# Dynamic sitemaps hosted on Supabase Edge Functions
+Sitemap: https://aqjcouhyaxtmfruqcgzf.supabase.co/functions/v1/sitemap
