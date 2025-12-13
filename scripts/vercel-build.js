@@ -6,7 +6,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distClientDir = path.resolve(__dirname, '../dist/client');
 const apiDir = path.resolve(__dirname, '../api');
 
-const sourcePath = path.join(distClientDir, 'index.html');
+// Vite is preserving the 'src' folder in output because of the input path
+const sourcePath = path.join(distClientDir, 'src/index.html');
 const destPath = path.join(apiDir, 'index.template.html');
 
 console.log('🚧 Starting post-build cleanup...');
