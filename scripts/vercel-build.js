@@ -16,6 +16,18 @@ if (!fs.existsSync(apiDir)) {
     fs.mkdirSync(apiDir, { recursive: true });
 }
 
+console.log(`Checking directory: ${distClientDir}`);
+if (fs.existsSync(distClientDir)) {
+    console.log('Contents:', fs.readdirSync(distClientDir));
+} else {
+    console.log('❌ Directory dist/client does not exist!');
+    // Check parent
+    const distDir = path.resolve(__dirname, '../dist');
+    if (fs.existsSync(distDir)) {
+        console.log('Contents of dist:', fs.readdirSync(distDir));
+    }
+}
+
 if (fs.existsSync(sourcePath)) {
     console.log(`Found index.html at: ${sourcePath}`);
     // COPY instead of rename/move so Vercel CDN still gets the (now useless) index.html
