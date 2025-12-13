@@ -9,7 +9,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 3000;
 const base = process.env.BASE || '/';
 
-async function createServer() {
+export async function createServer() {
     const app = express();
 
     // Initialize Supabase client for server-side operations
@@ -127,8 +127,10 @@ async function createServer() {
     return { app };
 }
 
-createServer().then(({ app }) =>
-    app.listen(port, () => {
-        console.log(`Server started at http://localhost:${port}`);
-    })
-);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    createServer().then(({ app }) =>
+        app.listen(port, () => {
+            console.log(`Server started at http://localhost:${port}`);
+        })
+    );
+}
