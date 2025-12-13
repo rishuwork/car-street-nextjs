@@ -72,11 +72,23 @@ export async function createServer() {
             base,
         });
         app.use(vite.middlewares);
+        import { existsSync } from 'node:fs';
+
+        // ... (imports)
+
+        // ...
+
     } else {
         const compression = (await import('compression')).default;
         const sirv = (await import('sirv')).default;
         app.use(compression());
-        app.use(base, sirv('./dist/client', { extensions: [] }));
+
+        // In Vercel, dist/client is stripped from the lambda (served by CDN)
+        // So we should only use sirv if the directory actually exists (e.g. local prod preview)
+        const clientDistPath = './dist/client';
+        if (existsSync(clientDistPath)) {
+            app.use(base, sirv(clientDistPath, { extensions: [] }));
+        }
     }
 
     app.use('*', async (req, res) => {
