@@ -95,8 +95,8 @@ export async function createServer() {
                 template = await vite.transformIndexHtml(url, template);
                 render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render;
             } else {
-                // Use process.cwd() for Vercel lambda compatibility
-                template = await fs.readFile(path.join(process.cwd(), 'dist/client/index.template.html'), 'utf-8');
+                // Read from local API directory (copied by vercel-build.js)
+                template = await fs.readFile(path.join(__dirname, 'index.template.html'), 'utf-8');
                 render = (await import('./dist/server/entry-server.js')).render;
             }
 

@@ -4,18 +4,33 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distClientDir = path.resolve(__dirname, '../dist/client');
+const apiDir = path.resolve(__dirname, '../api');
 
-const oldPath = path.join(distClientDir, 'index.html');
-const newPath = path.join(distClientDir, 'index.template.html');
+const sourcePath = path.join(distClientDir, 'index.html');
+const destPath = path.join(apiDir, 'index.template.html');
 
 console.log('🚧 Starting post-build cleanup...');
 
-if (fs.existsSync(oldPath)) {
-    console.log(`Found static index.html at: ${oldPath}`);
-    fs.renameSync(oldPath, newPath);
-    console.log('✅ Successfully renamed index.html to index.template.html');
+// Ensure api dir exists
+if (!fs.existsSync(apiDir)) {
+    fs.mkdirSync(apiDir, { recursive: true });
+}
+
+if (fs.existsSync(sourcePath)) {
+    console.log(`Found index.html at: ${sourcePath}`);
+    // COPY instead of rename/move so Vercel CDN still gets the (now useless) index.html
+    // but we have a safe copy for the server
+    fs.copyFileSync(sourcePath, destPath);
+    // Retrieve: Rename the original to avoid static conflict?
+    // YES. We must kill the original index.html so Vercel doesn't serve it.
+    // fs.renameSync is risky if Vercel looks for it.
+    // Instead, we overwrite it with "Moved".
+    fs.writeFileSync(sourcePath, "<!-- Moved to SSR -->");
+
+    console.log(`✅ Copied template to: ${destPath}`);
 } else {
-    console.log('⚠️ Warning: index.html not found. It might have been already renamed or build failed.');
+    // If not found, maybe we are running locally or it was already moved?
+    console.log('⚠️ Warning: index.html not found in dist/client.');
 }
 
 // Double check
