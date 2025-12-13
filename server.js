@@ -73,7 +73,6 @@ export async function createServer() {
             base,
         });
         app.use(vite.middlewares);
-        import { existsSync } from 'node:fs';
 
         // ... (imports)
 
