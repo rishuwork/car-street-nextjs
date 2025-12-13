@@ -34,9 +34,10 @@ if (fs.existsSync(sourcePath)) {
 }
 
 // Double check
-if (fs.existsSync(oldPath)) {
-    console.error('❌ ERROR: index.html still exists! Vercel will serve this statically.');
-    process.exit(1);
+if (fs.existsSync(destPath)) {
+    console.log('🎉 Verification passed: template copied.');
 } else {
-    console.log('🎉 Verification passed: index.html is gone.');
+    // We don't error on sourcePath missing because maybe it wasn't created, but destPath MUST be there if we want server to run
+    console.error('❌ ERROR: index.template.html missing in api dir!');
+    process.exit(1);
 }
