@@ -12,6 +12,11 @@ export default defineConfig(({ mode }) => ({
   ssr: {
     noExternal: ["react-helmet-async"],
   },
+  build: {
+    rollupOptions: {
+      input: "src/index.html"
+    }
+  },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
