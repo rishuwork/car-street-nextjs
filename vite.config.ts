@@ -13,9 +13,7 @@ export default defineConfig(({ mode }) => ({
     noExternal: ["react-helmet-async"],
   },
   build: {
-    rollupOptions: {
-      input: "src/index.html"
-    }
+    // Input handled via CLI
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
