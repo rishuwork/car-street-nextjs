@@ -107,8 +107,28 @@ export async function createServer() {
                 template = await vite.transformIndexHtml(url, template);
                 render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render;
             } else {
-                // Read from local API directory (copied by vercel-build.js)
-                template = await fs.readFile(path.join(__dirname, 'index.template.html'), 'utf-8');
+                // ROBUST TEMPLATE FINDING STRATEGY
+                const possiblePaths = [
+                    path.join(__dirname, 'api/index.template.html'), // Most likely (copied there)
+                    path.join(__dirname, 'index.template.html'),     // Fallback (if flattened)
+                ];
+
+                for (const p of possiblePaths) {
+                    if (existsSync(p)) {
+                        console.log(`✅ Found template at: ${p}`);
+                        template = await fs.readFile(p, 'utf-8');
+                        break;
+                    }
+                }
+
+                if (!template) {
+                    console.error('❌ Template NOT found in:', possiblePaths);
+                    console.error('Current directory contents:', await fs.readdir(__dirname));
+                    if (existsSync(path.join(__dirname, 'api'))) {
+                        console.error('API directory contents:', await fs.readdir(path.join(__dirname, 'api')));
+                    }
+                    throw new Error('Template file missing');
+                }
                 render = (await import('./dist/server/entry-server.js')).render;
             }
 
