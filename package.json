@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node server.js",
     "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build --outDir dist/client --sourcemap",
+    "build:client": "vite build --outDir dist/client --sourcemap && node -e \"const fs=require('fs'); fs.renameSync('dist/client/index.html', 'dist/client/index.template.html')\"",
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server --sourcemap",
     "lint": "eslint .",
     "preview": "vite preview",
