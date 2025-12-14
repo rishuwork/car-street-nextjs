@@ -39,6 +39,12 @@ const Footer = () => {
               <Link to="/inventory" className="text-sm hover:text-primary transition-colors">
                 Inventory
               </Link>
+              <Link to="/sell-your-car" className="text-sm hover:text-primary transition-colors">
+                Sell Your Car
+              </Link>
+              <Link to="/pre-approval" className="text-sm hover:text-primary transition-colors">
+                Get Pre-Approved
+              </Link>
               <Link to="/about" className="text-sm hover:text-primary transition-colors">
                 About Us
               </Link>

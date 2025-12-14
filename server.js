@@ -33,6 +33,7 @@ export async function createServer() {
                 '',
                 '/inventory',
                 '/pre-approval',
+                '/sell-your-car',
                 '/about',
                 '/contact'
             ];
