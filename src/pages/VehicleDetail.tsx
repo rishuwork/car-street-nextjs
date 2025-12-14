@@ -14,6 +14,14 @@ import VehicleFeatures from "@/components/VehicleFeatures";
 import PaymentCalculatorModal from "@/components/PaymentCalculatorModal";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import carfaxLogo from "@/assets/carfax-logo.png";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 const VehicleDetail = () => {
   const { id } = useParams();
@@ -49,16 +57,28 @@ const VehicleDetail = () => {
     },
   });
 
+  const [api, setApi] = useState<CarouselApi>();
+
   // Auto slideshow
   useEffect(() => {
-    if (!images || images.length <= 1) return;
+    if (!api) return;
 
     const interval = setInterval(() => {
-      setSelectedImageIndex((prev) => (prev + 1) % images.length);
+      api.scrollNext();
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [images]);
+  }, [api]);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    api.on("select", () => {
+      setSelectedImageIndex(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   // Track vehicle view when data is loaded
   useEffect(() => {
@@ -134,69 +154,70 @@ const VehicleDetail = () => {
               <div className="space-y-3">
                 {images && images.length > 0 ? (
                   <>
-                    <div className="relative group aspect-video">
-                      <picture>
-                        <OptimizedImage
-                          src={images[selectedImageIndex].image_url}
-                          alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                          width={1200}
-                          height={675}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      </picture>
+                    <>
+                      <Carousel
+                        opts={{
+                          align: "start",
+                          loop: true,
+                        }}
+                        setApi={setApi}
+                        className="w-full relative group"
+                      >
+                        <CarouselContent>
+                          {images.map((image, index) => (
+                            <CarouselItem key={image.id}>
+                              <div className="relative aspect-video">
+                                <picture>
+                                  <OptimizedImage
+                                    src={image.image_url}
+                                    alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} - Image ${index + 1}`}
+                                    width={1200}
+                                    height={675}
+                                    className="w-full h-full object-cover rounded-lg"
+                                  />
+                                </picture>
+                              </div>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0" />
+                        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0" />
+
+                        {/* Dots indicator */}
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                          {images.map((_, index) => (
+                            <button
+                              key={index}
+                              onClick={() => api?.scrollTo(index)}
+                              className={`w-2 h-2 rounded-full transition-colors ${index === selectedImageIndex ? "bg-white" : "bg-white/50"
+                                }`}
+                            />
+                          ))}
+                        </div>
+                      </Carousel>
+
                       {images.length > 1 && (
-                        <>
-                          <Button
-                            variant="secondary"
-                            size="icon"
-                            className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => setSelectedImageIndex((prev) => prev === 0 ? images.length - 1 : prev - 1)}
-                          >
-                            <ChevronLeft className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            size="icon"
-                            className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => setSelectedImageIndex((prev) => prev === images.length - 1 ? 0 : prev + 1)}
-                          >
-                            <ChevronRight className="h-4 w-4" />
-                          </Button>
-                          {/* Dots indicator */}
-                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                            {images.map((_, index) => (
-                              <button
-                                key={index}
-                                onClick={() => setSelectedImageIndex(index)}
-                                className={`w-2 h-2 rounded-full transition-colors ${index === selectedImageIndex ? "bg-white" : "bg-white/50"
-                                  }`}
-                              />
-                            ))}
-                          </div>
-                        </>
+                        <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+                          {images.map((image, index) => (
+                            <div key={image.id} className="aspect-video">
+                              <picture>
+                                <OptimizedImage
+                                  src={image.image_url}
+                                  alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} thumbnail ${index + 1}`}
+                                  width={200}
+                                  height={112}
+                                  className={`w-full h-full object-cover rounded cursor-pointer transition-all ${selectedImageIndex === index
+                                    ? 'ring-2 ring-primary opacity-100'
+                                    : 'opacity-60 hover:opacity-100'
+                                    }`}
+                                  onClick={() => api?.scrollTo(index)}
+                                />
+                              </picture>
+                            </div>
+                          ))}
+                        </div>
                       )}
-                    </div>
-                    {images.length > 1 && (
-                      <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
-                        {images.map((image, index) => (
-                          <div key={image.id} className="aspect-video">
-                            <picture>
-                              <OptimizedImage
-                                src={image.image_url}
-                                alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                                width={200}
-                                height={112}
-                                className={`w-full h-full object-cover rounded cursor-pointer transition-all ${selectedImageIndex === index
-                                  ? 'ring-2 ring-primary opacity-100'
-                                  : 'opacity-60 hover:opacity-100'
-                                  }`}
-                                onClick={() => setSelectedImageIndex(index)}
-                              />
-                            </picture>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    </>
                   </>
                 ) : (
                   <div className="w-full h-72 bg-muted rounded-lg flex items-center justify-center">
@@ -348,22 +369,22 @@ const VehicleDetail = () => {
                   </div>
 
                   <div className="mt-4 pt-4 border-t">
-                    <h3 className="font-heading font-semibold mb-2 text-sm">Why Buy From Us?</h3>
-                    <ul className="space-y-1.5 text-xs text-muted-foreground">
+                    <h3 className="font-heading font-semibold mb-3 text-lg">Why Buy From Us?</h3>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
-                        <Check className="h-3 w-3 text-primary flex-shrink-0 mt-0.5" />
+                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
                         <span>Price match guarantee</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <Check className="h-3 w-3 text-primary flex-shrink-0 mt-0.5" />
+                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
                         <span>Full vehicle inspection</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <Check className="h-3 w-3 text-primary flex-shrink-0 mt-0.5" />
+                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
                         <span>Warranty options available</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <Check className="h-3 w-3 text-primary flex-shrink-0 mt-0.5" />
+                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
                         <span>Flexible financing</span>
                       </li>
                     </ul>
