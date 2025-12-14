@@ -12,6 +12,7 @@ export default function AdminLayout() {
     { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
     { icon: Car, label: "Inventory", path: "/admin/inventory" },
     { icon: Mail, label: "Leads", path: "/admin/leads" },
+    { icon: Car, label: "Sell Requests", path: "/admin/sell-requests" },
     { icon: Users, label: "Users", path: "/admin/users" },
     { icon: HelpCircle, label: "FAQs", path: "/admin/faqs" },
   ];

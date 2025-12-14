@@ -56,7 +56,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEO 
+      <SEO
         title="Quality Used Cars in Langton, Ontario"
         description="We are certified used car dealers in Langton. Browse our pre-owned vehicles today & drive home your favourite! Contact us."
         url="https://carstreet.ca/"
@@ -64,7 +64,7 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <section 
+      <section
         className="relative h-[600px] flex items-center justify-center text-white bg-cover bg-center"
         style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${heroImage})` }}
       >
@@ -117,7 +117,7 @@ const Index = () => {
       <section className="py-12 bg-secondary text-secondary-foreground">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-heading font-bold mb-6 text-center">Why Choose Car Street?</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {whyChooseUs.map((item, index) => {
               const Icon = item.icon;

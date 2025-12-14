@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
+import ucdaLogo from "@/assets/ucda-logo.png";
+import omvicLogo from "@/assets/omvic-logo.png";
 
 const Footer = () => {
   return (
     <footer className="bg-secondary text-secondary-foreground">
       <div className="container mx-auto py-12 px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
             <h3 className="text-2xl font-heading font-bold">
@@ -72,6 +74,15 @@ const Footer = () => {
                 <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" />
                 <span>#1-17 Queen St<br />Langton, ON N0E 1G0</span>
               </div>
+            </div>
+          </div>
+
+          {/* Certifications */}
+          <div className="space-y-4">
+            <h4 className="font-heading font-semibold text-lg">Members Of</h4>
+            <div className="flex flex-col gap-4 items-start">
+              <img src={ucdaLogo} alt="UCDA Member" className="h-12 w-[126px] object-contain bg-white rounded p-1" />
+              <img src={omvicLogo} alt="OMVIC Registered" className="h-12 w-[126px] object-contain bg-white rounded p-1" />
             </div>
           </div>
         </div>

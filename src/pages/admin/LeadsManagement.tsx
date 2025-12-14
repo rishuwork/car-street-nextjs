@@ -70,7 +70,11 @@ export default function LeadsManagement() {
     if (error) {
       toast.error("Failed to load leads");
     } else {
-      setLeads(data || []);
+      // Filter OUT "Sell Your Car" requests to avoid duplication
+      const generalLeads = (data || []).filter(lead =>
+        !lead.message.startsWith("Sell Your Car Request:")
+      );
+      setLeads(generalLeads);
     }
     setIsLoading(false);
   };
