@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, Quote } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface Review {
@@ -69,6 +69,9 @@ export default function CustomerReviews() {
           {reviews.slice(0, 3).map((review) => (
             <Card key={review.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background">
               <CardContent className="pt-6 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+                  <Quote className="h-8 w-8 text-primary" />
+                </div>
                 <div className="flex items-center justify-center gap-1 mb-3">
                   {Array.from({ length: review.rating }).map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />

@@ -12,6 +12,7 @@ import { Search, ChevronDown, ChevronUp, SlidersHorizontal, Gauge, Palette, Sett
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import carfaxLogo from "@/assets/carfax-logo.png";
 
 type Vehicle = Tables<"vehicles">;
 type VehicleImage = Tables<"vehicle_images">;
@@ -273,16 +274,26 @@ const Inventory = () => {
                         />
                       </div>
                       <CardContent className="p-4">
-                        <h3 className="text-lg font-heading font-bold mb-1">
-                          {vehicle.make}
-                        </h3>
-                        <h3 className="text-base text-muted-foreground mb-1">
-                          {vehicle.year} {vehicle.model}
-                        </h3>
+                        <div className="flex justify-between items-start">
+                          <h3 className="text-lg font-heading font-bold mb-1">
+                            {vehicle.make}
+                          </h3>
+                        </div>
+                        <div className="flex justify-between items-start mb-1">
+                          <h3 className="text-base text-muted-foreground">
+                            {vehicle.year} {vehicle.model}
+                          </h3>
+                          {vehicle.carfax_url && (
+                            <a href={vehicle.carfax_url} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                              <img src={carfaxLogo} alt="Free CARFAX Report" className="h-6 object-contain" />
+                            </a>
+                          )}
+                        </div>
                         <div className="flex flex-wrap gap-3 my-3 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1.5">
                             <Gauge className="h-4 w-4" />
                             <span>{vehicle.mileage.toLocaleString()} KM</span>
+
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Settings className="h-4 w-4" />
@@ -300,7 +311,7 @@ const Inventory = () => {
                         <div className="border-t pt-3 mt-3">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-xl font-bold text-price">${Number(vehicle.price).toLocaleString()}</p>
+                              <p className="text-lg font-bold text-price">${vehicle.price.toLocaleString()}</p>
                               <p className="text-xs text-muted-foreground">+ Tax & Licensing</p>
                             </div>
                             <Link to={`/vehicle/${vehicle.id}`} className="text-primary hover:text-primary/80 text-sm font-medium flex items-center gap-1">

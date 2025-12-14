@@ -13,6 +13,7 @@ import { generateVehicleStructuredData } from "@/utils/vehicleStructuredData";
 import VehicleFeatures from "@/components/VehicleFeatures";
 import PaymentCalculatorModal from "@/components/PaymentCalculatorModal";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import carfaxLogo from "@/assets/carfax-logo.png";
 
 const VehicleDetail = () => {
   const { id } = useParams();
@@ -186,8 +187,8 @@ const VehicleDetail = () => {
                                 width={200}
                                 height={112}
                                 className={`w-full h-full object-cover rounded cursor-pointer transition-all ${selectedImageIndex === index
-                                    ? 'ring-2 ring-primary opacity-100'
-                                    : 'opacity-60 hover:opacity-100'
+                                  ? 'ring-2 ring-primary opacity-100'
+                                  : 'opacity-60 hover:opacity-100'
                                   }`}
                                 onClick={() => setSelectedImageIndex(index)}
                               />
@@ -210,6 +211,15 @@ const VehicleDetail = () => {
                   {vehicle.year} {vehicle.make} {vehicle.model}
                 </h1>
               </div>
+
+              {/* Carfax Report Button */}
+              {vehicle.carfax_url && (
+                <div className="flex justify-start mb-4">
+                  <a href={vehicle.carfax_url} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity inline-block">
+                    <img src={carfaxLogo} alt="Free CARFAX Report" className="h-8 object-contain" />
+                  </a>
+                </div>
+              )}
 
               {/* Vehicle Features Section */}
               <VehicleFeatures
@@ -334,6 +344,7 @@ const VehicleDetail = () => {
                       <Mail className="mr-2 h-5 w-5" />
                       Email Inquiry
                     </Button>
+
                   </div>
 
                   <div className="mt-4 pt-4 border-t">

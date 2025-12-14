@@ -39,6 +39,7 @@ export default function InventoryManagement() {
     description: "",
     status: "available" as "available" | "sold" | "pending",
     featured: false,
+    carfax_url: "",
   });
 
   useEffect(() => {
@@ -107,6 +108,7 @@ export default function InventoryManagement() {
       description: formData.description,
       status: formData.status,
       featured: formData.featured,
+      carfax_url: formData.carfax_url || null,
     };
 
     if (editingVehicle) {
@@ -160,6 +162,7 @@ export default function InventoryManagement() {
       description: "",
       status: "available",
       featured: false,
+      carfax_url: "",
     });
   };
 
@@ -179,6 +182,7 @@ export default function InventoryManagement() {
       description: vehicle.description || "",
       status: vehicle.status,
       featured: vehicle.featured,
+      carfax_url: vehicle.carfax_url || "",
     });
     setIsDialogOpen(true);
   };
@@ -366,6 +370,15 @@ export default function InventoryManagement() {
                           </SelectContent>
                         </Select>
                       </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="carfax_url">Carfax URL</Label>
+                      <Input
+                        id="carfax_url"
+                        placeholder="https://www.carfax.ca/..."
+                        value={formData.carfax_url}
+                        onChange={(e) => setFormData({ ...formData, carfax_url: e.target.value })}
+                      />
                     </div>
                     <div>
                       <Label htmlFor="description">Description</Label>
