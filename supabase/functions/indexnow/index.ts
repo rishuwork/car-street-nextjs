@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, Authorization',
   'Content-Type': 'application/json',
 };
 
@@ -16,7 +16,7 @@ serve(async (req) => {
 
   try {
     const { urls, type } = await req.json();
-    
+
     if (!urls || !Array.isArray(urls) || urls.length === 0) {
       return new Response(JSON.stringify({ error: 'No URLs provided' }), {
         status: 400,
@@ -25,9 +25,9 @@ serve(async (req) => {
     }
 
     const siteUrl = 'https://carstreet.ca';
-    
+
     // Format URLs properly
-    const formattedUrls = urls.map((url: string) => 
+    const formattedUrls = urls.map((url: string) =>
       url.startsWith('http') ? url : `${siteUrl}${url}`
     );
 
@@ -62,7 +62,7 @@ serve(async (req) => {
     // Also submit to Google (they support IndexNow via their own endpoint)
     // Note: Google prefers Search Console, but IndexNow is supported
 
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: responseStatus >= 200 && responseStatus < 300,
       status: responseStatus,
       message: `Submitted ${formattedUrls.length} URLs to IndexNow`,
@@ -74,9 +74,9 @@ serve(async (req) => {
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('IndexNow submission error:', error);
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       error: errorMessage,
-      success: false 
+      success: false
     }), {
       status: 500,
       headers: corsHeaders,
