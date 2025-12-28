@@ -66,7 +66,7 @@ export function ImageUploader({ onImagesChange, existingImages }: ImageUploaderP
         <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {existingImages.map((url, index) => (
-                    <div key={index} className="relative group aspect-square rounded-lg overflow-hidden border">
+                    <div key={index} className="relative group aspect-[4/3] rounded-lg overflow-hidden border">
                         <img src={url} alt="Uploaded" className="w-full h-full object-cover" />
                         <button
                             onClick={() => removeImage(index)}
@@ -79,7 +79,7 @@ export function ImageUploader({ onImagesChange, existingImages }: ImageUploaderP
 
                 <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="border-2 border-dashed rounded-lg aspect-square flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors"
+                    className="border-2 border-dashed rounded-lg aspect-[4/3] flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors"
                 >
                     {uploading ? (
                         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

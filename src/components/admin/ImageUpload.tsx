@@ -90,11 +90,10 @@ export function ImageUpload({ vehicleId, onImagesUploaded }: ImageUploadProps) {
       onDragLeave={handleDrag}
       onDragOver={handleDrag}
       onDrop={handleDrop}
-      className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-        dragActive
+      className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${dragActive
           ? "border-primary bg-primary/5"
           : "border-border hover:border-primary/50"
-      }`}
+        }`}
     >
       <input
         type="file"
@@ -207,7 +206,7 @@ export function VehicleImages({
           <img
             src={image.image_url}
             alt="Vehicle"
-            className="w-full aspect-video object-cover rounded-lg"
+            className="w-full aspect-[4/3] object-cover rounded-lg"
           />
           {image.is_primary && (
             <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">

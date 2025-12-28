@@ -166,7 +166,7 @@ const VehicleDetail = () => {
                         <CarouselContent>
                           {images.map((image, index) => (
                             <CarouselItem key={image.id}>
-                              <div className="relative aspect-video">
+                              <div className="relative aspect-[4/3]">
                                 <picture>
                                   <OptimizedImage
                                     src={image.image_url}
@@ -199,7 +199,7 @@ const VehicleDetail = () => {
                       {images.length > 1 && (
                         <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
                           {images.map((image, index) => (
-                            <div key={image.id} className="aspect-video">
+                            <div key={image.id} className="aspect-[4/3]">
                               <picture>
                                 <OptimizedImage
                                   src={image.image_url}
