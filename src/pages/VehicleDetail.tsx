@@ -13,6 +13,7 @@ import { generateVehicleStructuredData } from "@/utils/vehicleStructuredData";
 import VehicleFeatures from "@/components/VehicleFeatures";
 import PaymentCalculatorModal from "@/components/PaymentCalculatorModal";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import Autoplay from "embla-carousel-autoplay";
 import carfaxLogo from "@/assets/carfax-logo.png";
 import {
   Carousel,
@@ -60,15 +61,7 @@ const VehicleDetail = () => {
   const [api, setApi] = useState<CarouselApi>();
 
   // Auto slideshow
-  useEffect(() => {
-    if (!api) return;
-
-    const interval = setInterval(() => {
-      api.scrollNext();
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [api]);
+  // Manual slideshow removed in favor of Autoplay plugin
 
   useEffect(() => {
     if (!api) {
@@ -154,70 +147,74 @@ const VehicleDetail = () => {
               <div className="space-y-3">
                 {images && images.length > 0 ? (
                   <>
-                    <>
-                      <Carousel
-                        opts={{
-                          align: "start",
-                          loop: true,
-                        }}
-                        setApi={setApi}
-                        className="w-full relative group"
-                      >
-                        <CarouselContent>
-                          {images.map((image, index) => (
-                            <CarouselItem key={image.id}>
-                              <div className="relative aspect-[4/3]">
-                                <picture>
-                                  <OptimizedImage
-                                    src={image.image_url}
-                                    alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} - Image ${index + 1}`}
-                                    width={1200}
-                                    height={675}
-                                    className="w-full h-full object-cover rounded-lg"
-                                  />
-                                </picture>
-                              </div>
-                            </CarouselItem>
-                          ))}
-                        </CarouselContent>
-                        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0" />
-                        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0" />
-
-                        {/* Dots indicator */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                          {images.map((_, index) => (
-                            <button
-                              key={index}
-                              onClick={() => api?.scrollTo(index)}
-                              className={`w-2 h-2 rounded-full transition-colors ${index === selectedImageIndex ? "bg-white" : "bg-white/50"
-                                }`}
-                            />
-                          ))}
-                        </div>
-                      </Carousel>
-
-                      {images.length > 1 && (
-                        <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
-                          {images.map((image, index) => (
-                            <div key={image.id} className="aspect-[4/3]">
+                    <Carousel
+                      opts={{
+                        align: "start",
+                        loop: true,
+                        duration: 50, // Increase duration for smoother transition (default is roughly 20-25)
+                      }}
+                      plugins={[
+                        Autoplay({
+                          delay: 4000,
+                          stopOnInteraction: true,
+                        }),
+                      ]}
+                      setApi={setApi}
+                      className="w-full relative group"
+                    >
+                      <CarouselContent>
+                        {images.map((image, index) => (
+                          <CarouselItem key={image.id}>
+                            <div className="relative aspect-[4/3]">
                               <picture>
                                 <OptimizedImage
                                   src={image.image_url}
-                                  alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} thumbnail ${index + 1}`}
-                                  width={200}
-                                  height={112}
-                                  className={`w-full h-full object-cover rounded cursor-pointer transition-all ${selectedImageIndex === index
-                                    ? 'ring-2 ring-primary opacity-100'
-                                    : 'opacity-60 hover:opacity-100'
-                                    }`}
-                                  onClick={() => api?.scrollTo(index)}
+                                  alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} - Image ${index + 1}`}
+                                  width={1200}
+                                  height={900}
+                                  className="w-full h-full object-cover rounded-lg"
                                 />
                               </picture>
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0" />
+                      <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0" />
+
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                        {images.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => api?.scrollTo(index)}
+                            className={`w-2 h-2 rounded-full transition-colors ${index === selectedImageIndex ? "bg-white" : "bg-white/50"
+                              }`}
+                          />
+                        ))}
+                      </div>
+                    </Carousel>
+
+                    {images.length > 1 && (
+                      <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+                        {images.map((image, index) => (
+                          <div key={image.id} className="aspect-[4/3]">
+                            <picture>
+                              <OptimizedImage
+                                src={image.image_url}
+                                alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} thumbnail ${index + 1}`}
+                                width={200}
+                                height={112}
+                                className={`w-full h-full object-cover rounded cursor-pointer transition-all ${selectedImageIndex === index
+                                  ? 'ring-2 ring-primary opacity-100'
+                                  : 'opacity-60 hover:opacity-100'
+                                  }`}
+                                onClick={() => api?.scrollTo(index)}
+                              />
+                            </picture>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </>
                 ) : (
                   <div className="w-full h-72 bg-muted rounded-lg flex items-center justify-center">
