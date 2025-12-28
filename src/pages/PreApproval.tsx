@@ -176,10 +176,13 @@ const PreApproval = () => {
     return value !== "";
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [currentStep]);
+
   const goToStep = (step: number, dir: number) => {
     setDirection(dir);
     setCurrentStep(step);
-    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const nextStep = () => {
