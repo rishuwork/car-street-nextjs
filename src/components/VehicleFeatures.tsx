@@ -30,7 +30,7 @@ export default function VehicleFeatures({
     },
     {
       icon: Car,
-      label: "Body Style",
+      label: "Condition",
       value: condition.charAt(0).toUpperCase() + condition.slice(1),
     },
     {
