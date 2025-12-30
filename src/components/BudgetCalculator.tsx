@@ -176,13 +176,13 @@ const BudgetCalculator = () => {
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             <div className="bg-primary/10 px-8 py-4 rounded-lg text-center min-w-[200px]">
-              <div className="text-sm text-muted-foreground mb-1">
+              <div className="text-sm text-foreground/80 mb-1">
                 Estimated Monthly Payment
               </div>
               <div className="text-3xl font-heading font-bold text-primary">
                 ${monthlyPayment.toFixed(2)}
               </div>
-              <div className="text-xs text-muted-foreground mt-1">
+              <div className="text-xs text-foreground/80 mt-1">
                 at {interestRate}% APR{includeSalesTax && " (incl. 13% HST)"}
               </div>
             </div>

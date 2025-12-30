@@ -11,19 +11,19 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <h3 className="text-2xl font-heading font-bold">
-              CAR <span className="text-primary">STREET</span>
+              CAR <span className="text-accent">STREET</span>
             </h3>
-            <p className="text-sm text-secondary-foreground/80">
+            <p className="text-sm text-secondary-foreground">
               Your trusted partner for quality pre-owned vehicles. We offer the best deals with transparent pricing and excellent customer service.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-primary transition-colors" aria-label="Facebook">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-primary transition-colors" aria-label="Instagram">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-primary transition-colors" aria-label="Twitter">
                 <Twitter className="h-5 w-5" />
               </a>
             </div>

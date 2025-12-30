@@ -69,7 +69,7 @@ const Header = () => {
           {/* Mobile navigation */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" aria-label="Open mobile menu">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
