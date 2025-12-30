@@ -63,98 +63,107 @@ const Index = () => {
       />
       <Header />
 
-      {/* Hero Section */}
-      <section
-        className="relative h-[600px] flex items-center justify-center text-white bg-cover bg-center"
-        style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${heroImage})` }}
-      >
-        <div className="container mx-auto px-4 text-center z-10">
-          <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 animate-fade-in">
-            Find Your Dream Car Today
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto animate-fade-in opacity-90">
-            Quality pre-owned vehicles with transparent pricing and exceptional service
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
-            <Button size="lg" variant="default" asChild className="text-lg px-8">
-              <Link to="/inventory">Browse Inventory</Link>
-            </Button>
-            <Button size="lg" variant="default" asChild className="text-lg px-8">
-              <Link to="/pre-approval">Get Pre-Approved</Link>
-            </Button>
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <section className="relative h-[600px] flex items-center justify-center text-white overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <img 
+              src={heroImage} 
+              alt="Luxury car background" 
+              className="w-full h-full object-cover"
+              fetchPriority="high"
+            />
+            <div className="absolute inset-0 bg-black/60" />
           </div>
-        </div>
-      </section>
-
-      {/* Budget Calculator Section */}
-      <section className="py-12 bg-muted">
-        <div className="container mx-auto px-4">
-          <BudgetCalculator />
-        </div>
-      </section>
-
-      {/* Featured Vehicles Section */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl font-heading font-bold mb-2">Featured Vehicles</h2>
-            <p className="text-lg text-muted-foreground">Check out our hand-picked selection of quality vehicles</p>
+          
+          <div className="container mx-auto px-4 text-center z-10">
+            <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 animate-fade-in">
+              Find Your Dream Car Today
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto animate-fade-in opacity-90">
+              Quality pre-owned vehicles with transparent pricing and exceptional service
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
+              <Button size="lg" variant="default" asChild className="text-lg px-8">
+                <Link to="/inventory">Browse Inventory</Link>
+              </Button>
+              <Button size="lg" variant="default" asChild className="text-lg px-8">
+                <Link to="/pre-approval">Get Pre-Approved</Link>
+              </Button>
+            </div>
           </div>
-
-          <div className="mb-6 px-8 md:px-12">
-            <FeaturedVehiclesCarousel vehicles={featuredVehicles} />
+        </section>
+  
+        {/* Budget Calculator Section */}
+        <section className="py-12 bg-muted">
+          <div className="container mx-auto px-4">
+            <BudgetCalculator />
           </div>
-
-          <div className="text-center">
-            <Button size="lg" variant="outline" asChild>
-              <Link to="/inventory">View All Inventory</Link>
-            </Button>
+        </section>
+  
+        {/* Featured Vehicles Section */}
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-heading font-bold mb-2">Featured Vehicles</h2>
+              <p className="text-lg text-muted-foreground">Check out our hand-picked selection of quality vehicles</p>
+            </div>
+  
+            <div className="mb-6 px-8 md:px-12">
+              <FeaturedVehiclesCarousel vehicles={featuredVehicles} />
+            </div>
+  
+            <div className="text-center">
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/inventory">View All Inventory</Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us Section */}
-      <section className="py-12 bg-secondary text-secondary-foreground">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-heading font-bold mb-6 text-center">Why Choose Car Street?</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {whyChooseUs.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background">
-                  <CardContent className="pt-6 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
-                      <Icon className="h-8 w-8 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-heading font-bold mb-2">{item.title}</h3>
-                    <p className="text-muted-foreground">{item.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
+        </section>
+  
+        {/* Why Choose Us Section */}
+        <section className="py-12 bg-secondary text-secondary-foreground">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-heading font-bold mb-6 text-center">Why Choose Car Street?</h2>
+  
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {whyChooseUs.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background">
+                    <CardContent className="pt-6 text-center">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+                        <Icon className="h-8 w-8 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-heading font-bold mb-2">{item.title}</h3>
+                      <p className="text-muted-foreground">{item.description}</p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* Customer Reviews Section */}
-      <CustomerReviews />
-
-      {/* CTA Section */}
-      <section className="py-12 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-heading font-bold mb-3">Ready to Find Your Perfect Car?</h2>
-          <p className="text-lg mb-6 opacity-90">Visit us today or browse our inventory online</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" asChild>
-              <Link to="/inventory">View Inventory</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild className="bg-transparent border-white text-white hover:bg-white hover:text-primary">
-              <Link to="/contact">Contact Us</Link>
-            </Button>
+        </section>
+  
+        {/* Customer Reviews Section */}
+        <CustomerReviews />
+  
+        {/* CTA Section */}
+        <section className="py-12 bg-primary text-primary-foreground">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-heading font-bold mb-3">Ready to Find Your Perfect Car?</h2>
+            <p className="text-lg mb-6 opacity-90">Visit us today or browse our inventory online</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" variant="secondary" asChild>
+                <Link to="/inventory">View Inventory</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="bg-transparent border-white text-white hover:bg-white hover:text-primary">
+                <Link to="/contact">Contact Us</Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       <Footer />
     </div>
