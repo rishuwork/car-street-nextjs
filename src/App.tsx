@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import ScrollToTop from "@/components/ScrollToTop";
 import TrackingScripts from "@/components/tracking/TrackingScripts";
+import SpeedInsights from "@/components/tracking/SpeedInsights";
 import CookieConsent from "@/components/tracking/CookieConsent";
 import Index from "./pages/Index";
 import Inventory from "./pages/Inventory";
@@ -47,6 +48,7 @@ const App = () => (
       <AuthProvider>
         <ScrollToTop />
         <TrackingScripts />
+        <SpeedInsights />
         <CookieConsent />
         <Suspense fallback={<div className="h-screen w-full flex items-center justify-center">Loading...</div>}>
           <Routes>
