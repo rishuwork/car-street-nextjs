@@ -68,41 +68,44 @@ const Inventory = () => {
 
   const loadVehicles = async () => {
     setIsLoading(true);
-    // Only load available vehicles on public page
-    const { data, error } = await supabase
-      .from("vehicles")
-      .select("*")
-      .eq("status", "available")
-      .order("created_at", { ascending: false });
+
+    // Call the server-side RPC function
+    const { data, error } = await supabase.rpc('get_inventory');
 
     if (error) {
       console.error("Error loading vehicles:", error);
     } else if (data) {
-      setVehicles(data);
+      // The RPC returns exactly what we need, but we need to type cast it manually
+      // since Supabase Types generator doesn't automatically know RPC return structures yet
+      const vehiclesData: any[] = data as any[];
+
+      // Transform RPC data to match our state
+      // (The RPC returns an array of vehicle objects which ALREADY contain an 'images' array)
+
+      const mappedVehicles = vehiclesData.map(v => {
+        // Strip the images array to match the 'Vehicle' table type for the vehicles state
+        const { images, ...vehicleFields } = v;
+        return vehicleFields as Vehicle;
+      });
+
+      setVehicles(mappedVehicles);
+
+      // Extract images map directly from the response
+      const imagesMap: Record<string, VehicleImage[]> = {};
+      vehiclesData.forEach(v => {
+        if (v.images) {
+          imagesMap[v.id] = v.images as VehicleImage[];
+        }
+      });
+      setVehicleImages(imagesMap);
+
       // Extract unique makes, models, and years
-      const uniqueMakes = [...new Set(data.map(v => v.make))].sort();
-      const uniqueModels = [...new Set(data.map(v => v.model))].sort();
-      const uniqueYears = [...new Set(data.map(v => v.year))].sort((a, b) => b - a);
+      const uniqueMakes = [...new Set(mappedVehicles.map(v => v.make))].sort();
+      const uniqueModels = [...new Set(mappedVehicles.map(v => v.model))].sort();
+      const uniqueYears = [...new Set(mappedVehicles.map(v => v.year))].sort((a, b) => b - a);
       setMakes(uniqueMakes);
       setModels(uniqueModels);
       setYears(uniqueYears);
-
-      // Load images for all vehicles
-      const imagePromises = data.map(async (vehicle) => {
-        const { data: images } = await supabase
-          .from("vehicle_images")
-          .select("*")
-          .eq("vehicle_id", vehicle.id)
-          .order("is_primary", { ascending: false });
-        return { vehicleId: vehicle.id, images: images || [] };
-      });
-
-      const imageResults = await Promise.all(imagePromises);
-      const imagesMap: Record<string, VehicleImage[]> = {};
-      imageResults.forEach(({ vehicleId, images }) => {
-        imagesMap[vehicleId] = images;
-      });
-      setVehicleImages(imagesMap);
     }
     setIsLoading(false);
   };
