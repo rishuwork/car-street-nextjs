@@ -130,7 +130,7 @@ const VehicleDetail = () => {
       )}
       <Header />
 
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-2">
         <div className="container mx-auto px-4">
           {/* Back Button */}
           <Button variant="ghost" asChild className="mb-2">
@@ -165,7 +165,7 @@ const VehicleDetail = () => {
                       <CarouselContent>
                         {images.map((image, index) => (
                           <CarouselItem key={image.id}>
-                            <div className="relative aspect-[4/3]">
+                            <div className="relative aspect-video">
                               <picture>
                                 <OptimizedImage
                                   src={image.image_url}
@@ -256,7 +256,7 @@ const VehicleDetail = () => {
                     <CardTitle>Description</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <p className="text-muted-foreground leading-relaxed">{vehicle.description}</p>
+                    <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{vehicle.description}</p>
                   </CardContent>
                 </Card>
               )}

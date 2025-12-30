@@ -88,14 +88,14 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEO 
+      <SEO
         title="Contact Us"
         description="Get in touch with Car Street. Visit our dealership in Langton, Ontario or call us to find your perfect pre-owned vehicle. Open 7 days a week."
         url="https://carstreet.ca/contact"
       />
       <Header />
 
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-4">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-6">
@@ -113,33 +113,33 @@ const Contact = () => {
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
-                      <Input 
-                        id="name" 
+                      <Input
+                        id="name"
                         name="name"
-                        placeholder="Your name" 
-                        required 
+                        placeholder="Your name"
+                        required
                         onFocus={handleFormFocus}
                         maxLength={100}
                       />
                     </div>
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
-                      <Input 
-                        id="email" 
+                      <Input
+                        id="email"
                         name="email"
-                        type="email" 
-                        placeholder="your@email.com" 
-                        required 
+                        type="email"
+                        placeholder="your@email.com"
+                        required
                         onFocus={handleFormFocus}
                         maxLength={255}
                       />
                     </div>
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium mb-2">Phone</label>
-                      <Input 
-                        id="phone" 
+                      <Input
+                        id="phone"
                         name="phone"
-                        type="tel" 
+                        type="tel"
                         placeholder="(519) 582-5555"
                         onFocus={handleFormFocus}
                         maxLength={20}
@@ -147,19 +147,19 @@ const Contact = () => {
                     </div>
                     <div>
                       <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
-                      <Textarea 
-                        id="message" 
+                      <Textarea
+                        id="message"
                         name="message"
-                        placeholder="How can we help you?" 
+                        placeholder="How can we help you?"
                         rows={5}
-                        required 
+                        required
                         onFocus={handleFormFocus}
                         maxLength={1000}
                       />
                     </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
+                    <Button
+                      type="submit"
+                      className="w-full"
                       size="lg"
                       disabled={isSubmitting}
                     >
