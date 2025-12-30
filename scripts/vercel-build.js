@@ -31,10 +31,38 @@ if (fs.existsSync(distClientDir)) {
 
 if (fs.existsSync(sourcePath)) {
     console.log(`Found index.html at: ${sourcePath}`);
+    // Read content
+    let htmlContent = fs.readFileSync(sourcePath, 'utf-8');
+
+    // 1. INLINE CSS (Fix for Render Blocking)
+    // Find the main asset CSS file
+    const cssLinkRegex = /<link[^>]*rel="stylesheet"[^>]*href="\/assets\/index-([^"]+)\.css"[^>]*>/;
+    const match = htmlContent.match(cssLinkRegex);
+
+    if (match) {
+        const cssHash = match[1];
+        const cssFileName = `index-${cssHash}.css`;
+        // Locate the CSS file in dist/client/assets
+        // Note: distClientDir is .../dist/client
+        const cssPath = path.join(distClientDir, 'assets', cssFileName);
+
+        if (fs.existsSync(cssPath)) {
+            console.log(`Injecting Critical CSS: ${cssFileName}`);
+            const cssContent = fs.readFileSync(cssPath, 'utf-8');
+            htmlContent = htmlContent.replace(match[0], `<style>${cssContent}</style>`);
+        } else {
+            console.warn(`⚠️ CSS file not found at ${cssPath}, skipping inline.`);
+        }
+    }
+
+    // 2. REMOVE DEV FOUC HACK
+    // In dev, we added <link href="/src/index.css">. This is useless/broken in prod.
+    htmlContent = htmlContent.replace(/<link[^>]*href="\/src\/index\.css"[^>]*>/, '');
+
+    // Write to destination
+    fs.writeFileSync(destPath, htmlContent);
+
     // COPY instead of rename/move so Vercel CDN still gets the (now useless) index.html
-    // but we have a safe copy for the server
-    fs.copyFileSync(sourcePath, destPath);
-    // Retrieve: Rename the original to avoid static conflict?
     // YES. We must kill the original index.html so Vercel doesn't serve it.
     // fs.renameSync is risky if Vercel looks for it.
     // Instead, we overwrite it with "Moved".
