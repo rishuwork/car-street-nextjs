@@ -143,6 +143,18 @@ export default function SellYourCar() {
             return;
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            toast({ title: "Invalid Email", description: "Please enter a valid email address.", variant: "destructive" });
+            return;
+        }
+
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(formData.phone.replace(/\D/g, ""))) {
+            toast({ title: "Invalid Phone", description: "Phone number must be exactly 10 digits.", variant: "destructive" });
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             const { error } = await supabase.from("contact_submissions").insert({

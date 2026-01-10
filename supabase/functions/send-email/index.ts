@@ -89,8 +89,19 @@ const handler = async (req: Request): Promise<Response> => {
           <h3>Vehicle Details</h3>
           <p><strong>Vehicle:</strong> ${data.year} ${data.make} ${data.model}</p>
           <p><strong>VIN:</strong> ${data.vin}</p>
+          <p><strong>Location:</strong> ${data.city}, ${data.province}</p>
           <p><strong>Odometer:</strong> ${data.odometer} km</p>
-          <p><strong>Condition:</strong> Color: ${data.exteriorColor}, Trans: ${data.transmission}</p>
+          <p><strong>Transmission:</strong> ${data.transmission}</p>
+          <p><strong>Colors:</strong> Exterior: ${data.exteriorColor}, Interior: ${data.interiorColor}</p>
+          <hr />
+          <h3>Condition & History</h3>
+          <p><strong>Keys:</strong> ${data.keys}</p>
+          <p><strong>Exterior Damage:</strong> ${data.exteriorDamage === "true" ? "Yes" : "No"}</p>
+          <p><strong>Interior Damage:</strong> ${data.interiorDamage === "true" ? "Yes" : "No"}</p>
+          <p><strong>Accident Claims:</strong> ${data.accidentClaims === "true" ? "Yes" : "No"}</p>
+          <p><strong>Smoked In:</strong> ${data.smokedIn === "true" ? "Yes" : "No"}</p>
+          <p><strong>Windshield Crack:</strong> ${data.windshieldCrack === "true" ? "Yes" : "No"}</p>
+          <hr />
           <p><a href="https://carstreet.ca/admin/sell-requests">View Full Details in Admin Portal</a></p>
         `;
                 break;
