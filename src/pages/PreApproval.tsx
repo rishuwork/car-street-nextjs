@@ -761,7 +761,7 @@ const PreApproval = () => {
                           type="tel"
                           placeholder="(555) 555-1234"
                           value={formData.employerPhone}
-                          onChange={(e) => updateFormData("employerPhone", e.target.value)}
+                          onChange={(e) => updateFormData("employerPhone", e.target.value.replace(/\D/g, "").slice(0, 10))}
                           className="mt-2"
                         />
                       </div>
