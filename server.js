@@ -35,7 +35,8 @@ export async function createServer() {
                 '/pre-approval',
                 '/sell-your-car',
                 '/about',
-                '/contact'
+                '/contact',
+                '/privacy-policy'
             ];
 
             const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

@@ -15,6 +15,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import SellYourCar from "./pages/SellYourCar";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
 import InventoryManagement from "./pages/admin/InventoryManagement";
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/sell-your-car" element={<SellYourCar />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/auth" element={<Auth />} />
 
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminLayout /></ProtectedRoute>}>
