@@ -57,8 +57,8 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
-        title="Quality Used Cars in Langton, Ontario"
-        description="We are certified used car dealers in Langton. Browse our pre-owned vehicles today & drive home your favourite! Contact us."
+        title="Car Street | Used Car Dealership in Langton, Ontario | Financing Available"
+        description="Serving Langton since 2008. Car Street offers certified used vehicles, transparent pricing, and instant financing for all credit types."
         url="https://carstreet.ca/"
       />
       <Header />
@@ -67,15 +67,15 @@ const Index = () => {
         {/* Hero Section */}
         <section className="relative h-[600px] flex items-center justify-center text-white overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <img 
-              src={heroImage} 
-              alt="Luxury car background" 
+            <img
+              src={heroImage}
+              alt="Luxury car background"
               className="w-full h-full object-cover"
               fetchPriority="high"
             />
             <div className="absolute inset-0 bg-black/60" />
           </div>
-          
+
           <div className="container mx-auto px-4 text-center z-10">
             <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 animate-fade-in">
               Find Your Dream Car Today
@@ -93,14 +93,14 @@ const Index = () => {
             </div>
           </div>
         </section>
-  
+
         {/* Budget Calculator Section */}
         <section className="py-12 bg-muted">
           <div className="container mx-auto px-4">
             <BudgetCalculator />
           </div>
         </section>
-  
+
         {/* Featured Vehicles Section */}
         <section className="py-12">
           <div className="container mx-auto px-4">
@@ -108,11 +108,11 @@ const Index = () => {
               <h2 className="text-3xl font-heading font-bold mb-2">Featured Vehicles</h2>
               <p className="text-lg text-muted-foreground">Check out our hand-picked selection of quality vehicles</p>
             </div>
-  
+
             <div className="mb-6 px-8 md:px-12">
               <FeaturedVehiclesCarousel vehicles={featuredVehicles} />
             </div>
-  
+
             <div className="text-center">
               <Button size="lg" variant="outline" asChild>
                 <Link to="/inventory">View All Inventory</Link>
@@ -120,12 +120,12 @@ const Index = () => {
             </div>
           </div>
         </section>
-  
+
         {/* Why Choose Us Section */}
         <section className="py-12 bg-secondary text-secondary-foreground">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-heading font-bold mb-6 text-center">Why Choose Car Street?</h2>
-  
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {whyChooseUs.map((item, index) => {
                 const Icon = item.icon;
@@ -144,10 +144,10 @@ const Index = () => {
             </div>
           </div>
         </section>
-  
+
         {/* Customer Reviews Section */}
         <CustomerReviews />
-  
+
         {/* CTA Section */}
         <section className="py-12 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">

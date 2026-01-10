@@ -196,7 +196,7 @@ export default function SellYourCar() {
     return (
         <div className="min-h-screen bg-background flex flex-col">
             <Header />
-            <SEO title="Sell Your Car | Car Street" description="Get an instant offer for your vehicle." url="https://carstreet.ca/sell-your-car" />
+            <SEO title="Sell Your Car for Cash or Trade-In Value | Car Street" description="Want to sell your car in Ontario? Get a top-dollar cash offer or trade-in value at Car Street. Fast, fair appraisals with no obligation." url="https://carstreet.ca/sell-your-car" />
 
             <main className="flex-1 py-12 px-4">
                 <div className="max-w-xl mx-auto">

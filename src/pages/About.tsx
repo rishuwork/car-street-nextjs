@@ -45,8 +45,8 @@ const About = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SEO 
-        title="About Us"
+      <SEO
+        title="About Us | Car Street"
         description="Learn about Car Street - your trusted partner in finding quality pre-owned vehicles. Over 15 years serving the community with transparent pricing and exceptional service."
         url="https://carstreet.ca/about"
       />
@@ -54,7 +54,7 @@ const About = () => {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section 
+        <section
           className="relative h-72 flex items-center justify-center text-white bg-cover bg-center"
           style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${aboutImage})` }}
         >
