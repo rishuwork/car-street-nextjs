@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tables } from "@/integrations/supabase/types";
 import { formatDistanceToNow } from "date-fns";
-import { CheckCircle2, Car, Maximize2 } from "lucide-react";
+import { CheckCircle2, Car } from "lucide-react";
 
 type ContactSubmission = Tables<"contact_submissions">;
 
@@ -22,6 +23,7 @@ export default function SellRequestsManagement() {
     const [isUpdating, setIsUpdating] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [editingVehicleData, setEditingVehicleData] = useState<any>(null);
 
     useEffect(() => {
         loadLeads();
@@ -37,7 +39,6 @@ export default function SellRequestsManagement() {
         if (error) {
             toast.error("Failed to load requests");
         } else {
-            // Filter ONLY "Sell You Car" requests locally (or could improve DB query)
             const sellRequests = (data || []).filter(lead =>
                 lead.message.startsWith("Sell Your Car Request:")
             );
@@ -52,7 +53,7 @@ export default function SellRequestsManagement() {
             const parsed = JSON.parse(notes);
             return parsed._adminNotes || "";
         } catch {
-            return notes;
+            return notes || "";
         }
     };
 
@@ -70,6 +71,7 @@ export default function SellRequestsManagement() {
         setSelectedLead(lead);
         setStatus(lead.status);
         setNotes(getAdminNotes(lead.notes));
+        setEditingVehicleData(getVehicleData(lead.notes) || {});
         setIsDialogOpen(true);
     };
 
@@ -78,11 +80,11 @@ export default function SellRequestsManagement() {
         setIsUpdating(true);
 
         let notesToSave: string | null = notes.trim() || null;
-        const vehicleData = getVehicleData(selectedLead.notes);
 
-        if (vehicleData) {
+        // Merge edited vehicle data with admin notes
+        if (editingVehicleData) {
             notesToSave = JSON.stringify({
-                ...vehicleData,
+                ...editingVehicleData,
                 _adminNotes: notes.trim()
             });
         }
@@ -90,6 +92,9 @@ export default function SellRequestsManagement() {
         const { error } = await supabase
             .from("contact_submissions")
             .update({
+                name: selectedLead.name,
+                email: selectedLead.email,
+                phone: selectedLead.phone,
                 status,
                 notes: notesToSave,
                 updated_at: new Date().toISOString(),
@@ -154,15 +159,14 @@ export default function SellRequestsManagement() {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
-                                    {/* Vehicle Specs Grid */}
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted/30 p-4 rounded-lg text-sm">
+                                        <div><span className="font-semibold block">VIN</span> {data?.vin || "N/A"}</div>
                                         <div><span className="font-semibold block">Odometer</span> {data?.odometer} KM</div>
                                         <div><span className="font-semibold block">Color</span> {data?.exteriorColor} / {data?.interiorColor}</div>
                                         <div><span className="font-semibold block">Transmission</span> {data?.transmission}</div>
                                         <div><span className="font-semibold block">Location</span> {data?.city}, {data?.province}</div>
                                     </div>
 
-                                    {/* Condition Details */}
                                     <div className="text-sm space-y-2">
                                         <p className="font-semibold">Condition Report:</p>
                                         <ul className="list-disc list-inside grid grid-cols-2 gap-x-4 text-muted-foreground">
@@ -175,27 +179,24 @@ export default function SellRequestsManagement() {
                                         </ul>
                                     </div>
 
-                                    {/* Images */}
                                     {data?.images && data.images.length > 0 && (
                                         <div>
                                             <p className="font-semibold text-sm mb-2">Photos ({data.images.length}):</p>
                                             <div className="flex gap-2 overflow-x-auto pb-2">
                                                 {data.images.map((url: string, idx: number) => (
                                                     <div key={idx} className="relative flex-none w-24 h-24 rounded-md overflow-hidden cursor-pointer border hover:border-primary" onClick={() => setSelectedImage(url)}>
-                                                        <img src={url} className="w-full h-full object-cover" />
+                                                        <img src={url} alt="Vehicle" className="w-full h-full object-cover" />
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
                                     )}
 
-                                    {/* Contact Info */}
                                     <div className="flex gap-4 text-sm border-t pt-4">
                                         <div><span className="font-semibold">Email:</span> {lead.email}</div>
                                         <div><span className="font-semibold">Phone:</span> {lead.phone}</div>
                                     </div>
 
-                                    {/* Actions */}
                                     <div className="flex gap-2 justify-end pt-2">
                                         <Dialog open={isDialogOpen && selectedLead?.id === lead.id} onOpenChange={(open) => {
                                             setIsDialogOpen(open);
@@ -207,11 +208,52 @@ export default function SellRequestsManagement() {
                                                     Update Status
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader><DialogTitle>Update Status</DialogTitle></DialogHeader>
-                                                <div className="space-y-4 py-4">
-                                                    <div className="space-y-2">
-                                                        <label>Status</label>
+                                            <DialogContent className="max-h-[80vh] overflow-y-auto">
+                                                <DialogHeader><DialogTitle>Update Sell Request</DialogTitle></DialogHeader>
+                                                <div className="space-y-4 py-4 px-1">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b pb-4">
+                                                        <div className="space-y-2">
+                                                            <label className="text-sm font-medium">Name</label>
+                                                            <Input value={selectedLead?.name || ""} onChange={(e) => setSelectedLead(prev => prev ? ({ ...prev, name: e.target.value }) : null)} />
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <label className="text-sm font-medium">Email</label>
+                                                            <Input value={selectedLead?.email || ""} onChange={(e) => setSelectedLead(prev => prev ? ({ ...prev, email: e.target.value }) : null)} />
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <label className="text-sm font-medium">Phone</label>
+                                                            <Input value={selectedLead?.phone || ""} onChange={(e) => setSelectedLead(prev => prev ? ({ ...prev, phone: e.target.value }) : null)} />
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <h3 className="font-semibold mb-2">Vehicle Details</h3>
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <div className="space-y-2">
+                                                                <label className="text-sm font-medium">VIN</label>
+                                                                <Input value={editingVehicleData?.vin || ""} onChange={(e) => setEditingVehicleData((prev: any) => ({ ...prev, vin: e.target.value }))} />
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <label className="text-sm font-medium">Odometer</label>
+                                                                <Input value={editingVehicleData?.odometer || ""} onChange={(e) => setEditingVehicleData((prev: any) => ({ ...prev, odometer: e.target.value }))} />
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <label className="text-sm font-medium">Year</label>
+                                                                <Input value={editingVehicleData?.year || ""} onChange={(e) => setEditingVehicleData((prev: any) => ({ ...prev, year: e.target.value }))} />
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <label className="text-sm font-medium">Make</label>
+                                                                <Input value={editingVehicleData?.make || ""} onChange={(e) => setEditingVehicleData((prev: any) => ({ ...prev, make: e.target.value }))} />
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <label className="text-sm font-medium">Model</label>
+                                                                <Input value={editingVehicleData?.model || ""} onChange={(e) => setEditingVehicleData((prev: any) => ({ ...prev, model: e.target.value }))} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="space-y-2 pt-2 border-t">
+                                                        <label className="text-sm font-medium">Status</label>
                                                         <Select value={status} onValueChange={setStatus}>
                                                             <SelectTrigger><SelectValue /></SelectTrigger>
                                                             <SelectContent>
@@ -223,7 +265,7 @@ export default function SellRequestsManagement() {
                                                         </Select>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label>Admin Notes</label>
+                                                        <label className="text-sm font-medium">Admin Notes</label>
                                                         <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Internal notes..." rows={4} />
                                                     </div>
                                                     <Button onClick={handleUpdateLead} disabled={isUpdating} className="w-full">
@@ -240,10 +282,9 @@ export default function SellRequestsManagement() {
                 </div>
             )}
 
-            {/* Image Preview Modal */}
             <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
                 <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black/95 border-none">
-                    {selectedImage && <img src={selectedImage} className="w-full h-auto max-h-[90vh] object-contain" />}
+                    {selectedImage && <img src={selectedImage} alt="Vehicle Preview" className="w-full h-auto max-h-[90vh] object-contain" />}
                 </DialogContent>
             </Dialog>
         </div>

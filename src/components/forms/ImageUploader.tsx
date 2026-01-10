@@ -100,9 +100,6 @@ export function ImageUploader({ onImagesChange, existingImages }: ImageUploaderP
                 multiple
                 className="hidden"
             />
-            <p className="text-xs text-muted-foreground">
-                * Note: Uploads might fail if not logged in depending on Supabase policies.
-            </p>
         </div>
     );
 }

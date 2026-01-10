@@ -60,6 +60,26 @@ const Contact = () => {
 
       if (error) throw error;
 
+      if (error) throw error;
+
+      // Send email notification
+      try {
+        await supabase.functions.invoke("send-email", {
+          body: {
+            type: "contact",
+            data: {
+              firstName: validatedData.name.split(" ")[0], // Simple split for template
+              lastName: validatedData.name.split(" ").slice(1).join(" ") || "",
+              email: validatedData.email,
+              phone: validatedData.phone || "Not provided",
+              message: validatedData.message
+            },
+          },
+        });
+      } catch (emailError) {
+        console.error("Failed to send email notification", emailError);
+      }
+
       // Track successful submission
       trackFormSubmit("contact");
 

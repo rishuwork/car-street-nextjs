@@ -100,9 +100,17 @@ export default function SellYourCar() {
                     toast({ title: "Incomplete", description: "Please fill in all vehicle details.", variant: "destructive" });
                     return false;
                 }
-                // VIN is verified if entered, valid length check optional but good UX
-                if (formData.vin && formData.vin.length < 17) {
-                    toast({ title: "Invalid VIN", description: "VIN is usually 17 characters.", variant: "warning" });
+                if (formData.vin) {
+                    // Basic check: 17 chars, no I, O, Q
+                    const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
+                    if (!vinRegex.test(formData.vin)) {
+                        toast({
+                            title: "Invalid VIN",
+                            description: "VIN must be 17 characters and cannot contain I, O, or Q.",
+                            variant: "destructive"
+                        });
+                        return false;
+                    }
                 }
                 return true;
             case 2:
@@ -149,6 +157,18 @@ export default function SellYourCar() {
             });
 
             if (error) throw error;
+
+            // Send email notification
+            try {
+                await supabase.functions.invoke("send-email", {
+                    body: {
+                        type: "sell-request",
+                        data: formData,
+                    },
+                });
+            } catch (emailError) {
+                console.error("Failed to send email notification", emailError);
+            }
 
             toast({ title: "Success!", description: "Your offer request has been sent." });
             // Redirect or show success state

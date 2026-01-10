@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -55,6 +56,7 @@ export default function LeadsManagement() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
+  const [editingPreApprovalData, setEditingPreApprovalData] = useState<PreApprovalData | null>(null);
 
   useEffect(() => {
     loadLeads();
@@ -94,6 +96,7 @@ export default function LeadsManagement() {
     setSelectedLead(lead);
     setStatus(lead.status);
     setNotes(getAdminNotes(lead.notes));
+    setEditingPreApprovalData(parsePreApprovalData(lead.notes));
     setIsDialogOpen(true);
   };
 
@@ -116,11 +119,12 @@ export default function LeadsManagement() {
     const existingPreApprovalData = parsePreApprovalData(selectedLead.notes);
 
     // If there was pre-approval data, we need to keep it and add admin notes in a structured way
-    if (existingPreApprovalData) {
-      if (notes.trim()) {
+    // If there was pre-approval data (or we are editing it), merge it
+    if (existingPreApprovalData || editingPreApprovalData) {
+      if (notes.trim() || editingPreApprovalData) {
         // Store both pre-approval data and admin notes as JSON
         notesToSave = JSON.stringify({
-          ...existingPreApprovalData,
+          ...(editingPreApprovalData || existingPreApprovalData),
           _adminNotes: notes.trim()
         });
       } else {
@@ -132,6 +136,9 @@ export default function LeadsManagement() {
     const { error } = await supabase
       .from("contact_submissions")
       .update({
+        name: selectedLead.name,
+        email: selectedLead.email,
+        phone: selectedLead.phone,
         status,
         notes: notesToSave,
         updated_at: new Date().toISOString(),
@@ -396,9 +403,164 @@ export default function LeadsManagement() {
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Update Lead Status</DialogTitle>
+                          <DialogTitle>Update Lead Details</DialogTitle>
                         </DialogHeader>
-                        <div className="space-y-4 py-4">
+                        <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Name</label>
+                            <Input value={selectedLead?.name || ""} onChange={(e) => setSelectedLead(prev => prev ? ({ ...prev, name: e.target.value }) : null)} />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Email</label>
+                            <Input value={selectedLead?.email || ""} onChange={(e) => setSelectedLead(prev => prev ? ({ ...prev, email: e.target.value }) : null)} />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Phone</label>
+                            <Input value={selectedLead?.phone || ""} onChange={(e) => setSelectedLead(prev => prev ? ({ ...prev, phone: e.target.value }) : null)} />
+                          </div>
+
+
+                          {editingPreApprovalData && (
+                            <div className="space-y-4 border-t pt-4 mt-4">
+                              <h3 className="font-semibold">Application Details</h3>
+
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium">Vehicle Type</label>
+                                  <Input value={editingPreApprovalData.vehicleType || ""} onChange={(e) => setEditingPreApprovalData({ ...editingPreApprovalData, vehicleType: e.target.value })} />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium">Budget</label>
+                                  <Input value={editingPreApprovalData.budget || ""} onChange={(e) => setEditingPreApprovalData({ ...editingPreApprovalData, budget: e.target.value })} />
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium">Employment Status</label>
+                                <Select
+                                  value={editingPreApprovalData.employmentStatus}
+                                  onValueChange={(val) => setEditingPreApprovalData({ ...editingPreApprovalData, employmentStatus: val })}
+                                >
+                                  <SelectTrigger><SelectValue placeholder="Select Status" /></SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Employed">Employed</SelectItem>
+                                    <SelectItem value="Self-Employed">Self-Employed</SelectItem>
+                                    <SelectItem value="Unemployed">Unemployed</SelectItem>
+                                    <SelectItem value="Retired">Retired</SelectItem>
+                                    <SelectItem value="Student">Student</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium">Employer</label>
+                                  <Input
+                                    value={editingPreApprovalData.employerDetails?.name || ""}
+                                    onChange={(e) => setEditingPreApprovalData({
+                                      ...editingPreApprovalData,
+                                      employerDetails: { ...editingPreApprovalData.employerDetails, name: e.target.value }
+                                    })}
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium">Job Title</label>
+                                  <Input
+                                    value={editingPreApprovalData.employerDetails?.jobTitle || ""}
+                                    onChange={(e) => setEditingPreApprovalData({
+                                      ...editingPreApprovalData,
+                                      employerDetails: { ...editingPreApprovalData.employerDetails, jobTitle: e.target.value }
+                                    })}
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium">Annual Income</label>
+                                <Input
+                                  value={editingPreApprovalData.incomeDetails?.annualIncome || ""}
+                                  onChange={(e) => setEditingPreApprovalData({
+                                    ...editingPreApprovalData,
+                                    incomeDetails: { ...editingPreApprovalData.incomeDetails, annualIncome: e.target.value }
+                                  })}
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium">Trade-In</label>
+                                  <Select
+                                    value={editingPreApprovalData.tradeIn}
+                                    onValueChange={(val) => setEditingPreApprovalData({ ...editingPreApprovalData, tradeIn: val })}
+                                  >
+                                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="Yes">Yes</SelectItem>
+                                      <SelectItem value="No">No</SelectItem>
+                                      <SelectItem value="Unsure">Unsure</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium">Credit Rating</label>
+                                  <Select
+                                    value={editingPreApprovalData.creditRating}
+                                    onValueChange={(val) => setEditingPreApprovalData({ ...editingPreApprovalData, creditRating: val })}
+                                  >
+                                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="excellent">Excellent (760+)</SelectItem>
+                                      <SelectItem value="very_good">Very Good (720-759)</SelectItem>
+                                      <SelectItem value="good">Good (660-719)</SelectItem>
+                                      <SelectItem value="fair">Fair (600-659)</SelectItem>
+                                      <SelectItem value="poor">Poor (&lt;600)</SelectItem>
+                                      <SelectItem value="unsure">Unsure</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium">Full Address</label>
+                                <Input
+                                  value={editingPreApprovalData.address || ""}
+                                  onChange={(e) => setEditingPreApprovalData({ ...editingPreApprovalData, address: e.target.value })}
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium">Housing Status</label>
+                                  <Select
+                                    value={editingPreApprovalData.housing?.rentOrOwn}
+                                    onValueChange={(val: "rent" | "own") => setEditingPreApprovalData({
+                                      ...editingPreApprovalData,
+                                      housing: { ...editingPreApprovalData.housing, rentOrOwn: val }
+                                    })}
+                                  >
+                                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="rent">Rent</SelectItem>
+                                      <SelectItem value="own">Own</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium">Monthly Housing Payment</label>
+                                  <Input
+                                    value={editingPreApprovalData.housing?.monthlyPayment || ""}
+                                    onChange={(e) => setEditingPreApprovalData({
+                                      ...editingPreApprovalData,
+                                      housing: { ...editingPreApprovalData.housing, monthlyPayment: e.target.value }
+                                    })}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="border-t my-2"></div>
+
                           <div className="space-y-2">
                             <label className="text-sm font-medium">Status</label>
                             <Select value={status} onValueChange={setStatus}>
@@ -423,7 +585,7 @@ export default function LeadsManagement() {
                             />
                           </div>
                           <Button onClick={handleUpdateLead} disabled={isUpdating} className="w-full">
-                            {isUpdating ? "Updating..." : "Save Changes"}
+                            {isUpdating ? "Saving..." : "Save Changes"}
                           </Button>
                         </div>
                       </DialogContent>

@@ -378,6 +378,10 @@ const PreApproval = () => {
 
     try {
       const detailedInfo = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
         vehicleType: formData.vehicleType,
         budget: formData.budget,
         tradeIn: formData.tradeIn,
@@ -414,6 +418,19 @@ const PreApproval = () => {
       });
 
       if (error) throw error;
+
+      // Send email notification
+      try {
+        await supabase.functions.invoke("send-email", {
+          body: {
+            type: "pre-approval",
+            data: detailedInfo,
+          },
+        });
+      } catch (emailError) {
+        console.error("Failed to send email notifcation", emailError);
+        // Don't block success flow if email fails
+      }
 
       // Clear localStorage after successful submission
       localStorage.removeItem(STORAGE_KEY);
@@ -942,17 +959,19 @@ const PreApproval = () => {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="sin">Social Insurance Number (Optional)</Label>
+                        <Label htmlFor="sin">Social Insurance Number (SIN)</Label>
                         <Input
                           id="sin"
-                          type="text"
+                          type="password"
                           inputMode="numeric"
-                          maxLength={9}
-                          placeholder="•••-••-••••"
+                          placeholder="XXX-XXX-XXX"
                           value={formData.sin}
-                          onChange={(e) => updateFormData("sin", e.target.value.replace(/\D/g, ""))}
+                          onChange={(e) => updateFormData("sin", e.target.value)}
                           className="mt-2"
                         />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Providing your SIN helps us verify your identity and credit history more accurately.
+                        </p>
                       </div>
                       <div className="p-3 bg-muted rounded-lg text-xs">
                         <p className="font-medium mb-1">Important Disclosure:</p>
