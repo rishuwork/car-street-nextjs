@@ -13,7 +13,7 @@ interface SEOProps {
 const defaultMeta = {
   title: 'Car Street - Quality Used Cars in Langton, Ontario',
   description: 'We are certified used car dealers in Langton. Browse our pre-owned vehicles today & drive home your favourite! Contact us.',
-  keywords: 'used cars Langton, pre-owned vehicles, car dealership Ontario, quality used cars, certified used cars, car financing',
+  keywords: 'used cars Langton, pre-owned vehicles, car dealership Ontario, quality used cars, certified used cars, car financing, used cars Brampton, used cars Mississauga, auto financing Toronto, GTA car dealership',
   image: 'https://carstreet.ca/og-image.jpg',
   url: 'https://carstreet.ca',
 };
