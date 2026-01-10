@@ -43,12 +43,26 @@ const About = () => {
     },
   });
 
+  const faqSchema = faqs.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer,
+      },
+    })),
+  } : undefined;
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
         title="About Us | Car Street"
         description="Learn about Car Street - your trusted partner in finding quality pre-owned vehicles. Over 15 years serving the community with transparent pricing and exceptional service."
         url="https://carstreet.ca/about"
+        jsonLd={faqSchema}
       />
       <Header />
 
