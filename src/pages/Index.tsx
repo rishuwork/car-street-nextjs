@@ -58,7 +58,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <SEO
         title="Car Street | Used Car Dealership in Langton, Ontario | Financing Available"
-        description="Serving Langton, Brampton, Mississauga, and the GTA since 2008. Car Street offers certified used vehicles, transparent pricing, and instant financing for all credit types."
+        description="Serving Langton, Brampton, Mississauga, and the GTA. Car Street offers certified used vehicles, transparent pricing, and instant financing for all credit types."
         url="https://carstreet.ca/"
       />
       <Header />
