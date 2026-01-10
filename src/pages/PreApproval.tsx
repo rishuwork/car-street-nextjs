@@ -253,6 +253,11 @@ const PreApproval = () => {
           return false;
         }
         break;
+        if (formData.employerPhone && !isValidPhone(formData.employerPhone)) {
+          toast({ title: "Invalid Phone", description: "Employer phone must be exactly 10 digits", variant: "destructive" });
+          return false;
+        }
+        break;
       case 9:
         if (!formData.address) {
           toast({ title: "Input Required", description: "Please enter your address", variant: "destructive" });
@@ -299,6 +304,10 @@ const PreApproval = () => {
         }
         if (!isValidPhone(formData.phone)) {
           toast({ title: "Invalid Phone", description: "Please enter a valid phone number", variant: "destructive" });
+          return false;
+        }
+        if (formData.sin && formData.sin.length !== 9) {
+          toast({ title: "Invalid SIN", description: "SIN must be exactly 9 digits", variant: "destructive" });
           return false;
         }
         break;
@@ -962,11 +971,12 @@ const PreApproval = () => {
                         <Label htmlFor="sin">Social Insurance Number (SIN)</Label>
                         <Input
                           id="sin"
-                          type="password"
+                          type="text"
                           inputMode="numeric"
                           placeholder="XXX-XXX-XXX"
+                          maxLength={9}
                           value={formData.sin}
-                          onChange={(e) => updateFormData("sin", e.target.value)}
+                          onChange={(e) => updateFormData("sin", e.target.value.replace(/\D/g, "").slice(0, 9))}
                           className="mt-2"
                         />
                         <p className="text-xs text-muted-foreground mt-1">
