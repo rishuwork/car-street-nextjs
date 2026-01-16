@@ -31,10 +31,10 @@ const vehicleTypes = [
 ];
 
 const budgetOptions = [
-  "Under $400 / Month",
-  "$400 - $499 / Month",
-  "$500 - $600 / Month",
-  "Over $600 / Month",
+  "Under $200 / Bi-Weekly",
+  "$200 - $249 / Bi-Weekly",
+  "$250 - $300 / Bi-Weekly",
+  "Over $300 / Bi-Weekly",
 ];
 
 const tradeInOptions = ["Yes", "No", "Unsure"];
@@ -535,7 +535,7 @@ const PreApproval = () => {
                 {currentStep === 2 && (
                   <div>
                     <h2 className="text-2xl font-bold mb-2">What is your budget?</h2>
-                    <p className="text-muted-foreground mb-6">Select your preferred monthly payment range</p>
+                    <p className="text-muted-foreground mb-6">Select your preferred bi-weekly payment range</p>
                     <div className="grid grid-cols-2 gap-3">
                       {budgetOptions.map((option) => (
                         <motion.button

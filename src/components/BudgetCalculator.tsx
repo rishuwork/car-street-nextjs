@@ -12,11 +12,11 @@ const BudgetCalculator = () => {
   const [vehiclePrice, setVehiclePrice] = useState(25000);
   const [downPayment, setDownPayment] = useState(0);
   const [loanTerm, setLoanTerm] = useState("72");
-  const [interestRate, setInterestRate] = useState("7.99");
+  const [interestRate, setInterestRate] = useState("6.49");
   const [includeTradeIn, setIncludeTradeIn] = useState(false);
   const [tradeInValue, setTradeInValue] = useState(0);
   const [includeSalesTax, setIncludeSalesTax] = useState(false);
-  const [monthlyPayment, setMonthlyPayment] = useState(0);
+  const [biweeklyPayment, setBiweeklyPayment] = useState(0);
 
   const SALES_TAX_RATE = 0.13; // 13% HST
 
@@ -32,12 +32,14 @@ const BudgetCalculator = () => {
     const loanAmount = taxablePrice - down - tradeIn;
     const monthlyRate = rate / 12;
 
-    let payment = 0;
+    let monthlyPayment = 0;
     if (loanAmount > 0 && rate > 0) {
-      payment = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, term)) / (Math.pow(1 + monthlyRate, term) - 1);
+      monthlyPayment = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, term)) / (Math.pow(1 + monthlyRate, term) - 1);
     }
 
-    setMonthlyPayment(payment);
+    // Convert monthly to bi-weekly (multiply by 12 months, divide by 26 bi-weekly periods)
+    const biweekly = (monthlyPayment * 12) / 26;
+    setBiweeklyPayment(biweekly);
   }, [vehiclePrice, downPayment, loanTerm, interestRate, includeTradeIn, tradeInValue, includeSalesTax]);
 
   useEffect(() => {
@@ -52,7 +54,7 @@ const BudgetCalculator = () => {
         search_query: 'budget_calculator',
         selected_filters: {
           max_price: vehiclePrice,
-          calculated_payment: monthlyPayment.toFixed(2)
+          calculated_payment: biweeklyPayment.toFixed(2)
         }
       });
     }
@@ -122,10 +124,10 @@ const BudgetCalculator = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="14.99">Poor (14.99%)</SelectItem>
-                  <SelectItem value="9.99">Fair (9.99%)</SelectItem>
-                  <SelectItem value="7.99">Good (7.99%)</SelectItem>
                   <SelectItem value="6.49">Excellent (6.49%)</SelectItem>
+                  <SelectItem value="7.99">Good (7.99%)</SelectItem>
+                  <SelectItem value="9.99">Fair (9.99%)</SelectItem>
+                  <SelectItem value="14.99">Poor (14.99%)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -177,10 +179,10 @@ const BudgetCalculator = () => {
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             <div className="bg-primary/10 px-8 py-4 rounded-lg text-center min-w-[200px]">
               <div className="text-sm text-foreground/80 mb-1">
-                Estimated Monthly Payment
+                Estimated Bi-Weekly Payment
               </div>
               <div className="text-3xl font-heading font-bold text-primary">
-                ${monthlyPayment.toFixed(2)}
+                ${biweeklyPayment.toFixed(2)}
               </div>
               <div className="text-xs text-foreground/80 mt-1">
                 at {interestRate}% APR{includeSalesTax && " (incl. 13% HST)"}

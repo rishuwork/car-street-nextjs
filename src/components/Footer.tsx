@@ -90,8 +90,8 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-heading font-semibold text-lg">Members Of</h4>
             <div className="flex flex-col gap-4 items-start">
-              <img src={ucdaLogo} alt="UCDA Member" className="h-12 w-[126px] object-contain bg-white rounded p-1" />
-              <img src={omvicLogo} alt="OMVIC Registered" className="h-12 w-[126px] object-contain bg-white rounded p-1" />
+              <img src={ucdaLogo} alt="UCDA Member" className="w-[126px] object-contain bg-white rounded" />
+              <img src={omvicLogo} alt="OMVIC Registered" className="h-12 w-[126px] object-contain rounded" />
             </div>
           </div>
         </div>
