@@ -139,7 +139,7 @@ const Contact = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
-        title="Contact Us | Location, Hours & Phone Number | Car Street"
+        title="Contact Us | Location, Hours & Phone Number"
         description="Get in touch with Car Street. Visit our dealership in Langton, Ontario or call us to find your perfect pre-owned vehicle. Open 7 days a week."
         url="https://carstreet.ca/contact"
       />

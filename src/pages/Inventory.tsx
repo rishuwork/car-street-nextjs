@@ -141,7 +141,7 @@ const Inventory = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
-        title="Inventory |Browse Used Cars, Trucks & SUVs | Car Street"
+        title="Inventory | Browse Used Cars, Trucks & SUVs"
         description="Browse our selection of quality pre-owned vehicles at Car Street. Find the perfect used car with competitive pricing and flexible financing options."
         url="https://carstreet.ca/inventory"
         keywords="used cars for sale, pre-owned vehicles, car inventory, used car dealership Langton Ontario"

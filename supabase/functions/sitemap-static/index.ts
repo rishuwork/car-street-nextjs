@@ -18,8 +18,9 @@ serve(async (req) => {
     { loc: '/', priority: '1.0', changefreq: 'daily' },
     { loc: '/inventory', priority: '0.9', changefreq: 'daily' },
     { loc: '/pre-approval', priority: '0.8', changefreq: 'monthly' },
-    { loc: '/about', priority: '0.7', changefreq: 'monthly' },
+    { loc: '/sell-your-car', priority: '0.8', changefreq: 'monthly' },
     { loc: '/contact', priority: '0.7', changefreq: 'monthly' },
+    { loc: '/privacy-policy', priority: '0.5', changefreq: 'monthly' },
   ];
 
   const urlEntries = staticPages.map(page => `

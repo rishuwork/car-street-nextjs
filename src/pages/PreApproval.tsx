@@ -477,7 +477,7 @@ const PreApproval = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <SEO
-        title="Get Pre-Approved now | Good, Bad or no Credit Financing | Car Street"
+        title="Get Pre-Approved now | Good, Bad or no Credit Financing"
         description="Apply for car financing online. Bad credit? No credit? We can help you get approved for your dream car."
         url="https://carstreet.ca/pre-approval"
       />
