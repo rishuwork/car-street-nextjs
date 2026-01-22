@@ -6,11 +6,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackFormStart, trackFormSubmit } from "@/utils/tracking";
 import { z } from "zod";
+
+
+interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  display_order: number;
+  is_active: boolean;
+}
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
@@ -22,6 +38,20 @@ const contactSchema = z.object({
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formStarted, setFormStarted] = useState(false);
+
+  const { data: faqs = [] } = useQuery({
+    queryKey: ["faqs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("faqs")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data as FAQ[];
+    },
+  });
 
   const handleFormFocus = () => {
     if (!formStarted) {
@@ -267,6 +297,36 @@ const Contact = () => {
             </div>
           </div>
         </div>
+
+        {/* FAQ Section */}
+        {faqs.length > 0 && (
+          <section className="py-12 mt-8">
+            <div className="container mx-auto px-4">
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div className="lg:col-span-2">
+                  <h2 className="text-3xl font-heading font-bold mb-3">Frequently Asked Questions</h2>
+                  <p className="text-muted-foreground">
+                    Have questions about buying your car? We've got you covered.
+                  </p>
+                </div>
+                <div className="lg:col-span-3">
+                  <Accordion type="single" collapsible className="w-full">
+                    {faqs.map((faq) => (
+                      <AccordionItem key={faq.id} value={faq.id}>
+                        <AccordionTrigger className="text-left font-medium">
+                          {faq.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground">
+                          {faq.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />

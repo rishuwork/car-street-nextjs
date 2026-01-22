@@ -16,7 +16,6 @@ const Header = () => {
     { name: "Inventory", path: "/inventory" },
     { name: "Get Pre-Approved", path: "/pre-approval" },
     { name: "Sell Your Car", path: "/sell-your-car" },
-    { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
 

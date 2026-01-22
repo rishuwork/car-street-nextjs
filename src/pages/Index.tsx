@@ -9,6 +9,7 @@ import CustomerReviews from "@/components/CustomerReviews";
 import { SEO } from "@/components/SEO";
 import { CreditCard, Eye, Scale, FileText } from "lucide-react";
 import heroImage from "@/assets/hero-bg.jpg";
+import whyChooseBg from "@/assets/why-choose-bg.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Tables } from "@/integrations/supabase/types";
@@ -51,6 +52,11 @@ const Index = () => {
       icon: Scale,
       title: "Buy Smart, Sell Right",
       description: "We ensure you get top value—no overpaying, no underselling!"
+    },
+    {
+      icon: FileText,
+      title: "Quality Guaranteed",
+      description: "Every vehicle is thoroughly inspected and comes with a comprehensive warranty for your peace of mind."
     }
   ];
 
@@ -122,23 +128,50 @@ const Index = () => {
         </section>
 
         {/* Why Choose Us Section */}
-        <section className="py-12 bg-secondary text-secondary-foreground">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-heading font-bold mb-6 text-center">Why Choose Car Street?</h2>
+        <section className="relative py-16 overflow-hidden">
+          {/* Background with overlay */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src={whyChooseBg}
+              alt=""
+              className="w-full h-full object-cover"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-black/75 via-black/70 to-black/75" />
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl mx-auto mb-10 text-center">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-white">
+                Why Choose Car Street?
+              </h2>
+              <p className="text-white/90 text-lg">
+                Experience the difference of a dealership that puts you first. At Car Street, we combine exceptional service with unbeatable value to make your car buying journey seamless and stress-free.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 max-w-4xl mx-auto">
               {whyChooseUs.map((item, index) => {
-                const Icon = item.icon;
                 return (
-                  <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background">
-                    <CardContent className="pt-6 text-center">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
-                        <Icon className="h-8 w-8 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-heading font-bold mb-2">{item.title}</h3>
-                      <p className="text-muted-foreground">{item.description}</p>
-                    </CardContent>
-                  </Card>
+                  <div key={index} className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-14 h-14 rounded-full border-2 border-white/30 flex items-center justify-center bg-white/5">
+                      <svg
+                        className="w-7 h-7 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-heading font-bold mb-2 text-white uppercase tracking-wide">
+                        {item.title}
+                      </h3>
+                      <p className="text-white/80 text-base leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
                 );
               })}
             </div>

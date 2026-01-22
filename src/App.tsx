@@ -13,7 +13,7 @@ import CookieConsent from "@/components/tracking/CookieConsent";
 import Index from "./pages/Index";
 import Inventory from "./pages/Inventory";
 import VehicleDetail from "./pages/VehicleDetail";
-import About from "./pages/About";
+
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import SellYourCar from "./pages/SellYourCar";
@@ -60,7 +60,7 @@ const App = () => (
             <Route path="/vehicle/:id" element={<VehicleDetail />} />
             <Route path="/pre-approval" element={<PreApproval />} />
             <Route path="/sell-your-car" element={<SellYourCar />} />
-            <Route path="/about" element={<About />} />
+
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/auth" element={<Auth />} />

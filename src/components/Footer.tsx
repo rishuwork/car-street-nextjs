@@ -45,9 +45,6 @@ const Footer = () => {
               <Link to="/pre-approval" className="text-sm hover:text-primary transition-colors">
                 Get Pre-Approved
               </Link>
-              <Link to="/about" className="text-sm hover:text-primary transition-colors">
-                About Us
-              </Link>
               <Link to="/contact" className="text-sm hover:text-primary transition-colors">
                 Contact
               </Link>
