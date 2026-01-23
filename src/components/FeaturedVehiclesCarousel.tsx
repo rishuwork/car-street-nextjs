@@ -47,9 +47,9 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
         }}
         className="w-full relative group"
       >
-        <CarouselContent className="">
+        <CarouselContent className="gap-4 ml-0">
           {vehicles.map((vehicle) => (
-            <CarouselItem key={vehicle.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+            <CarouselItem key={vehicle.id} className="pl-0 md:basis-1/2 lg:basis-1/3">
               <Card className="overflow-hidden md:hover:shadow-2xl transition-shadow duration-300 group/card h-full flex flex-col card-hover-lift">
                 <div className="relative overflow-hidden aspect-[4/3]">
                   <OptimizedImage
