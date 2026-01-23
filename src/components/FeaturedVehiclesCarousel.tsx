@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,16 +25,6 @@ interface FeaturedVehiclesCarouselProps {
 }
 
 export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesCarouselProps) {
-  const [api, setApi] = useState<CarouselApi>();
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  useEffect(() => {
-    if (!api) return;
-
-    api.on("select", () => {
-      setSelectedIndex(api.selectedScrollSnap());
-    });
-  }, [api]);
 
   if (vehicles.length === 0) {
     return (
@@ -55,13 +45,12 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
           align: "start",
           loop: true,
         }}
-        setApi={setApi}
         className="w-full relative group"
       >
         <CarouselContent className="-ml-4">
           {vehicles.map((vehicle) => (
             <CarouselItem key={vehicle.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
-              <Card className="overflow-hidden md:hover:shadow-2xl transition-all duration-300 group/card h-full flex flex-col card-hover-lift">
+              <Card className="overflow-hidden md:hover:shadow-2xl transition-shadow duration-300 group/card h-full flex flex-col card-hover-lift">
                 <div className="relative overflow-hidden aspect-[4/3]">
                   <OptimizedImage
                     src={vehicle.primaryImage || "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&auto=format&fit=crop"}
@@ -105,21 +94,7 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
       </Carousel>
 
       {/* Dot indicators */}
-      {totalSlides > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
-          {vehicles.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => api?.scrollTo(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${index === selectedIndex
-                  ? "bg-primary w-6"
-                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      )}
+
     </div>
   );
 }

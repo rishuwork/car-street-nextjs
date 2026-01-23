@@ -25,7 +25,6 @@ import {
 
 const VehicleDetail = () => {
   const { id } = useParams();
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   const { data: vehicle, isLoading } = useQuery({
@@ -62,15 +61,7 @@ const VehicleDetail = () => {
   // Auto slideshow
   // Manual slideshow removed in favor of Autoplay plugin
 
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
 
-    api.on("select", () => {
-      setSelectedImageIndex(api.selectedScrollSnap());
-    });
-  }, [api]);
 
   // Track vehicle view when data is loaded
   useEffect(() => {
@@ -80,25 +71,7 @@ const VehicleDetail = () => {
   }, [vehicle]);
 
   // Preload adjacent images for smoother carousel transitions
-  useEffect(() => {
-    if (!images || images.length <= 1) return;
 
-    const preloadImage = (src: string) => {
-      const img = new Image();
-      img.src = src;
-    };
-
-    // Preload next and previous images
-    const nextIndex = (selectedImageIndex + 1) % images.length;
-    const prevIndex = (selectedImageIndex - 1 + images.length) % images.length;
-
-    if (images[nextIndex]?.image_url) {
-      preloadImage(getSupabaseOptimizedUrl(images[nextIndex].image_url, 1200, 900));
-    }
-    if (images[prevIndex]?.image_url) {
-      preloadImage(getSupabaseOptimizedUrl(images[prevIndex].image_url, 1200, 900));
-    }
-  }, [selectedImageIndex, images]);
 
   const handleCallClick = () => {
     trackClickToCall('+16398990000');
@@ -199,16 +172,7 @@ const VehicleDetail = () => {
                       <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0" />
                       <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0" />
 
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                        {images.map((_, index) => (
-                          <button
-                            key={index}
-                            onClick={() => api?.scrollTo(index)}
-                            className={`w-2 h-2 rounded-full transition-colors ${index === selectedImageIndex ? "bg-white" : "bg-white/50"
-                              }`}
-                          />
-                        ))}
-                      </div>
+
                     </Carousel>
 
                     {images.length > 1 && (
@@ -221,10 +185,7 @@ const VehicleDetail = () => {
                                 alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} thumbnail ${index + 1}`}
                                 width={200}
                                 height={112}
-                                className={`w-full h-full object-cover rounded cursor-pointer transition-all ${selectedImageIndex === index
-                                  ? 'ring-2 ring-primary opacity-100'
-                                  : 'opacity-60 hover:opacity-100'
-                                  }`}
+                                className={`w-full h-full object-cover rounded cursor-pointer transition-all opacity-80 hover:opacity-100`}
                                 onClick={() => api?.scrollTo(index)}
                               />
                             </picture>
