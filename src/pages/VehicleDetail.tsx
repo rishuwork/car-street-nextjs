@@ -80,6 +80,27 @@ const VehicleDetail = () => {
     }
   }, [vehicle]);
 
+  // Preload adjacent images for smoother carousel transitions
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+
+    const preloadImage = (src: string) => {
+      const img = new Image();
+      img.src = src;
+    };
+
+    // Preload next and previous images
+    const nextIndex = (selectedImageIndex + 1) % images.length;
+    const prevIndex = (selectedImageIndex - 1 + images.length) % images.length;
+
+    if (images[nextIndex]?.image_url) {
+      preloadImage(images[nextIndex].image_url);
+    }
+    if (images[prevIndex]?.image_url) {
+      preloadImage(images[prevIndex].image_url);
+    }
+  }, [selectedImageIndex, images]);
+
   const handleCallClick = () => {
     trackClickToCall('+16398990000');
   };
@@ -149,9 +170,11 @@ const VehicleDetail = () => {
                   <>
                     <Carousel
                       opts={{
-                        align: "start",
+                        align: "center",
                         loop: true,
-                        duration: 50, // Increase duration for smoother transition (default is roughly 20-25)
+                        duration: 30, // Lower = faster/smoother transition
+                        dragFree: false,
+                        skipSnaps: false,
                       }}
                       plugins={[
                         Autoplay({
@@ -165,7 +188,7 @@ const VehicleDetail = () => {
                       <CarouselContent>
                         {images.map((image, index) => (
                           <CarouselItem key={image.id}>
-                            <div className="relative aspect-video">
+                            <div className="relative aspect-[4/3]">
                               <picture>
                                 <OptimizedImage
                                   src={image.image_url}

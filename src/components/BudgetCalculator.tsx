@@ -68,7 +68,7 @@ const BudgetCalculator = () => {
       <div className="text-center mb-8">
         <h2 className="text-4xl font-heading font-bold mb-4">Know Your Buying Power</h2>
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-          Calculate your estimated monthly payment and find vehicles within your budget.
+          Calculate your estimated Bi-Weekly payment and find vehicles within your budget.
           Get pre-qualified in minutes with no impact to your credit score.
         </p>
       </div>
