@@ -163,6 +163,7 @@ const VehicleDetail = () => {
                                   height={900}
                                   className="w-full h-full object-cover rounded-lg"
                                   loading={index === 0 ? "eager" : "lazy"}
+                                  skipAnimation
                                 />
                               </picture>
                             </div>

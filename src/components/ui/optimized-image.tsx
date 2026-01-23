@@ -39,8 +39,9 @@ export function OptimizedImage({
     height,
     quality = 90,
     className,
+    skipAnimation = false,
     ...props
-}: OptimizedImageProps) {
+}: OptimizedImageProps & { skipAnimation?: boolean }) {
     const [error, setError] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -54,8 +55,8 @@ export function OptimizedImage({
             height={height}
             loading={props.loading || "lazy"}
             className={cn(
-                "transition-opacity duration-500 ease-out",
-                isLoaded ? "opacity-100" : "opacity-0",
+                !skipAnimation && "transition-opacity duration-500 ease-out",
+                !skipAnimation ? (isLoaded ? "opacity-100" : "opacity-0") : "",
                 className
             )}
             onLoad={() => setIsLoaded(true)}

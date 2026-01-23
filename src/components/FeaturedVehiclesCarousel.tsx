@@ -58,6 +58,7 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
                     width={600}
                     height={450}
                     className="w-full h-full object-cover md:group-hover/card:scale-110 transition-transform duration-300"
+                    skipAnimation
                   />
                 </div>
                 <CardContent className="p-6 flex-1 flex flex-col">
