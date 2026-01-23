@@ -90,7 +90,7 @@ export default function CustomerReviews() {
       <div className="container mx-auto px-4">
         <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}>
           {visibleReviews.map((review) => (
-            <Card key={review.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background card-hover-lift">
+            <Card key={review.id} className="border-0 shadow-lg md:hover:shadow-xl transition-shadow bg-background card-hover-lift">
               <CardContent className="pt-6 text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
                   <Quote className="h-8 w-8 text-primary" />
@@ -125,8 +125,8 @@ export default function CustomerReviews() {
                 }, 300);
               }}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${startIndex === index
-                  ? "bg-primary w-6"
-                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                ? "bg-primary w-6"
+                : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
                 }`}
               aria-label={`Show reviews ${index + 1}-${index + 3}`}
             />

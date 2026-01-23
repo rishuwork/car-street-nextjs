@@ -284,14 +284,14 @@ const Inventory = () => {
                   const imageUrl = primaryImage?.image_url || "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&auto=format&fit=crop";
 
                   return (
-                    <Card key={vehicle.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group card-hover-lift">
+                    <Card key={vehicle.id} className="overflow-hidden md:hover:shadow-2xl transition-all duration-300 group card-hover-lift">
                       <div className="relative overflow-hidden aspect-[4/3]">
                         <OptimizedImage
                           src={imageUrl}
                           alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                           width={400}
                           height={400}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          className="w-full h-full object-cover md:group-hover:scale-110 transition-transform duration-300"
                         />
                       </div>
                       <CardContent className="p-4">

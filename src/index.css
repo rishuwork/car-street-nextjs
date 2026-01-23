@@ -112,9 +112,11 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .card-hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px -12px hsl(var(--primary) / 0.3);
+  @media (hover: hover) {
+    .card-hover-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px -12px hsl(var(--primary) / 0.3);
+    }
   }
 
   /* Count up animation for numbers */
