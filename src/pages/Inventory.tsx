@@ -12,6 +12,7 @@ import { Search, ChevronDown, ChevronUp, SlidersHorizontal, Gauge, Palette, Sett
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { Skeleton } from "@/components/ui/skeleton";
 import carfaxLogo from "@/assets/carfax-logo.png";
 
 type Vehicle = Tables<"vehicles">;
@@ -246,8 +247,25 @@ const Inventory = () => {
           </Collapsible>
 
           {isLoading ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">Loading vehicles...</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <Skeleton className="aspect-[4/3] w-full" />
+                  <div className="p-4 space-y-3">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <div className="flex gap-3 my-3">
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                    <div className="border-t pt-3 mt-3 flex justify-between items-center">
+                      <Skeleton className="h-6 w-20" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                  </div>
+                </Card>
+              ))}
             </div>
           ) : (
             <>
@@ -266,7 +284,7 @@ const Inventory = () => {
                   const imageUrl = primaryImage?.image_url || "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&auto=format&fit=crop";
 
                   return (
-                    <Card key={vehicle.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group">
+                    <Card key={vehicle.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 group card-hover-lift">
                       <div className="relative overflow-hidden aspect-[4/3]">
                         <OptimizedImage
                           src={imageUrl}

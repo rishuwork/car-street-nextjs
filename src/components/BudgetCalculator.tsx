@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,8 @@ import { Switch } from "@/components/ui/switch";
 
 const BudgetCalculator = () => {
   const navigate = useNavigate();
-  const [vehiclePrice, setVehiclePrice] = useState(25000);
-  const [downPayment, setDownPayment] = useState(0);
+  const [vehiclePrice, setVehiclePrice] = useState("25000");
+  const [downPayment, setDownPayment] = useState("0");
   const [loanTerm, setLoanTerm] = useState("72");
   const [interestRate, setInterestRate] = useState("6.49");
   const [includeTradeIn, setIncludeTradeIn] = useState(false);
@@ -21,8 +21,8 @@ const BudgetCalculator = () => {
   const SALES_TAX_RATE = 0.13; // 13% HST
 
   const calculatePayment = useCallback(() => {
-    const price = parseFloat(vehiclePrice.toString()) || 0;
-    const down = parseFloat(downPayment.toString()) || 0;
+    const price = parseFloat(vehiclePrice) || 0;
+    const down = parseFloat(downPayment) || 0;
     const term = parseInt(loanTerm);
     const rate = parseFloat(interestRate) / 100;
     const tradeIn = includeTradeIn ? (parseFloat(tradeInValue.toString()) || 0) : 0;
@@ -46,6 +46,17 @@ const BudgetCalculator = () => {
     calculatePayment();
   }, [calculatePayment]);
 
+  // Animation key for payment pulse effect
+  const [animationKey, setAnimationKey] = useState(0);
+  const prevPayment = useRef(biweeklyPayment);
+
+  useEffect(() => {
+    if (prevPayment.current !== biweeklyPayment) {
+      setAnimationKey((k) => k + 1);
+      prevPayment.current = biweeklyPayment;
+    }
+  }, [biweeklyPayment]);
+
   const handleShopByBudget = () => {
     // Track budget search event
     if (window.dataLayer) {
@@ -53,7 +64,7 @@ const BudgetCalculator = () => {
         event: 'search_inventory',
         search_query: 'budget_calculator',
         selected_filters: {
-          max_price: vehiclePrice,
+          max_price: parseFloat(vehiclePrice),
           calculated_payment: biweeklyPayment.toFixed(2)
         }
       });
@@ -82,7 +93,8 @@ const BudgetCalculator = () => {
                 id="vehiclePrice"
                 type="number"
                 value={vehiclePrice}
-                onChange={(e) => setVehiclePrice(Number(e.target.value))}
+                onChange={(e) => setVehiclePrice(e.target.value)}
+                onFocus={(e) => e.target.select()}
                 placeholder="$ 25,000"
               />
             </div>
@@ -93,7 +105,8 @@ const BudgetCalculator = () => {
                 id="downPayment"
                 type="number"
                 value={downPayment}
-                onChange={(e) => setDownPayment(Number(e.target.value))}
+                onChange={(e) => setDownPayment(e.target.value)}
+                onFocus={(e) => e.target.select()}
                 placeholder="$ 0"
               />
             </div>
@@ -181,7 +194,7 @@ const BudgetCalculator = () => {
               <div className="text-sm text-foreground/80 mb-1">
                 Estimated Bi-Weekly Payment
               </div>
-              <div className="text-3xl font-heading font-bold text-primary">
+              <div key={animationKey} className="text-3xl font-heading font-bold text-primary animate-count">
                 ${biweeklyPayment.toFixed(2)}
               </div>
               <div className="text-xs text-foreground/80 mt-1">

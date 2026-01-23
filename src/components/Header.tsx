@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Phone, Menu } from "lucide-react";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import {
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -18,6 +19,13 @@ const Header = () => {
     { name: "Sell Your Car", path: "/sell-your-car" },
     { name: "Contact", path: "/contact" },
   ];
+
+  const isActive = (path: string) => {
+    if (path === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -51,9 +59,15 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className="text-base font-medium text-foreground hover:text-primary transition-colors"
+                className={`text-base font-medium transition-colors relative ${isActive(item.path)
+                    ? "text-primary"
+                    : "text-foreground hover:text-primary"
+                  }`}
               >
                 {item.name}
+                {isActive(item.path) && (
+                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                )}
               </Link>
             ))}
           </nav>

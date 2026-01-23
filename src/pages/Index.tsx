@@ -86,10 +86,10 @@ const Index = () => {
             <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 animate-fade-in">
               Find Your Dream Car Today
             </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto animate-fade-in opacity-90">
+            <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto animate-fade-in animate-delay-100 opacity-90">
               Quality pre-owned vehicles with transparent pricing and exceptional service
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in animate-delay-200">
               <Button size="lg" variant="default" asChild className="text-lg px-8">
                 <Link to="/inventory">Browse Inventory</Link>
               </Button>
@@ -155,13 +155,7 @@ const Index = () => {
                 return (
                   <div key={index} className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-14 h-14 rounded-full border-2 border-white/30 flex items-center justify-center bg-white/5">
-                      <svg
-                        className="w-7 h-7 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
+                      <item.icon className="w-7 h-7 text-white" />
                     </div>
                     <div>
                       <h3 className="text-xl font-heading font-bold mb-2 text-white uppercase tracking-wide">

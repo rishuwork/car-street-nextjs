@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Star, Quote } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -55,6 +56,28 @@ const reviews: Review[] = [
 ];
 
 export default function CustomerReviews() {
+  const [startIndex, setStartIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Auto-rotate reviews every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setStartIndex((prev) => (prev + 3) % reviews.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Get visible reviews (wrap around if needed)
+  const visibleReviews = [
+    reviews[startIndex % reviews.length],
+    reviews[(startIndex + 1) % reviews.length],
+    reviews[(startIndex + 2) % reviews.length],
+  ];
 
   return (
     <section className="py-12 bg-muted overflow-hidden">
@@ -65,9 +88,9 @@ export default function CustomerReviews() {
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {reviews.slice(0, 3).map((review) => (
-            <Card key={review.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background">
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}>
+          {visibleReviews.map((review) => (
+            <Card key={review.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-background card-hover-lift">
               <CardContent className="pt-6 text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
                   <Quote className="h-8 w-8 text-primary" />
@@ -86,6 +109,27 @@ export default function CustomerReviews() {
                 </div>
               </CardContent>
             </Card>
+          ))}
+        </div>
+
+        {/* Dot indicators */}
+        <div className="flex justify-center gap-2 mt-6">
+          {[0, 3].map((index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setIsTransitioning(true);
+                setTimeout(() => {
+                  setStartIndex(index);
+                  setIsTransitioning(false);
+                }, 300);
+              }}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${startIndex === index
+                  ? "bg-primary w-6"
+                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                }`}
+              aria-label={`Show reviews ${index + 1}-${index + 3}`}
+            />
           ))}
         </div>
       </div>

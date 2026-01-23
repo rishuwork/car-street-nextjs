@@ -12,7 +12,7 @@ import { trackVehicleView, trackClickToCall } from "@/utils/tracking";
 import { generateVehicleStructuredData } from "@/utils/vehicleStructuredData";
 import VehicleFeatures from "@/components/VehicleFeatures";
 import PaymentCalculatorModal from "@/components/PaymentCalculatorModal";
-import { OptimizedImage } from "@/components/ui/optimized-image";
+import { OptimizedImage, getSupabaseOptimizedUrl } from "@/components/ui/optimized-image";
 import carfaxLogo from "@/assets/carfax-logo.png";
 import {
   Carousel,
@@ -93,10 +93,10 @@ const VehicleDetail = () => {
     const prevIndex = (selectedImageIndex - 1 + images.length) % images.length;
 
     if (images[nextIndex]?.image_url) {
-      preloadImage(images[nextIndex].image_url);
+      preloadImage(getSupabaseOptimizedUrl(images[nextIndex].image_url, 1200, 900));
     }
     if (images[prevIndex]?.image_url) {
-      preloadImage(images[prevIndex].image_url);
+      preloadImage(getSupabaseOptimizedUrl(images[prevIndex].image_url, 1200, 900));
     }
   }, [selectedImageIndex, images]);
 
@@ -189,6 +189,7 @@ const VehicleDetail = () => {
                                   width={1200}
                                   height={900}
                                   className="w-full h-full object-cover rounded-lg"
+                                  loading={index === 0 ? "eager" : "lazy"}
                                 />
                               </picture>
                             </div>
