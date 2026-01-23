@@ -13,7 +13,6 @@ import { generateVehicleStructuredData } from "@/utils/vehicleStructuredData";
 import VehicleFeatures from "@/components/VehicleFeatures";
 import PaymentCalculatorModal from "@/components/PaymentCalculatorModal";
 import { OptimizedImage } from "@/components/ui/optimized-image";
-import Autoplay from "embla-carousel-autoplay";
 import carfaxLogo from "@/assets/carfax-logo.png";
 import {
   Carousel,
@@ -172,22 +171,16 @@ const VehicleDetail = () => {
                       opts={{
                         align: "center",
                         loop: true,
-                        duration: 30, // Lower = faster/smoother transition
+                        duration: 30,
                         dragFree: false,
                         skipSnaps: false,
                       }}
-                      plugins={[
-                        Autoplay({
-                          delay: 4000,
-                          stopOnInteraction: true,
-                        }),
-                      ]}
                       setApi={setApi}
                       className="w-full relative group"
                     >
-                      <CarouselContent>
+                      <CarouselContent className="-ml-0">
                         {images.map((image, index) => (
-                          <CarouselItem key={image.id}>
+                          <CarouselItem key={image.id} className="pl-0">
                             <div className="relative aspect-[4/3]">
                               <picture>
                                 <OptimizedImage
