@@ -54,17 +54,27 @@ export function OptimizedImage({
             width={width}
             height={height}
             loading={props.loading || "lazy"}
+            decoding="async"
             className={cn(
+                "backface-hidden", // Force a hardware layer
                 !skipAnimation && "transition-opacity duration-500 ease-out",
                 !skipAnimation ? (isLoaded ? "opacity-100" : "opacity-0") : "",
                 className
             )}
-            onLoad={() => setIsLoaded(true)}
+            onLoad={() => {
+                if (!skipAnimation) setIsLoaded(true);
+            }}
             onError={(e) => {
                 setError(true);
-                setIsLoaded(true);
+                if (!skipAnimation) setIsLoaded(true);
                 // Fallback to original src if transformation fails
                 e.currentTarget.src = src;
+            }}
+            style={{
+                ...props.style,
+                transform: 'translateZ(0)', // Force GPU layer for Safari
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden'
             }}
             {...props}
         />

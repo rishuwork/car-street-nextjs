@@ -28,7 +28,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 md:backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto">
         {/* Top bar */}
         <div className="border-b border-border py-2 hidden md:block">
@@ -60,8 +60,8 @@ const Header = () => {
                 key={item.path}
                 to={item.path}
                 className={`text-base font-medium transition-colors relative ${isActive(item.path)
-                    ? "text-primary"
-                    : "text-foreground hover:text-primary"
+                  ? "text-primary"
+                  : "text-foreground hover:text-primary"
                   }`}
               >
                 {item.name}
