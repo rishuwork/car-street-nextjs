@@ -42,12 +42,12 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
     <div className="relative">
       <Carousel
         opts={{
-          align: "start",
+          align: "center",
           loop: true,
         }}
         className="w-full relative group"
       >
-        <CarouselContent className="-ml-4">
+        <CarouselContent className="">
           {vehicles.map((vehicle) => (
             <CarouselItem key={vehicle.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
               <Card className="overflow-hidden md:hover:shadow-2xl transition-shadow duration-300 group/card h-full flex flex-col card-hover-lift">
