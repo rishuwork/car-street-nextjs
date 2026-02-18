@@ -8,11 +8,10 @@ export const getSupabaseOptimizedUrl = (url: string, width?: number, height?: nu
     // Check if it's a Supabase Storage URL
     if (url.includes("supabase.co/storage/v1/object/public")) {
         const params = new URLSearchParams();
+        // Only use width to preserve the original aspect ratio (portrait photos)
         if (width) params.append("width", width.toString());
-        if (height) params.append("height", height.toString());
         params.append("quality", quality.toString());
         params.append("format", "webp");
-        params.append("resize", "cover");
 
         // Switch from /object/public to /render/image/public to enable on-the-fly transformations
         const renderUrl = url.replace("/object/public", "/render/image/public");

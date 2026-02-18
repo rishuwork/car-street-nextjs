@@ -51,7 +51,7 @@ export default function FeaturedVehiclesCarousel({ vehicles }: FeaturedVehiclesC
           {vehicles.map((vehicle) => (
             <CarouselItem key={vehicle.id} className="pl-0 md:basis-1/2 lg:basis-1/3">
               <Card className="overflow-hidden md:hover:shadow-2xl transition-shadow duration-300 group/card h-full flex flex-col card-hover-lift">
-                <div className="relative overflow-hidden aspect-[4/3]">
+                <div className="relative overflow-hidden aspect-[3/4]">
                   <OptimizedImage
                     src={vehicle.primaryImage || "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&auto=format&fit=crop"}
                     alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}

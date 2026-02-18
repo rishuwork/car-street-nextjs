@@ -595,7 +595,7 @@ export default function InventoryManagement() {
             return (
               <Card key={vehicle.id} className="overflow-hidden">
                 {primaryImage && (
-                  <div className="relative aspect-[4/3] overflow-hidden">
+                  <div className="relative aspect-[3/4] overflow-hidden">
                     <img
                       src={primaryImage.image_url}
                       alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
