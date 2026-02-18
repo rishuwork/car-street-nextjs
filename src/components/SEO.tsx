@@ -7,7 +7,7 @@ interface SEOProps {
   image?: string;
   url?: string;
   type?: string;
-  jsonLd?: object;
+  jsonLd?: object | object[];
 }
 
 const defaultMeta = {
@@ -34,6 +34,8 @@ export function SEO({
     image: image || defaultMeta.image,
     url: url || defaultMeta.url,
   };
+
+  const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
   return (
     <Helmet>
@@ -63,11 +65,11 @@ export function SEO({
       <meta name="twitter:image" content={seo.image} />
 
       {/* JSON-LD Structured Data */}
-      {jsonLd && (
-        <script type="application/ld+json">
-          {JSON.stringify(jsonLd)}
+      {jsonLdArray.map((schema, i) => (
+        <script key={i} type="application/ld+json">
+          {JSON.stringify(schema)}
         </script>
-      )}
+      ))}
     </Helmet>
   );
 }

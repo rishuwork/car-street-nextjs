@@ -39,6 +39,15 @@ export const generateVehicleStructuredData = (
       seller: {
         '@type': 'AutoDealer',
         name: 'Car Street',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '17 Queen St',
+          addressLocality: 'Langton',
+          addressRegion: 'ON',
+          postalCode: 'N0E 1G0',
+          addressCountry: 'CA',
+        },
+        telephone: '+16398990000',
       },
     },
     image: primaryImageUrl || `${window.location.origin}/placeholder.svg`,
@@ -64,3 +73,31 @@ const getAvailabilityUrl = (status: string) => {
   };
   return availabilityMap[status] || 'https://schema.org/InStock';
 };
+
+export const generateBreadcrumbSchema = (
+  vehicleName: string,
+  vehicleId: string
+) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://carstreet.ca',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Inventory',
+      item: 'https://carstreet.ca/inventory',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: vehicleName,
+      item: `https://carstreet.ca/vehicle/${vehicleId}`,
+    },
+  ],
+});

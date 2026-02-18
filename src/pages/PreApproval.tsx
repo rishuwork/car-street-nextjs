@@ -968,7 +968,7 @@ const PreApproval = () => {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="sin">Social Insurance Number (SIN)</Label>
+                        <Label htmlFor="sin">Social Insurance Number (SIN) <span className="text-muted-foreground font-normal">(optional)</span></Label>
                         <Input
                           id="sin"
                           type="text"

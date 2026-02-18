@@ -9,7 +9,7 @@ import { Phone, Mail, ArrowLeft, Check, ChevronLeft, ChevronRight, Calculator, F
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { trackVehicleView, trackClickToCall } from "@/utils/tracking";
-import { generateVehicleStructuredData } from "@/utils/vehicleStructuredData";
+import { generateVehicleStructuredData, generateBreadcrumbSchema } from "@/utils/vehicleStructuredData";
 import VehicleFeatures from "@/components/VehicleFeatures";
 import PaymentCalculatorModal from "@/components/PaymentCalculatorModal";
 import { OptimizedImage, getSupabaseOptimizedUrl } from "@/components/ui/optimized-image";
@@ -106,7 +106,10 @@ const VehicleDetail = () => {
   }
 
   const primaryImage = images?.[0]?.image_url;
-  const structuredData = vehicle ? generateVehicleStructuredData(vehicle, primaryImage) : undefined;
+  const structuredData = vehicle ? [
+    generateVehicleStructuredData(vehicle, primaryImage),
+    generateBreadcrumbSchema(`${vehicle.year} ${vehicle.make} ${vehicle.model}`, vehicle.id),
+  ] : undefined;
 
   return (
     <div className="min-h-screen flex flex-col">
