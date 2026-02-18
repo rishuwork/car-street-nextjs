@@ -154,14 +154,14 @@ const VehicleDetail = () => {
                       <CarouselContent className="-ml-0">
                         {images.map((image, index) => (
                           <CarouselItem key={image.id} className="pl-0">
-                            <div className="relative aspect-[3/4]">
+                            <div className="relative aspect-[4/3] bg-black">
                               <picture>
                                 <OptimizedImage
                                   src={image.image_url}
                                   alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} - Image ${index + 1}`}
                                   width={1200}
                                   height={900}
-                                  className="w-full h-full object-cover rounded-lg"
+                                  className="w-full h-full object-contain rounded-lg"
                                   loading={index === 0 ? "eager" : "lazy"}
                                   skipAnimation
                                 />
@@ -179,14 +179,14 @@ const VehicleDetail = () => {
                     {images.length > 1 && (
                       <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
                         {images.map((image, index) => (
-                          <div key={image.id} className="aspect-[3/4]">
+                          <div key={image.id} className="aspect-[4/3] bg-black rounded">
                             <picture>
                               <OptimizedImage
                                 src={image.image_url}
                                 alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} thumbnail ${index + 1}`}
                                 width={200}
                                 height={112}
-                                className={`w-full h-full object-cover rounded cursor-pointer transition-all opacity-80 hover:opacity-100`}
+                                className={`w-full h-full object-contain rounded cursor-pointer transition-all opacity-80 hover:opacity-100`}
                                 onClick={() => api?.scrollTo(index)}
                               />
                             </picture>
