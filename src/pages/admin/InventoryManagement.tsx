@@ -64,6 +64,7 @@ export default function InventoryManagement() {
             .from("vehicle_images")
             .select("*")
             .eq("vehicle_id", vehicle.id)
+            .order("display_order", { ascending: true })
             .order("is_primary", { ascending: false });
           return { vehicleId: vehicle.id, images: images || [] };
         });
@@ -83,6 +84,7 @@ export default function InventoryManagement() {
       .from("vehicle_images")
       .select("*")
       .eq("vehicle_id", vehicleId)
+      .order("display_order", { ascending: true })
       .order("is_primary", { ascending: false });
 
     setVehicleImages(prev => ({
