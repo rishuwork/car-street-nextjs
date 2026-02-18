@@ -285,13 +285,13 @@ const Inventory = () => {
 
                   return (
                     <Card key={vehicle.id} className="overflow-hidden md:hover:shadow-2xl transition-all duration-300 group card-hover-lift">
-                      <div className="relative overflow-hidden aspect-[4/3] bg-black">
+                      <div className="relative overflow-hidden aspect-[4/3]">
                         <OptimizedImage
                           src={imageUrl}
                           alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                           width={400}
                           height={400}
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-cover md:group-hover:scale-110 transition-transform duration-300"
                         />
                       </div>
                       <CardContent className="p-4">

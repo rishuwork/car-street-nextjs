@@ -595,11 +595,11 @@ export default function InventoryManagement() {
             return (
               <Card key={vehicle.id} className="overflow-hidden">
                 {primaryImage && (
-                  <div className="relative aspect-[4/3] overflow-hidden bg-black">
+                  <div className="relative aspect-[4/3] overflow-hidden">
                     <img
                       src={primaryImage.image_url}
                       alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-cover"
                     />
                     <div className="absolute top-2 right-2">
                       <Badge variant={vehicle.status === "available" ? "default" : vehicle.status === "sold" ? "secondary" : "outline"}>
