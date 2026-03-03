@@ -154,7 +154,7 @@ export const trackFormSubmit = (formType: string, vehicleId?: string) => {
 
     if (window.gtag) {
       window.gtag('event', 'conversion', {
-        send_to: 'AW-CONVERSION_ID/CONVERSION_LABEL',
+        send_to: 'AW-17988644036',
         value: 1.0,
         currency: 'CAD',
       });

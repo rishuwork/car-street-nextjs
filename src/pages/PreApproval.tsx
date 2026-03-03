@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { SEO } from "@/components/SEO";
+import { trackFormSubmit } from "@/utils/tracking";
 
 // Vehicle type icons
 import CoupeIcon from "@/assets/vehicle-icons/coupe.png";
@@ -440,6 +441,9 @@ const PreApproval = () => {
         console.error("Failed to send email notifcation", emailError);
         // Don't block success flow if email fails
       }
+
+      // Track successful form submission
+      trackFormSubmit('Pre-Approval', formData.vehicleType);
 
       // Clear localStorage after successful submission
       localStorage.removeItem(STORAGE_KEY);
