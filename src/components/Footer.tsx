@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook, Instagram } from "lucide-react";
 import ucdaLogo from "@/assets/ucda-logo.png";
 import omvicLogo from "@/assets/omvic-logo.png";
 import carStreetLogo from "@/assets/car-street-logo-white.png";
@@ -20,14 +20,11 @@ const Footer = () => {
               Your trusted partner for quality pre-owned vehicles. We offer the best deals with transparent pricing and excellent customer service.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-primary transition-colors" aria-label="Facebook">
+              <a href="https://www.facebook.com/profile.php?id=61585397176390" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors" aria-label="Facebook">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="hover:text-primary transition-colors" aria-label="Instagram">
+              <a href="https://www.instagram.com/carstreet.ca/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors" aria-label="Instagram">
                 <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" className="hover:text-primary transition-colors" aria-label="Twitter">
-                <Twitter className="h-5 w-5" />
               </a>
             </div>
           </div>
@@ -74,6 +71,10 @@ const Footer = () => {
               <a href="tel:+16398990000" className="flex items-start gap-2 text-sm hover:text-primary transition-colors">
                 <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
                 <span>(639) 899-0000</span>
+              </a>
+              <a href="tel:+17426880055" className="flex items-start gap-2 text-sm hover:text-primary transition-colors">
+                <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <span>(742) 688-0055</span>
               </a>
               <a href="mailto:info@carstreet.ca" className="flex items-start gap-2 text-sm hover:text-primary transition-colors">
                 <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
