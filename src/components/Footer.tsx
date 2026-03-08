@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
 import ucdaLogo from "@/assets/ucda-logo.png";
 import omvicLogo from "@/assets/omvic-logo.png";
+import carStreetLogo from "@/assets/car-street-logo-white.png";
 
 const Footer = () => {
   return (
@@ -10,9 +11,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-heading font-bold">
-              CAR <span className="text-accent">STREET</span>
-            </h3>
+            <img
+              src={carStreetLogo}
+              alt="Car Street - Drive Your Dreams"
+              className="w-40 object-contain"
+            />
             <p className="text-sm text-secondary-foreground">
               Your trusted partner for quality pre-owned vehicles. We offer the best deals with transparent pricing and excellent customer service.
             </p>
