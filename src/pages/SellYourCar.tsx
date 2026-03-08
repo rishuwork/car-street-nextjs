@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { SEO } from "@/components/SEO";
+import { trackFormSubmit, identifyUser } from "@/utils/tracking";
 import { Progress } from "@/components/ui/progress";
 import { ImageUploader } from "@/components/forms/ImageUploader";
 
@@ -169,6 +170,15 @@ export default function SellYourCar() {
             });
 
             if (error) throw error;
+
+            // Track conversion events (Meta Pixel Lead + Google Ads)
+            trackFormSubmit('sell-your-car');
+            identifyUser(formData.email, {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                phone: formData.phone,
+                vehicle: `${formData.year} ${formData.make} ${formData.model}`,
+            });
 
             // Send email notification
             try {
