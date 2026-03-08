@@ -293,6 +293,18 @@ const Inventory = () => {
                           height={400}
                           className="w-full h-full object-cover md:group-hover:scale-110 transition-transform duration-300"
                         />
+                        {vehicle.status === "sold" && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
+                            <div className="border-4 border-red-600 px-8 py-3">
+                              <h4 className="text-red-600 text-4xl font-extrabold uppercase tracking-wider">SOLD</h4>
+                            </div>
+                          </div>
+                        )}
+                        {images.length > 0 && (
+                          <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded flex items-center gap-1 z-20">
+                            📷 {images.length}
+                          </div>
+                        )}
                       </div>
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start">
