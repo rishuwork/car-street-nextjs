@@ -194,7 +194,7 @@ export default function LeadsManagement() {
 
     return (
       <div className="space-y-4 text-sm">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <span className="font-semibold">Vehicle Type:</span>
             <p className="text-muted-foreground">{data.vehicleType || "N/A"}</p>
@@ -205,7 +205,7 @@ export default function LeadsManagement() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <span className="font-semibold">Trade-In:</span>
             <p className="text-muted-foreground">{data.tradeIn || "N/A"}</p>
@@ -277,7 +277,7 @@ export default function LeadsManagement() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <span className="font-semibold">Date of Birth:</span>
             <p className="text-muted-foreground">{formatDob(data.dateOfBirth) || "N/A"}</p>
@@ -338,7 +338,7 @@ export default function LeadsManagement() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="font-medium">Email:</span> {lead.email}
                     </div>
@@ -379,7 +379,7 @@ export default function LeadsManagement() {
                           <div className="py-4">
                             <div className="mb-4 pb-4 border-b">
                               <h3 className="font-semibold mb-2">Contact Information</h3>
-                              <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                                 <p><span className="font-medium">Name:</span> {lead.name}</p>
                                 <p><span className="font-medium">Email:</span> {lead.email}</p>
                                 <p><span className="font-medium">Phone:</span> {lead.phone}</p>
@@ -424,7 +424,7 @@ export default function LeadsManagement() {
                             <div className="space-y-4 border-t pt-4 mt-4">
                               <h3 className="font-semibold">Application Details</h3>
 
-                              <div className="grid grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                   <label className="text-sm font-medium">Vehicle Type</label>
                                   <Input value={editingPreApprovalData.vehicleType || ""} onChange={(e) => setEditingPreApprovalData({ ...editingPreApprovalData, vehicleType: e.target.value })} />
@@ -452,7 +452,7 @@ export default function LeadsManagement() {
                                 </Select>
                               </div>
 
-                              <div className="grid grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                   <label className="text-sm font-medium">Employer</label>
                                   <Input
@@ -486,7 +486,7 @@ export default function LeadsManagement() {
                                 />
                               </div>
 
-                              <div className="grid grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                   <label className="text-sm font-medium">Trade-In</label>
                                   <Select
@@ -528,7 +528,7 @@ export default function LeadsManagement() {
                                 />
                               </div>
 
-                              <div className="grid grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                   <label className="text-sm font-medium">Housing Status</label>
                                   <Select

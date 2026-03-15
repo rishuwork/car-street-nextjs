@@ -151,7 +151,7 @@ export default function FAQManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h1 className="text-3xl font-bold">FAQ Management</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -221,64 +221,66 @@ export default function FAQManagement() {
           {isLoading ? (
             <p>Loading...</p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">#</TableHead>
-                  <TableHead>Question</TableHead>
-                  <TableHead className="w-24">Active</TableHead>
-                  <TableHead className="w-32">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {faqs?.map((faq) => (
-                  <TableRow key={faq.id}>
-                    <TableCell>
-                      <GripVertical className="h-4 w-4 text-muted-foreground" />
-                    </TableCell>
-                    <TableCell>
-                      <p className="font-medium">{faq.question}</p>
-                      <p className="text-sm text-muted-foreground line-clamp-1">
-                        {faq.answer}
-                      </p>
-                    </TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={faq.is_active}
-                        onCheckedChange={(checked) =>
-                          toggleActiveMutation.mutate({
-                            id: faq.id,
-                            is_active: checked,
-                          })
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(faq)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            if (confirm("Are you sure you want to delete this FAQ?")) {
-                              deleteMutation.mutate(faq.id);
-                            }
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12">#</TableHead>
+                    <TableHead>Question</TableHead>
+                    <TableHead className="w-24">Active</TableHead>
+                    <TableHead className="w-32">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {faqs?.map((faq) => (
+                    <TableRow key={faq.id}>
+                      <TableCell>
+                        <GripVertical className="h-4 w-4 text-muted-foreground" />
+                      </TableCell>
+                      <TableCell>
+                        <p className="font-medium">{faq.question}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-1">
+                          {faq.answer}
+                        </p>
+                      </TableCell>
+                      <TableCell>
+                        <Switch
+                          checked={faq.is_active}
+                          onCheckedChange={(checked) =>
+                            toggleActiveMutation.mutate({
+                              id: faq.id,
+                              is_active: checked,
+                            })
+                          }
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEdit(faq)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              if (confirm("Are you sure you want to delete this FAQ?")) {
+                                deleteMutation.mutate(faq.id);
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

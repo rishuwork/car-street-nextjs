@@ -252,7 +252,7 @@ export default function InventoryManagement() {
 
                 <TabsContent value="details">
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="make">Make *</Label>
                         <Input
@@ -416,7 +416,7 @@ export default function InventoryManagement() {
               </Tabs>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="make">Make *</Label>
                     <Input

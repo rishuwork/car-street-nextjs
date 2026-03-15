@@ -148,7 +148,7 @@ export default function SellRequestsManagement() {
                                             <div className="flex items-center gap-2">
                                                 <CardTitle className="text-xl flex items-center gap-2">
                                                     <Car className="h-5 w-5" />
-                                                    {data?.year} {data?.make} {data?.model}
+                                                    {data?.year} {data?.make} {data?.model} {data?.trim && `- ${data.trim}`}
                                                 </CardTitle>
                                             </div>
                                             <p className="text-sm text-muted-foreground">
@@ -159,7 +159,7 @@ export default function SellRequestsManagement() {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted/30 p-4 rounded-lg text-sm">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 bg-muted/30 p-4 rounded-lg text-sm">
                                         <div><span className="font-semibold block">VIN</span> {data?.vin || "N/A"}</div>
                                         <div><span className="font-semibold block">Odometer</span> {data?.odometer} KM</div>
                                         <div><span className="font-semibold block">Color</span> {data?.exteriorColor} / {data?.interiorColor}</div>
@@ -169,13 +169,14 @@ export default function SellRequestsManagement() {
 
                                     <div className="text-sm space-y-2">
                                         <p className="font-semibold">Condition Report:</p>
-                                        <ul className="list-disc list-inside grid grid-cols-2 gap-x-4 text-muted-foreground">
+                                        <ul className="list-disc list-inside grid grid-cols-1 sm:grid-cols-2 gap-x-4 text-muted-foreground">
                                             <li>Accidents: {data?.accidentClaims === "true" ? "Yes" : "No"}</li>
                                             <li>Smoke: {data?.smokedIn === "true" ? "Yes" : "No"}</li>
                                             <li>Ext Damage: {data?.exteriorDamage === "true" ? "Yes" : "No"}</li>
                                             <li>Int Damage: {data?.interiorDamage === "true" ? "Yes" : "No"}</li>
                                             <li>Windshield: {data?.windshieldCrack === "true" ? "Yes" : "No"}</li>
                                             <li>Keys: {data?.keys}</li>
+                                            {data?.reasonForSelling && <li className="col-span-1 sm:col-span-2 mt-2 font-medium text-foreground">Reason for selling: {data.reasonForSelling}</li>}
                                         </ul>
                                     </div>
 
@@ -228,7 +229,7 @@ export default function SellRequestsManagement() {
 
                                                     <div>
                                                         <h3 className="font-semibold mb-2">Vehicle Details</h3>
-                                                        <div className="grid grid-cols-2 gap-4">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                             <div className="space-y-2">
                                                                 <label className="text-sm font-medium">VIN</label>
                                                                 <Input value={editingVehicleData?.vin || ""} onChange={(e) => setEditingVehicleData((prev: any) => ({ ...prev, vin: e.target.value }))} />
@@ -248,6 +249,14 @@ export default function SellRequestsManagement() {
                                                             <div className="space-y-2">
                                                                 <label className="text-sm font-medium">Model</label>
                                                                 <Input value={editingVehicleData?.model || ""} onChange={(e) => setEditingVehicleData((prev: any) => ({ ...prev, model: e.target.value }))} />
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <label className="text-sm font-medium">Trim</label>
+                                                                <Input value={editingVehicleData?.trim || ""} onChange={(e) => setEditingVehicleData((prev: any) => ({ ...prev, trim: e.target.value }))} />
+                                                            </div>
+                                                            <div className="space-y-2 col-span-1 md:col-span-2">
+                                                                <label className="text-sm font-medium">Reason for Selling</label>
+                                                                <Input value={editingVehicleData?.reasonForSelling || ""} onChange={(e) => setEditingVehicleData((prev: any) => ({ ...prev, reasonForSelling: e.target.value }))} />
                                                             </div>
                                                         </div>
                                                     </div>

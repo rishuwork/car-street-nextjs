@@ -79,7 +79,7 @@ const handler = async (req: Request): Promise<Response> => {
                 break;
 
             case "sell-request":
-                subject = `New Sell Your Car Request: ${data.year} ${data.make} ${data.model}`;
+                subject = `New Sell Your Car Request: ${data.year} ${data.make} ${data.model} ${data.trim || ''}`;
                 html = `
           <h2>Sell Your Car Request</h2>
           <p><strong>Name:</strong> ${data.firstName} ${data.lastName}</p>
@@ -87,14 +87,15 @@ const handler = async (req: Request): Promise<Response> => {
           <p><strong>Phone:</strong> ${data.phone}</p>
           <hr />
           <h3>Vehicle Details</h3>
-          <p><strong>Vehicle:</strong> ${data.year} ${data.make} ${data.model}</p>
-          <p><strong>VIN:</strong> ${data.vin}</p>
+          <p><strong>Vehicle:</strong> ${data.year} ${data.make} ${data.model} ${data.trim || ''}</p>
+          <p><strong>VIN:</strong> ${data.vin || 'N/A'}</p>
           <p><strong>Location:</strong> ${data.city}, ${data.province}</p>
           <p><strong>Odometer:</strong> ${data.odometer} km</p>
           <p><strong>Transmission:</strong> ${data.transmission}</p>
-          <p><strong>Colors:</strong> Exterior: ${data.exteriorColor}, Interior: ${data.interiorColor}</p>
+          <p><strong>Colors:</strong> Exterior: ${data.exteriorColor === "Other" ? data.customExteriorColor : data.exteriorColor}, Interior: ${data.interiorColor === "Other" ? data.customInteriorColor : data.interiorColor}</p>
           <hr />
           <h3>Condition & History</h3>
+          <p><strong>Reason for Selling:</strong> ${data.reasonForSelling || "N/A"}</p>
           <p><strong>Keys:</strong> ${data.keys}</p>
           <p><strong>Exterior Damage:</strong> ${data.exteriorDamage === "true" ? "Yes" : "No"}</p>
           <p><strong>Interior Damage:</strong> ${data.interiorDamage === "true" ? "Yes" : "No"}</p>

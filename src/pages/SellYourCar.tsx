@@ -12,12 +12,15 @@ import { SEO } from "@/components/SEO";
 import { trackFormSubmit, identifyUser } from "@/utils/tracking";
 import { Progress } from "@/components/ui/progress";
 import { ImageUploader } from "@/components/forms/ImageUploader";
+import { Combobox } from "@/components/ui/combobox";
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import vinInfoImage from "@/assets/vin-info.png";
 
 // Data Lists
 const years = Array.from({ length: 2025 - 1986 + 1 }, (_, i) => 2025 - i);
+const yearOptions = years.map(y => ({ label: y.toString(), value: y.toString() }));
+
 const makes = [
     "Acura", "Alfa Romeo", "Audi", "BMW", "Buick", "Cadillac", "Chevrolet", "Chrysler",
     "Dodge", "Ford", "GMC", "Genesis", "Honda", "Hyundai", "INEOS", "Infiniti", "Jaguar",
@@ -25,17 +28,30 @@ const makes = [
     "Mercedes-Benz", "Mini", "Mitsubishi", "Nissan", "Polestar", "Porsche", "Ram",
     "Rivian", "Subaru", "Tesla", "Toyota", "VinFast", "Volkswagen", "Volvo"
 ];
+const makeOptions = makes.map(m => ({ label: m, value: m }));
+
 const provinces = ["AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YK"];
 
 const colors = [
     "Black", "Gray", "Silver", "White", "Blue",
-    "Green", "Red", "Brown", "Gold", "Beige"
+    "Green", "Red", "Brown", "Gold", "Beige", "Other"
 ];
+
+const sellingReasons = [
+    "Looking to get cash for my car",
+    "Looking to upgrade",
+    "Downsizing",
+    "Moving",
+    "Vehicle no longer needed",
+    "Other"
+];
+const sellingReasonOptions = sellingReasons.map(r => ({ label: r, value: r }));
 
 interface SellFormData {
     year: string;
     make: string;
     model: string;
+    trim: string;
     vin: string; // Added VIN
     city: string;
     province: string;
@@ -54,6 +70,9 @@ interface SellFormData {
     email: string;
     phone: string;
     images: string[];
+    customExteriorColor: string; // Internal use
+    customInteriorColor: string; // Internal use
+    reasonForSelling: string;
 }
 
 const steps = [
@@ -70,12 +89,12 @@ export default function SellYourCar() {
     const [currentStep, setCurrentStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState<SellFormData>({
-        year: "", make: "", model: "", vin: "", city: "", province: "",
+        year: "", make: "", model: "", trim: "", vin: "", city: "", province: "",
         odometer: "", exteriorColor: "", interiorColor: "", transmission: "",
         exteriorDamage: "", interiorDamage: "", accidentClaims: "", smokedIn: "",
         windshieldCrack: "", keys: "",
         firstName: "", lastName: "", email: "", phone: "",
-        images: []
+        images: [], customExteriorColor: "", customInteriorColor: "", reasonForSelling: ""
     });
 
     const updateField = (field: keyof SellFormData, value: any) => {
@@ -97,7 +116,7 @@ export default function SellYourCar() {
     const validateStep = (step: number) => {
         switch (step) {
             case 1:
-                if (!formData.year || !formData.make || !formData.model || !formData.city || !formData.province) {
+                if (!formData.year || !formData.make || !formData.model || !formData.trim || !formData.city || !formData.province) {
                     toast({ title: "Incomplete", description: "Please fill in all vehicle details.", variant: "destructive" });
                     return false;
                 }
@@ -123,6 +142,12 @@ export default function SellYourCar() {
             case 3:
                 if (!formData.exteriorDamage || !formData.interiorDamage || !formData.accidentClaims || !formData.smokedIn || !formData.windshieldCrack || !formData.keys) {
                     toast({ title: "Incomplete", description: "Please answer all condition questions.", variant: "destructive" });
+                    return false;
+                }
+                return true;
+            case 4: // Photos & Reason
+                if (!formData.reasonForSelling) {
+                    toast({ title: "Incomplete", description: "Please provide a reason for selling.", variant: "destructive" });
                     return false;
                 }
                 return true;
@@ -162,9 +187,11 @@ export default function SellYourCar() {
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email,
                 phone: formData.phone,
-                message: `Sell Your Car Request: ${formData.year} ${formData.make} ${formData.model}`,
+                message: `Sell Your Car Request: ${formData.year} ${formData.make} ${formData.model} ${formData.trim}`,
                 notes: JSON.stringify({
-                    ...formData
+                    ...formData,
+                    exteriorColor: formData.exteriorColor === "Other" ? formData.customExteriorColor : formData.exteriorColor,
+                    interiorColor: formData.interiorColor === "Other" ? formData.customInteriorColor : formData.interiorColor,
                 }),
                 status: "new"
             });
@@ -248,17 +275,22 @@ export default function SellYourCar() {
 
                                 <div className="border-t my-4"></div>
 
-                                <Select value={formData.year} onValueChange={(v) => updateField("year", v)}>
-                                    <SelectTrigger><SelectValue placeholder="Year" /></SelectTrigger>
-                                    <SelectContent className="max-h-[200px]">{years.map(y => <SelectItem key={y} value={y.toString()}>{y}</SelectItem>)}</SelectContent>
-                                </Select>
+                                <Combobox
+                                    options={yearOptions}
+                                    value={formData.year}
+                                    onValueChange={(v) => updateField("year", v)}
+                                    placeholder="Select Year"
+                                />
 
-                                <Select value={formData.make} onValueChange={(v) => updateField("make", v)}>
-                                    <SelectTrigger><SelectValue placeholder="Make" /></SelectTrigger>
-                                    <SelectContent className="max-h-[200px]">{makes.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
-                                </Select>
+                                <Combobox
+                                    options={makeOptions}
+                                    value={formData.make}
+                                    onValueChange={(v) => updateField("make", v)}
+                                    placeholder="Select Make"
+                                />
 
                                 <Input placeholder="Model (e.g. Civic, F-150)" value={formData.model} onChange={e => updateField("model", e.target.value)} />
+                                <Input placeholder="Trim (e.g. Touring, Lariat)" value={formData.trim} onChange={e => updateField("trim", e.target.value)} />
 
                                 <div className="grid grid-cols-2 gap-2">
                                     <Input placeholder="City" value={formData.city} onChange={e => updateField("city", e.target.value)} />
@@ -277,15 +309,27 @@ export default function SellYourCar() {
                                 <h2 className="text-xl font-bold">{formData.year} {formData.make} Details</h2>
                                 <Input placeholder="Odometer Reading (KM)" type="number" value={formData.odometer} onChange={e => updateField("odometer", e.target.value)} />
 
-                                <Select value={formData.exteriorColor} onValueChange={v => updateField("exteriorColor", v)}>
-                                    <SelectTrigger><SelectValue placeholder="Exterior Colour" /></SelectTrigger>
-                                    <SelectContent>{colors.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                                </Select>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Select value={formData.exteriorColor} onValueChange={v => updateField("exteriorColor", v)}>
+                                            <SelectTrigger><SelectValue placeholder="Exterior Colour" /></SelectTrigger>
+                                            <SelectContent>{colors.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                                        </Select>
+                                        {formData.exteriorColor === "Other" && (
+                                            <Input placeholder="Enter Exterior Colour" value={formData.customExteriorColor} onChange={e => updateField("customExteriorColor", e.target.value)} />
+                                        )}
+                                    </div>
 
-                                <Select value={formData.interiorColor} onValueChange={v => updateField("interiorColor", v)}>
-                                    <SelectTrigger><SelectValue placeholder="Interior Colour" /></SelectTrigger>
-                                    <SelectContent>{colors.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                                </Select>
+                                    <div className="space-y-2">
+                                        <Select value={formData.interiorColor} onValueChange={v => updateField("interiorColor", v)}>
+                                            <SelectTrigger><SelectValue placeholder="Interior Colour" /></SelectTrigger>
+                                            <SelectContent>{colors.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                                        </Select>
+                                        {formData.interiorColor === "Other" && (
+                                            <Input placeholder="Enter Interior Colour" value={formData.customInteriorColor} onChange={e => updateField("customInteriorColor", e.target.value)} />
+                                        )}
+                                    </div>
+                                </div>
 
                                 <div className="space-y-2">
                                     <Label>Transmission</Label>
@@ -378,9 +422,22 @@ export default function SellYourCar() {
                                     onImagesChange={(urls) => updateField("images", urls)}
                                 />
 
+                                <div className="space-y-4 pt-4 border-t mt-4">
+                                    <h3 className="font-semibold">Additional Details</h3>
+                                    <div className="space-y-2">
+                                        <Label>What is the reason for selling?</Label>
+                                        <Combobox
+                                            options={sellingReasonOptions}
+                                            value={formData.reasonForSelling}
+                                            onValueChange={(v) => updateField("reasonForSelling", v)}
+                                            placeholder="Select a reason"
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className="flex justify-between pt-4">
                                     <Button variant="ghost" onClick={prevStep}>Back</Button>
-                                    <Button onClick={nextStep}>Skip / Continue</Button>
+                                    <Button onClick={nextStep}>Continue</Button>
                                 </div>
                             </div>
                         )}
