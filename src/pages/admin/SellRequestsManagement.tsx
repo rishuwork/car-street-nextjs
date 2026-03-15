@@ -170,12 +170,12 @@ export default function SellRequestsManagement() {
                                     <div className="text-sm space-y-2">
                                         <p className="font-semibold">Condition Report:</p>
                                         <ul className="list-disc list-inside grid grid-cols-1 sm:grid-cols-2 gap-x-4 text-muted-foreground">
-                                            <li>Accidents: {data?.accidentClaims === "true" ? "Yes" : "No"}</li>
-                                            <li>Smoke: {data?.smokedIn === "true" ? "Yes" : "No"}</li>
-                                            <li>Ext Damage: {data?.exteriorDamage === "true" ? "Yes" : "No"}</li>
-                                            <li>Int Damage: {data?.interiorDamage === "true" ? "Yes" : "No"}</li>
-                                            <li>Windshield: {data?.windshieldCrack === "true" ? "Yes" : "No"}</li>
-                                            <li>Keys: {data?.keys}</li>
+                                            <li>Accidents: {String(data?.accidentClaims) === "true" ? "Yes" : "No"}</li>
+                                            <li>Smoke: {String(data?.smokedIn) === "true" ? "Yes" : "No"}</li>
+                                            <li>Ext Damage: {String(data?.exteriorDamage) === "true" ? "Yes" : "No"}</li>
+                                            <li>Int Damage: {String(data?.interiorDamage) === "true" ? "Yes" : "No"}</li>
+                                            <li>Windshield: {String(data?.windshieldCrack) === "true" ? "Yes" : "No"}</li>
+                                            <li>Keys: {data?.keys || "N/A"}</li>
                                             {data?.reasonForSelling && <li className="col-span-1 sm:col-span-2 mt-2 font-medium text-foreground">Reason for selling: {data.reasonForSelling}</li>}
                                         </ul>
                                     </div>

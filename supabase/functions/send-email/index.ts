@@ -96,12 +96,12 @@ const handler = async (req: Request): Promise<Response> => {
           <hr />
           <h3>Condition & History</h3>
           <p><strong>Reason for Selling:</strong> ${data.reasonForSelling || "N/A"}</p>
-          <p><strong>Keys:</strong> ${data.keys}</p>
-          <p><strong>Exterior Damage:</strong> ${data.exteriorDamage === "true" ? "Yes" : "No"}</p>
-          <p><strong>Interior Damage:</strong> ${data.interiorDamage === "true" ? "Yes" : "No"}</p>
-          <p><strong>Accident Claims:</strong> ${data.accidentClaims === "true" ? "Yes" : "No"}</p>
-          <p><strong>Smoked In:</strong> ${data.smokedIn === "true" ? "Yes" : "No"}</p>
-          <p><strong>Windshield Crack:</strong> ${data.windshieldCrack === "true" ? "Yes" : "No"}</p>
+          <p><strong>Keys:</strong> ${data.keys || "N/A"}</p>
+          <p><strong>Exterior Damage:</strong> ${String(data.exteriorDamage) === "true" ? "Yes" : "No"}</p>
+          <p><strong>Interior Damage:</strong> ${String(data.interiorDamage) === "true" ? "Yes" : "No"}</p>
+          <p><strong>Accident Claims:</strong> ${String(data.accidentClaims) === "true" ? "Yes" : "No"}</p>
+          <p><strong>Smoked In:</strong> ${String(data.smokedIn) === "true" ? "Yes" : "No"}</p>
+          <p><strong>Windshield Crack:</strong> ${String(data.windshieldCrack) === "true" ? "Yes" : "No"}</p>
           <hr />
           <p><a href="https://carstreet.ca/admin/sell-requests">View Full Details in Admin Portal</a></p>
         `;
