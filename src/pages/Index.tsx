@@ -101,11 +101,7 @@ const Index = () => {
         </section>
 
         {/* Budget Calculator Section */}
-        <section className="py-12 bg-muted">
-          <div className="container mx-auto px-4">
-            <BudgetCalculator />
-          </div>
-        </section>
+        <BudgetCalculator />
 
         {/* Featured Vehicles Section */}
         <section className="py-12">
